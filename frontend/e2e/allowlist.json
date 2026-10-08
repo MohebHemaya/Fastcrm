@@ -1,0 +1,37 @@
+{
+  "description": "Touch target exceptions allowlist for responsive verification",
+  "frameworkPatterns": [
+    {
+      "selector": "input[data-slot=\"input\"]",
+      "reason": "HeroUI inner input element; tappable container is div[data-slot=\"input-wrapper\"] which satisfies >= 44px."
+    },
+    {
+      "selector": "input[type=\"checkbox\"], input[type=\"radio\"]",
+      "reason": "Inner native form control wrapped in a larger tappable <label> or HeroUI Checkbox/Radio component."
+    },
+    {
+      "selector": "span[data-slot=\"wrapper\"]",
+      "reason": "HeroUI Checkbox/Switch visual indicator nested inside full tappable label container."
+    },
+    {
+      "selector": "button[data-slot=\"clear-button\"]",
+      "reason": "HeroUI Input inline clear button embedded within 44px input wrapper."
+    },
+    {
+      "selector": "button[data-slot=\"close-button\"]",
+      "reason": "HeroUI Chip or Modal auxiliary close button with compact dismiss interaction."
+    }
+  ],
+  "viewExceptions": [
+    {
+      "page": "all",
+      "pattern": "table-sort-header",
+      "reason": "Table column header sort icons and indicators."
+    },
+    {
+      "page": "all",
+      "pattern": "pagination-compact",
+      "reason": "Pagination item buttons in compact mode."
+    }
+  ]
+}

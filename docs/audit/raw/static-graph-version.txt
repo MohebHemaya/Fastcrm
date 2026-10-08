@@ -1,0 +1,4 @@
+﻿backend\app\Http\Controllers\Api\AdminHealthController.php:73: $graphVersion = config('whatsapp.cloud_api.version', 'v25.0');
+backend\app\WhatsApp\CloudApiProvider.php:31: $version = config('whatsapp.cloud_api.version', 'v25.0');
+backend\app\WhatsApp\CloudApiProvider.php:34: ->baseUrl("https://graph.facebook.com/{$version}/")
+backend\config\whatsapp.php:29: 'version' => env('WHATSAPP_GRAPH_VERSION', 'v25.0'),

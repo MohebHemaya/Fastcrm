@@ -1,0 +1,160 @@
+﻿
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ArabicReplyNormalizerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('مُهْتَمٌّ', 'مهتم')[39m[90m           [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('إِيْقَافٌ', 'ايقاف')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('أَهْلاً وَسَهْلاً', 'اهلا وسهلا')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('آهٍ', 'اه')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('نَعَمْ', 'نعم')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('لَا', 'لا')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('سَيَّارَةٌ', 'سياره')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('شَاحِنَةٌ', 'شاحنه')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('إلغاء', 'الغاء')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with (' تَمَامْ ', 'تمام')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('عَرَبِيَّةٌ', 'عربيه')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('مَصْرِيٌّ', 'مصري')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('سَنَتَيْنِ', 'سنتين')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('أَكِيدْ', 'اكيد')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('مُوافِقْ', 'موافق')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('٠١٢٣٤٥٦٧٨٩', '0123456789')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('۰۱۲۳۴۵۶۷۸۹', '0123456789')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('٥ سنوات', '5 سنوات')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('خبرة ١٠ سنين', 'خبرة 10 سنين')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('١٢.٥', '12.5')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('رقم ٧', 'رقم 7')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('5', 5.0)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('٥', 5.0)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('١٢', 12.0)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('3.5', 3.5)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('٣,٥', 3.5)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('عندي 10 سنين خبرة', 10.0)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('حوالي ٧ سنوات', 7.0)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('لا يوجد', null)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with (null, null)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('', null)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('نعم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('نَعَمْ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('ايوه', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('أيوة', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('ايوة', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اه', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('آه', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اهه', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('تمام', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('تَمَامْ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('موافق', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('مُوافِقْ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اكيد', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('أَكِيدْ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('طبعا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('طَبْعاً', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('حاضر', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('حَاضِرْ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اوكي', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اوك', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('yes', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('YES', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('y', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('1', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('نعم مهتم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('مهتم جدا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('تمام يا فندم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('ايوه مهتم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اكيد طبعا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('موافق جدا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('لا', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('مش عايز', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('لا شكرا', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('مش مناسب', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('no', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('2', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لَا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لأ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لاء', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('مش عايز', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('مش موافق', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('غير موافق', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لا شكرا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('مش هقدر', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('مش مناسب', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('مش حابب', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('غير مهتم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('no', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('NO', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('n', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('2', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لا مش مهتم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('نعم', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('ايوه', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('تمام', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('yes', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('1', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer matches options correctly[39m[90m                                                             [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer handles look-alike options and ambiguous replies without guessing[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer handles misspellings and low-confidence replies explicitly[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ExampleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mthat true is true[39m[90m                                                                                           [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\PhoneNormalizerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01112345678', true, '+201112345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01212345678', true, '+201212345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01512345678', true, '+201512345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('1012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('1112345678', true, '+201112345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('1212345678', true, '+201212345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('1512345678', true, '+201512345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('201012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+201012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('00201012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('201198765432', true, '+201198765432', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+201234567890', true, '+201234567890', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('00201555555555', true, '+201555555555', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('٠١٠١٢٣٤٥٦٧٨', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('٠١١٩٨٧٦٥٤٣٢', true, '+201198765432', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('١٢١٢٣٤٥٦٧٨', true, '+201212345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+٢٠١٥٥٥٥٥٥٥٥٥', true, '+201555555555', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('٠٠٢٠١٠١٢٣٤٥٦٧٨', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('۰۱۰۱۲۳۴۵۶۷۸', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('۰۱۱۱۲۳۴۵۶۷۸', true, '+201112345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010-1234-5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('(010) 1234 5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010.1234.5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+20 10 1234 5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+20-10-1234-5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with (' 01012345678 ', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010/1234/5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010 1234 5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('‏01012345678‎', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('﻿01012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010​1234‌5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+966512345[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('00966512345678', true, '+966512345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+971501234567', true, '+971501234567', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+96599123456', true, '+96599123456', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+14155552671', true, '+14155552671', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+447400123456', true, '+447400123456', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010123456', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('1012345', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('0101234567899', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01912345678', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01412345678', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01712345678', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('0223456789', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+20223456789', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('035432100', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('0133221100', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with (null, false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with (' ', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('abc', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('0101234567a', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('سائق ممتاز', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+2010abc5678', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('00000', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+999123456789', false, null, …)[39m
+
+  [90mTests:[39m    [32;1m150 passed[39;22m[90m (320 assertions)[39m
+  [90mDuration:[39m [39m0.91s[39m
+

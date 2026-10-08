@@ -1,0 +1,125 @@
+﻿== migrate:fresh --seed
+
+   INFO  Preparing database.  
+
+  Creating migration table .............................................................................. 28.05ms DONE
+
+   INFO  Running migrations.  
+
+  0001_01_01_000000_create_users_table .................................................................. 79.86ms DONE
+  0001_01_01_000001_create_cache_table .................................................................. 54.43ms DONE
+  0001_01_01_000002_create_jobs_table ................................................................... 69.97ms DONE
+  2026_09_30_114651_create_personal_access_tokens_table ................................................. 48.11ms DONE
+  2026_09_30_120000_add_active_and_last_login_to_users_table ............................................ 11.15ms DONE
+  2026_09_30_120001_create_activity_logs_table .......................................................... 79.31ms DONE
+  2026_09_30_130000_create_drivers_table ................................................................ 36.80ms DONE
+  2026_09_30_130001_create_whatsapp_groups_table ........................................................ 19.22ms DONE
+  2026_09_30_130002_create_imports_table ................................................................ 59.13ms DONE
+  2026_09_30_130003_create_driver_group_table .......................................................... 171.59ms DONE
+  2026_09_30_130004_create_driver_status_histories_table ............................................... 101.80ms DONE
+  2026_09_30_130005_create_import_rows_table ........................................................... 103.60ms DONE
+  2026_09_30_140000_create_whatsapp_messages_table ...................................................... 80.64ms DONE
+  2026_09_30_140001_create_webhook_events_table ......................................................... 34.17ms DONE
+  2026_09_30_150000_create_questions_and_answers_tables ................................................ 393.03ms DONE
+  2026_09_30_150001_create_settings_and_update_drivers_table ............................................ 33.30ms DONE
+  2026_09_30_160000_create_work_orders_tables .......................................................... 307.33ms DONE
+  2026_10_02_100000_create_phase6_followup_and_metrics_tables .......................................... 379.12ms DONE
+  2026_10_02_120000_create_exports_table ................................................................ 83.17ms DONE
+  2026_10_02_120001_add_phase7_dashboard_indexes ........................................................ 33.03ms DONE
+  2026_10_02_130000_add_phase8_performance_indexes ...................................................... 42.73ms DONE
+  2026_10_02_204600_alter_whatsapp_messages_body_to_text ................................................. 3.48ms DONE
+
+
+   INFO  Seeding database.  
+
+  Database\Seeders\AdminUserSeeder ........................................................................... RUNNING  
+  Database\Seeders\AdminUserSeeder ....................................................................... 390 ms DONE  
+
+  Database\Seeders\SettingsSeeder ............................................................................ RUNNING  
+  Database\Seeders\SettingsSeeder ......................................................................... 15 ms DONE  
+
+  Database\Seeders\QuestionSeeder ............................................................................ RUNNING  
+  Database\Seeders\QuestionSeeder ......................................................................... 76 ms DONE  
+
+EXIT=0
+== migrate:rollback (full)
+
+   INFO  Rolling back migrations.  
+
+  2026_10_02_204600_alter_whatsapp_messages_body_to_text ................................................ 54.76ms DONE
+  2026_10_02_130000_add_phase8_performance_indexes ...................................................... 10.60ms FAIL
+
+   Illuminate\Database\QueryException 
+
+  SQLSTATE[HY000]: General error: 1553 Cannot drop index 'idx_import_rows_import_class_id': needed in a foreign key constraint (Connection: mysql, Host: 127.0.0.1, Port: 3306, Database: driver_system_audit, SQL: alter table `import_rows` drop index `idx_import_rows_import_class_id`)
+
+  at vendor\laravel\framework\src\Illuminate\Database\Connection.php:857
+    853▕             $exceptionType = ($isUniqueConstraintError = $this->isUniqueConstraintError($e))
+    854▕                 ? UniqueConstraintViolationException::class
+    855▕                 : QueryException::class;
+    856▕ 
+  ➜ 857▕             $exception = new $exceptionType(
+    858▕                 $this->getNameWithReadWriteType(),
+    859▕                 $query,
+    860▕                 $this->prepareBindings($bindings),
+    861▕                 $e,
+
+  1   vendor\laravel\framework\src\Illuminate\Database\Connection.php:601
+      PDOException::("SQLSTATE[HY000]: General error: 1553 Cannot drop index 'idx_import_rows_import_class_id': needed in a foreign key constraint")
+
+  2   vendor\laravel\framework\src\Illuminate\Database\Connection.php:601
+      PDOStatement::execute()
+
+EXIT=1
+== tables after reset
+activity_logs
+cache
+cache_locks
+drivers
+driver_answers
+driver_group
+driver_metrics
+driver_status_histories
+exports
+failed_jobs
+imports
+import_rows
+jobs
+job_batches
+migrations
+password_reset_tokens
+personal_access_tokens
+questions
+question_options
+question_versions
+sessions
+settings
+users
+webhook_events
+whatsapp_groups
+whatsapp_messages
+work_orders
+work_order_events
+work_order_filters
+work_order_recipients
+== migrate again
+
+   INFO  Running migrations.  
+
+  2026_10_02_204600_alter_whatsapp_messages_body_to_text ................................................ 57.87ms DONE
+
+EXIT=0
+== seed again
+
+   INFO  Seeding database.  
+
+  Database\Seeders\AdminUserSeeder ........................................................................... RUNNING  
+  Database\Seeders\AdminUserSeeder ....................................................................... 402 ms DONE  
+
+  Database\Seeders\SettingsSeeder ............................................................................ RUNNING  
+  Database\Seeders\SettingsSeeder .......................................................................... 7 ms DONE  
+
+  Database\Seeders\QuestionSeeder ............................................................................ RUNNING  
+  Database\Seeders\QuestionSeeder .......................................................................... 8 ms DONE  
+
+EXIT=0

@@ -1,0 +1,28 @@
+﻿D:\Projects\Web\fast crm\.agents\rules\project-rules.md:4: - Never use SQLite for tests or runtime. MySQL/MariaDB InnoDB is required.
+D:\Projects\Web\fast crm\audit\stage1.ps1:31: Out "s1-sqlite-grep.txt" {
+D:\Projects\Web\fast crm\audit\stage1.ps1:34: Select-String -Pattern 'sqlite' -SimpleMatch | ForEach-Object { "$($_.Path):$($_.LineNumber): $($_.Line.Trim())" }
+D:\Projects\Web\fast crm\backend\config\database.php:35: 'sqlite' => [
+D:\Projects\Web\fast crm\backend\config\database.php:36: 'driver' => 'sqlite',
+D:\Projects\Web\fast crm\backend\config\database.php:38: 'database' => env('DB_DATABASE', database_path('database.sqlite')),
+D:\Projects\Web\fast crm\backend\config\queue.php:106: 'database' => env('DB_CONNECTION', 'sqlite'),
+D:\Projects\Web\fast crm\backend\config\queue.php:125: 'database' => env('DB_CONNECTION', 'sqlite'),
+D:\Projects\Web\fast crm\backend\database\.gitignore:1: *.sqlite*
+D:\Projects\Web\fast crm\backend\tests\Feature\DatabaseUtf8mb4Test.php:6: test('database connection is mysql/mariadb and not sqlite', function () {
+D:\Projects\Web\fast crm\backend\.env.example:23: DB_CONNECTION=sqlite
+D:\Projects\Web\fast crm\backend\composer.json:71: "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+D:\Projects\Web\fast crm\docs\decisions.md:18: ## Decision 002: Strict Disallowance of SQLite for Automated Tests
+D:\Projects\Web\fast crm\docs\decisions.md:21: - **Context:** Standard Laravel projects often use in-memory SQLite for testing speed. However, Phase 5 relies heavily on transactional row-level pessimistic locking (`lockForUpdate()`) to prevent race conditions and over-booking of work orders. SQLite does not replicate MySQL/MariaDB row locks.
+D:\Projects\Web\fast crm\docs\decisions.md:23: - SQLite is completely prohibited across the codebase and testing configurations.
+D:\Projects\Web\fast crm\docs\local-setup-xampp.md:27: > **Important:** SQLite is strictly forbidden across this project, even for automated testing. All unit and feature tests run against `driver_system_test` to validate real InnoDB row-level locking and concurrency.
+D:\Projects\Web\fast crm\plan\phase-0-foundation.md:8: - **Separate test database** `driver_system_test` (`.env.testing` + Pest/phpunit config, `RefreshDatabase`/`LazilyRefreshDatabase`). SQLite in-memory is **not allowed** — later phases rely on MySQL row locks.
+D:\Projects\Web\fast crm\plan\phase-0-foundation.md:70: - Database: **MySQL** everywhere — local development on **XAMPP**, production on Hostinger. Never use SQLite, not even for tests (tests run on a separate MySQL database). All tables: InnoDB, `utf8mb4` / `utf8mb4_unicode_ci`.
+D:\Projects\Web\fast crm\plan\phase-1-auth-layout.md:49: - Database: **MySQL** everywhere — local development on **XAMPP**, production on Hostinger. Never use SQLite, not even for tests (tests run on a separate MySQL database). All tables: InnoDB, `utf8mb4` / `utf8mb4_unicode_ci`.
+D:\Projects\Web\fast crm\plan\phase-2-drivers-import.md:68: - Database: **MySQL** everywhere — local development on **XAMPP**, production on Hostinger. Never use SQLite, not even for tests (tests run on a separate MySQL database). All tables: InnoDB, `utf8mb4` / `utf8mb4_unicode_ci`.
+D:\Projects\Web\fast crm\plan\phase-3-whatsapp.md:66: - Database: **MySQL** everywhere — local development on **XAMPP**, production on Hostinger. Never use SQLite, not even for tests (tests run on a separate MySQL database). All tables: InnoDB, `utf8mb4` / `utf8mb4_unicode_ci`.
+D:\Projects\Web\fast crm\plan\phase-4-questions.md:65: - Database: **MySQL** everywhere — local development on **XAMPP**, production on Hostinger. Never use SQLite, not even for tests (tests run on a separate MySQL database). All tables: InnoDB, `utf8mb4` / `utf8mb4_unicode_ci`.
+D:\Projects\Web\fast crm\plan\phase-5-work-orders.md:45: - **Race-condition test (mandatory, run on the local XAMPP MySQL test database — InnoDB, real row locks; SQLite is not acceptable):** 30 concurrent acceptances (separate processes or parallel DB connections) on a 10+5 order → **exactly 10 confirmed, 5 backup, 15 too_late**, sequence numbers unique and gapless, order `filled`, regardless of arrival order.
+D:\Projects\Web\fast crm\plan\phase-5-work-orders.md:72: - Database: **MySQL** everywhere — local development on **XAMPP**, production on Hostinger. Never use SQLite, not even for tests (tests run on a separate MySQL database). All tables: InnoDB, `utf8mb4` / `utf8mb4_unicode_ci`.
+D:\Projects\Web\fast crm\plan\phase-6-followup.md:53: - Database: **MySQL** everywhere — local development on **XAMPP**, production on Hostinger. Never use SQLite, not even for tests (tests run on a separate MySQL database). All tables: InnoDB, `utf8mb4` / `utf8mb4_unicode_ci`.
+D:\Projects\Web\fast crm\plan\phase-7-reports.md:51: - Database: **MySQL** everywhere — local development on **XAMPP**, production on Hostinger. Never use SQLite, not even for tests (tests run on a separate MySQL database). All tables: InnoDB, `utf8mb4` / `utf8mb4_unicode_ci`.
+D:\Projects\Web\fast crm\plan\phase-8-hardening-deploy.md:53: - Database: **MySQL** everywhere — local development on **XAMPP**, production on Hostinger. Never use SQLite, not even for tests (tests run on a separate MySQL database). All tables: InnoDB, `utf8mb4` / `utf8mb4_unicode_ci`.
+D:\Projects\Web\fast crm\AGENTS.md:19: - **SQLite is strictly forbidden**, even in test environments (tests run against `driver_system_test` to support real MySQL row-level locks).

@@ -1,0 +1,81 @@
+﻿frontend\src\components\auth\ChangePasswordDialog.tsx:61: } catch (err: any) {
+frontend\src\components\exports\ExportModal.tsx:50: } catch (e: any) {
+frontend\src\components\exports\ExportModal.tsx:113: } catch (e: any) {
+frontend\src\components\exports\ExportModal.tsx:136: } catch (e: any) {
+frontend\src\features\drivers\components\AddDriverModal.tsx:102: } catch (err: any) {
+frontend\src\features\drivers\components\AddDriverModal.tsx:105: setError(field as any, {
+frontend\src\features\drivers\components\ChangeStatusModal.tsx:73: } catch (err: any) {
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:125: } catch (err: any) {
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:136: const handleSaveAnswerEdit = async (payload: any) => {
+frontend\src\features\imports\components\ImportCommittingStep.tsx:37: setError(data.error_message || (data as any).error || 'حدث خطأ أثناء حفظ البيانات، يرجى مراجعة الدعم الفني.');
+frontend\src\features\imports\components\ImportParsingStep.tsx:39: setError(data.error_message || (data as any).error || 'فشلت معالجة الملف، يرجى التأكد من صحة التنسيق والمحاولة ثانية.');
+frontend\src\features\imports\components\ImportUploadStep.tsx:65: } catch (err: any) {
+frontend\src\features\settings\QuestionModal.tsx:176: } catch (err: any) {
+frontend\src\features\settings\SettingsPage.tsx:127: const handleSaveQuestion = async (payload: any) => {
+frontend\src\lib\api.ts:36: const responseData = error.response?.data as any;
+frontend\src\routes\ActivityLogsPage.tsx:45: } catch (err: any) {
+frontend\src\routes\CreateWorkOrderPage.tsx:63: value: any;
+frontend\src\routes\CreateWorkOrderPage.tsx:287: } catch (err: any) {
+frontend\src\routes\CreateWorkOrderPage.tsx:601: onChange={(e) => field.onChange(e.target.value as any)}
+frontend\src\routes\DriversPage.tsx:87: } catch (e: any) {
+frontend\src\routes\DriversPage.tsx:106: } catch (e: any) {
+frontend\src\routes\HomePage.tsx:40: } catch (err: any) {
+frontend\src\routes\LoginPage.tsx:23: const from = (location.state as any)?.from?.pathname || '/';
+frontend\src\routes\LoginPage.tsx:48: } catch (err: any) {
+frontend\src\routes\LoginPage.tsx:51: const responseData = apiErr?.response?.data as any;
+frontend\src\routes\ReportsPage.tsx:125: } catch (err: any) {
+frontend\src\routes\ReportsPage.tsx:208: } catch (e: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:122: } catch (e: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:147: } catch (e: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:169: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:193: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:251: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:270: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:289: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:311: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:338: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:360: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:385: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:410: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:432: } catch (err: any) {
+frontend\src\routes\WorkOrderDetailPage.tsx:452: } catch (err: any) {
+frontend\src\routes\WorkOrdersListPage.tsx:77: } catch (err: any) {
+frontend\src\routes\WorkOrdersListPage.tsx:98: const handleDuplicate = async (orderId: number, e?: any) => {
+frontend\src\routes\WorkOrdersListPage.tsx:105: } catch (err: any) {
+frontend\src\routes\WorkOrdersListPage.tsx:236: onPress={(e: any) => handleDuplicate(row.id, e)}
+frontend\src\services\whatsappService.ts:92: async simulateInbound(phone: string, text?: string, payloadId?: string): Promise<ApiEnvelope<any>> {
+frontend\src\services\whatsappService.ts:93: const response = await api.post<ApiEnvelope<any>>('/whatsapp/simulate-inbound', {
+frontend\src\test\mocks\handlers.ts:41: const body = (await request.json()) as any;
+frontend\src\test\mocks\handlers.ts:90: const body = (await request.json()) as any;
+frontend\src\test\mocks\handlers.ts:310: const body = (await request.json()) as any;
+frontend\src\test\mocks\handlers.ts:347: const body = (await request.json()) as any;
+frontend\src\test\mocks\handlers.ts:368: const body = (await request.json()) as any;
+frontend\src\test\mocks\handlers.ts:579: const body = (await request.json()) as any;
+frontend\src\test\mocks\handlers.ts:804: const body = (await request.json()) as any;
+frontend\src\test\api.test.ts:18: } catch (error: any) {
+frontend\src\test\api.test.ts:36: } catch (error: any) {
+frontend\src\test\DashboardPage.test.tsx:14: ResponsiveContainer: ({ children }: any) => <div data-testid="recharts-container">{children}</div>,
+frontend\src\test\WhatsAppMessagesPage.test.tsx:69: data: mockMessages as any,
+frontend\src\test\WhatsAppMessagesPage.test.tsx:103: data: { ...mockMessages[0], status: 'queued' } as any,
+frontend\src\test\WhatsAppModals.test.tsx:86: data: mockChatMessages as any,
+frontend\src\test\whatsappService.test.ts:21: } as any);
+frontend\src\test\whatsappService.test.ts:33: } as any);
+frontend\src\test\whatsappService.test.ts:47: } as any);
+frontend\src\test\whatsappService.test.ts:63: } as any);
+frontend\src\test\whatsappService.test.ts:75: } as any);
+frontend\src\test\whatsappService.test.ts:88: } as any);
+frontend\src\test\whatsappService.test.ts:99: } as any);
+frontend\src\test\workOrderService.test.ts:24: vi.mocked(api.get).mockResolvedValueOnce({ data: mockData } as any);
+frontend\src\test\workOrderService.test.ts:41: vi.mocked(api.get).mockResolvedValueOnce({ data: mockOrder } as any);
+frontend\src\test\workOrderService.test.ts:58: vi.mocked(api.post).mockResolvedValueOnce({ data: mockRes } as any);
+frontend\src\test\workOrderService.test.ts:60: const res = await workOrderService.createDraft(payload as any);
+frontend\src\test\workOrderService.test.ts:68: vi.mocked(api.post).mockResolvedValueOnce({ data: mockRes } as any);
+frontend\src\test\workOrderService.test.ts:78: vi.mocked(api.post).mockResolvedValueOnce({ data: mockRes } as any);
+frontend\src\test\workOrderService.test.ts:90: vi.mocked(api.post).mockResolvedValueOnce({ data: mockRes } as any);
+frontend\src\test\workOrderService.test.ts:107: vi.mocked(api.post).mockResolvedValueOnce({ data: mockRes } as any);
+frontend\src\test\WorkOrdersPhase6.test.tsx:404: meta: null as any,
+frontend\src\types\settings.ts:11: value: any;
+frontend\src\types\whatsapp.ts:15: payload?: any;
+frontend\src\types\workOrder.ts:29: value: any;
+frontend\src\types\workOrder.ts:148: value: any;
+frontend\src\types\workOrder.ts:158: value: any;

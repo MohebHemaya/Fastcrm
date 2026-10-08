@@ -1,0 +1,21 @@
+﻿s2-pint.txt	exit=0	seconds=1.2
+s2-phpstan.txt	exit=0	seconds=3.3
+s2-baseline.txt	exit=0	seconds=0.1
+s2-tsc.txt	exit=0	seconds=10.8
+s2-lint.txt	exit=0	seconds=0.9
+s2-vitest.txt	exit=0	seconds=21.7
+s2-build.txt	exit=0	seconds=20.5
+s2-pest-unit.txt	exit=0	seconds=1.2
+s2-pest-feature.txt	exit=0	seconds=177.8
+s2-pest-combined-run1.txt	exit=0	seconds=180.2
+s2-pest-combined-run2.txt	exit=0	seconds=180.2
+s2-pest-combined-run3.txt	exit=0	seconds=179
+s2-race-accept-x20.txt	exit=2	seconds=0.4
+s2-race-promote-x20.txt	exit=2	seconds=0.4
+s2-webhook-smoke-x20.txt	exit=2	seconds=0.4
+s2-e2e-run1.txt	exit=0	seconds=93.1
+s2-e2e-run2.txt	exit=0	seconds=93.1
+STAGE2 DONE
+s2-race-accept-benchmark.txt	exit=0	seconds=80.2
+s2-race-promote-benchmark.txt	exit=0	seconds=31
+s2-webhook-smoke-benchmark.txt	exit=0	seconds=2.6

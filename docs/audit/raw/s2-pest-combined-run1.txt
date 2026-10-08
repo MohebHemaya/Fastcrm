@@ -1,0 +1,491 @@
+﻿
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ActivityLogTest[39m
+  [32;1m✓[39;22m[90m [39m[90munauthenticated request to activity logs is rejected[39m[90m                                                        [39m [90m3.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated user can view paginated activity logs[39m[90m                                                         [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactivity logs can be filtered by user_id[39m[90m                                                                    [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactivity logs can be filtered by action[39m[90m                                                                     [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mactivity logs can be filtered by date range[39m[90m                                                                 [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminHealthAndBackupTest[39m
+  [32;1m✓[39;22m[90m [39m[90mGET /api/v1/admin/health requires authentication[39m[90m                                                            [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mGET /api/v1/admin/health returns full metrics and detects stale scheduler heartbeat[39m[90m                         [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfailed jobs can be inspected, retried, and deleted via health admin endpoints[39m[90m                               [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapp:check-health-alerts dispatches alert email when heartbeat is stale or messages failed[39m[90m                   [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapp:backup-db generates a valid backup and prunes old backups according to retention[39m[90m                        [39m [90m0.57s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AdminUserSeederTest[39m
+  [32;1m✓[39;22m[90m [39m[90mAdminUserSeeder seeds default admin in testing and local environment[39m[90m                                        [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mAdminUserSeeder refuses to run in production with default credentials[39m[90m                                       [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mAdminUserSeeder refuses to run in production without configured credentials[39m[90m                                 [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mAdminUserSeeder seeds admin in production with secure custom credentials[39m[90m                                    [39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ApiExceptionHandlingTest[39m
+  [32;1m✓[39;22m[90m [39m[90munauthenticated request to api returns 401 with standard json envelope and arabic message[39m[90m                   [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mrequest to missing api route returns 404 with standard json envelope and arabic message[39m[90m                     [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\AuthTest[39m
+  [32;1m✓[39;22m[90m [39m[90muser can log in with valid credentials and session is established[39m[90m                                           [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90muser cannot log in with invalid credentials[39m[90m                                                                 [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90minactive user is blocked from logging in[39m[90m                                                                    [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlogin requests are throttled after 5 attempts[39m[90m                                                               [39m [90m1.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated user can view their profile via me endpoint[39m[90m                                                   [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90munauthenticated user cannot access me endpoint[39m[90m                                                              [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated user can log out and session is invalidated[39m[90m                                                   [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mauthenticated user can change password with valid current password[39m[90m                                          [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpassword change fails when current password is wrong[39m[90m                                                        [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ConcurrentWebhookSmokeTest[39m
+  [32;1m✓[39;22m[90m [39m[90mconcurrent webhook smoke test processes 100 requests with exactly 8 intentional duplicates and 0 deadlocks[39m[90m  [39m [90m1.83s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DashboardApiAndAggregationsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexact dashboard numbers on seeded data match expectations[39m[90m                                                   [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgroup performance table returns exact stats per WhatsApp group with conversion rate[39m[90m                         [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdashboard respects date range filter[39m[90m                                                                        [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdashboard cache busts when driver or work order changes[39m[90m                                                     [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdashboard cache-version observers debounce and write at most once during batch transactions[39m[90m                 [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdashboard cache executes trailing invalidation so changes made within debounce window bump version once win[39m[90m…[39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DatabaseGuardTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtests run on a database ending with _test[39m[90m                                                                   [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DatabaseUtf8mb4Test[39m
+  [32;1m✓[39;22m[90m [39m[90mdatabase connection is mysql/mariadb and not sqlite[39m[90m                                                         [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90marabic text and emoji round trip safely in utf8mb4 mysql database[39m[90m                                           [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DocumentationArtisanCommandsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mall artisan commands in docs and scripts exist[39m[90m                                                              [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DriverAnswerApiTest[39m
+  [32;1m✓[39;22m[90m [39m[90mAuthenticated user can view driver answers and history[39m[90m                                                      [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90mAuthenticated user can manually update a driver answer and it is audited[39m[90m                                    [39m [90m0.09s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DriverAnswerFilterScopeTest[39m
+  [32;1m✓[39;22m[90m [39m[90mDriver without an answer and driver with skipped answer are excluded by work-order filter[39m[90m                   [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mDriver whose current answer was edited manually is matched by the new answer only[39m[90m                           [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mInactive or deactivated option does not break matching of historical answers[39m[90m                                [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mNumeric question scope matches correctly with comparison operators and excludes missing/skipped[39m[90m             [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DriverApiTest[39m
+  [32;1m✓[39;22m[90m [39m[90munauthenticated request to drivers is rejected[39m[90m                                                              [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan list drivers with pagination and search by phone and name[39m[90m                                               [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan filter drivers by status and whatsapp group[39m[90m                                                             [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan create a driver manually with phone normalization and group attachment[39m[90m                                  [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcannot create driver with duplicate phone[39m[90m                                                                   [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan view driver details with status histories[39m[90m                                                               [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan update driver name and notes[39m[90m                                                                            [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan change driver status through state machine endpoint[39m[90m                                                     [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforbidden status change returns 422 with localized error[39m[90m                                                    [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan list whatsapp groups with driver count[39m[90m                                                                  [39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DriverMatcherSystemFiltersTest[39m
+  [32;1m✓[39;22m[90m [39m[90mDriverMatcher min_avg_rating excludes unrated drivers by default and includes them when include_unrated is[39m[90m… [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mDriverMatcher max_no_shows treats drivers with no history as eligible (0 no-shows)[39m[90m                          [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mDriverMatcher last_trip_within_days matches only drivers active within specified window[39m[90m                     [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DriverMatcherTest[39m
+  [32;1m✓[39;22m[90m [39m[90mDriverMatcher only matches active drivers and excludes suspended, new, or blacklisted drivers[39m[90m               [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mDriverMatcher ignores questions where is_filter is false[39m[90m                                                    [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mDriverMatcher applies AND between questions and OR between options of same question[39m[90m                         [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mDriverMatcher handles numeric gte and lte correctly[39m[90m                                                         [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mMissing or skipped answers never match in DriverMatcher[39m[90m                                                     [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mDriverMatcher excludes drivers confirmed on another order on the same date when flag is set[39m[90m                 [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mPOST /work-orders/match-preview returns count and first 20 drivers with no N+1 queries[39m[90m                      [39m [90m0.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90mPOST /work-orders/match-preview rejects non-filter question with 422[39m[90m                                        [39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\DriverStatusServiceTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcanTransition correctly identifies allowed and forbidden transitions[39m[90m                                        [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtransition updates status, records history, and creates audit log[39m[90m                                           [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mtransition to opted_out records opted_out_at timestamp[39m[90m                                                      [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mforbidden transition throws InvalidDriverStatusTransitionException and does not alter driver[39m[90m                [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\EndToEnd2000RowImportTest[39m
+  [32;1m✓[39;22m[90m [39m[90m2000 row sample file imports commits and reimports without duplicates[39m[90m                                       [39m [90m8.34s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\EndToEndPhase5WorkOrderSimulationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mPhase 5 E2E Scenario: 50 recipients, 10+5 order, simulated inbound acceptances, verify 10 confirmed, 5 back[39m[90m…[39m [90m1.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\EndToEndPhase6FollowUpSimulationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mPhase 6 E2E Scenario: fill 10+5 -> cancel confirmed -> promote backup -> complete order -> record outcomes[39m[90m… [39m [90m0.88s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\EndToEndWhatsAppSimulationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mFull WhatsApp Lifecycle E2E: Import/New -> Invite -> Delivered -> Read -> Reply Yes -> Interested -> Opt-ou[39m[90m…[39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExampleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mthe application returns a successful response[39m[90m                                                               [39m [90m0.06s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExcelExportTest[39m
+  [32;1m✓[39;22m[90m [39m[90mdrivers export generates RTL sheet, correct headers, preserves phone as string, and respects filters[39m[90m        [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwork order export generates multiple RTL sheets for summary, confirmed, and backup drivers[39m[90m                  [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mgroup performance export generates RTL sheet with Arabic headers and accurate data[39m[90m                          [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchunked large export of 2,000 drivers completes successfully within shared hosting memory limits[39m[90m            [39m [90m1.97s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ExportQueueLifecycleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mexport queue flow: queued -> processing -> done -> authenticated download[39m[90m                                   [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90munauthenticated request to download export is rejected with 401[39m[90m                                             [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdownloading non-ready or expired export returns proper HTTP error codes[39m[90m                                     [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mscheduled command exports:cleanup deletes expired files and records older than 7 days[39m[90m                       [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdownloading another users export is rejected with 403 Forbidden[39m[90m                                             [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexport files strictly reside outside the public directory[39m[90m                                                   [39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\HealthTest[39m
+  [32;1m✓[39;22m[90m [39m[90mhealth endpoint returns ok and database status when db is reachable[39m[90m                                         [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mhealth endpoint returns 503 and fail when db connection fails[39m[90m                                               [39m [90m4.14s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ImportPipelineTest[39m
+  [32;1m✓[39;22m[90m [39m[90mtemplate download returns valid CSV with Arabic UTF-8 BOM and headers[39m[90m                                       [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mupload validates mime type and file presence[39m[90m                                                                [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mupload stores file, dispatches ParseImportJob, and returns 201[39m[90m                                              [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mParseImportJob correctly classifies new, duplicate_in_file, existing, active, and invalid rows[39m[90m              [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mCommitImportJob creates new drivers, attaches groups, and never overwrites existing status[39m[90m                  [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcancel import changes status before commit[39m[90m                                                                  [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexport invalid rows returns CSV with errors[39m[90m                                                                 [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mchunked import of a 5,000-row file finishes and memory stays bounded[39m[90m                                       [39m [90m23.71s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\PdfExportTest[39m
+  [32;1m✓[39;22m[90m [39m[90mwork order PDF generates valid PDF with correct Arabic headers and BiDi phone runs[39m[90m                          [39m [90m0.51s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdriver profile PDF generates valid single page PDF with metrics and answers[39m[90m                                 [39m [90m0.30s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\QuestionVersioningAndCrudTest[39m
+  [32;1m✓[39;22m[90m [39m[90mAdmin can list questions ordered by sort_order[39m[90m                                                              [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mValidates options count and character limits on single_choice questions[39m[90m                                     [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mEditing question text or options creates a new QuestionVersion and keeps old answers linked to old version[39m[90m  [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mReordering questions updates sort orders[39m[90m                                                                    [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mToggle active flips is_active state[39m[90m                                                                         [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\QuestionnaireFlowTest[39m
+  [32;1m✓[39;22m[90m [39m[90mFull happy-path questionnaire for 5 mixed question types transitions driver to active[39m[90m                       [39m [90m0.25s[39m  
+  [32;1m✓[39;22m[90m [39m[90mInvalid reply increments retries and max 2 retries marks question skipped and flags driver for review[39m[90m       [39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mLate or duplicate button taps for already answered question are ignored safely[39m[90m                              [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mAudio or image replies send polite guidance asking to reply with buttons or text[39m[90m                            [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\QuestionnaireTimeoutAndResumeTest[39m
+  [32;1m✓[39;22m[90m [39m[90mReminders are sent once after configured reminder hours[39m[90m                                                     [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mTimeouts transition driver to NO_RESPONSE after configured timeout days[39m[90m                                     [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mDriver in NO_RESPONSE who replies later resumes questionnaire where they stopped[39m[90m                            [39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mAdmin can resend current question and request answer update for active driver[39m[90m                               [39m [90m0.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\ReleaseZipVerificationTest[39m
+  [32;1m✓[39;22m[90m [39m[90mverify-release-zip script passes on valid release archive or reports error on forbidden files[39m[90m               [39m [90m0.26s[39m  
+  [32;1m✓[39;22m[90m [39m[90mverify-release-zip script fails when forbidden file (.env or tests or cache) is present in zip[39m[90m              [39m [90m0.28s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SchedulerQueueProcessingTest[39m
+  [32;1m✓[39;22m[90m [39m[90mqueue:work is executed by scheduler and processes queued jobs from database[39m[90m                                 [39m [90m3.14s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SchedulerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mscheduler registers queue work and heartbeat commands[39m[90m                                                       [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mheartbeat command records timestamp in cache[39m[90m                                                                [39m [90m0.04s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SecurityHardeningAndDataRetentionTest[39m
+  [32;1m✓[39;22m[90m [39m[90msecurity headers middleware adds HSTS, nosniff, frame options, referrer policy and CSP[39m[90m                      [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mlogin endpoint enforces rate limiting after 5 attempts[39m[90m                                                      [39m [90m3.57s[39m  
+  [32;1m✓[39;22m[90m [39m[90mexports endpoint enforces rate limiting[39m[90m                                                                     [39m [90m0.28s[39m  
+  [32;1m✓[39;22m[90m [39m[90mCloud WhatsApp Webhook strictly rejects unsigned or wrongly signed requests with 403[39m[90m                        [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly masks phone numbers keeping prefix and last 3-4 digits[39m[90m                            [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mMaskPhoneNumberProcessor sanitizes phone numbers in log messages and context arrays[39m[90m                         [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapp:prune-retention-data deletes old webhook events and clears old message payloads[39m[90m                         [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapp:backup-db generates encrypted backup with APP_KEY when requested[39m[90m                                        [39m [90m0.31s[39m  
+  [32;1m✓[39;22m[90m [39m[90mapp:backup-db replicates backup to secondary disk and admin can download latest backup[39m[90m                      [39m [90m0.31s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\SettingsApiTest[39m
+  [32;1m✓[39;22m[90m [39m[90mAuthenticated user can view system settings[39m[90m                                                                 [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mAuthenticated user can update system settings with validation[39m[90m                                               [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\StreamingDriversExportTest[39m
+  [32;1m✓[39;22m[90m [39m[90mstreaming drivers export generates RTL sheet, correct headers, preserves phone as text, and formats properl[39m[90m…[39m [90m0.16s[39m  
+  [32;1m✓[39;22m[90m [39m[90mprocess export job switches to streaming exporter when driver count exceeds 1000[39m[90m                            [39m [90m1.15s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WhatsAppApiAndInviteFlowTest[39m
+  [32;1m✓[39;22m[90m [39m[90mestimate invite calculates count and duration accurately[39m[90m                                                    [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mbulk invite transitions new drivers to invited and dispatches messages[39m[90m                                      [39m [90m0.13s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdriver messages endpoint returns chat history in chronological order[39m[90m                                        [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mglobal whatsapp messages endpoint lists messages and status counters[39m[90m                                        [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mretry endpoint re-queues a failed outgoing message[39m[90m                                                          [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdrivers:expire-invites command transitions expired invited drivers to no_response[39m[90m                           [39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WhatsAppInboundRouterTest[39m
+  [32;1m✓[39;22m[90m [39m[90mInbound message is persisted to whatsapp_messages table with direction in[39m[90m                                   [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('إيقاف')[39m[90m            [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('ايقاف')[39m[90m            [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with (' إيقاف ')[39m[90m          [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('إِيقَافٌ')[39m[90m         [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('stop')[39m[90m             [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('STOP')[39m[90m             [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('إلغاء')[39m[90m            [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('الغاء')[39m[90m            [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('إِلْغَاء')[39m[90m         [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('unsubscribe')[39m[90m      [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('وقف')[39m[90m              [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('انهاء')[39m[90m            [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('إنهاء')[39m[90m            [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('اوقف')[39m[90m             [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('قف')[39m[90m               [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mOpt-out keyword matrix transitions driver to opted_out and sends one confirmation with ('خروج')[39m[90m             [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mNormal sentences containing ambiguous words do NOT opt the driver out with ('عربيتي واقفة في الورشة')[39m[90m       [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mNormal sentences containing ambiguous words do NOT opt the driver out with ('الشغل وقف النهارده')[39m[90m           [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mNormal sentences containing ambiguous words do NOT opt the driver out with ('مش هقدر انهي الشغل')[39m[90m           [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mNormal sentences containing ambiguous words do NOT opt the driver out with ('لو سمحت انا مش عايز الغاء')[39m[90m    [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mNormal sentences containing ambiguous words do NOT opt the driver out with ('الساعة واقفة')[39m[90m                 [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mNormal sentences containing ambiguous words do NOT opt the driver out with ('المحطة عند إشارة قف')[39m[90m          [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mNormal sentences containing ambiguous words do NOT opt the driver out with ('خروج السيارة من الجراج بعد قلي[39m[90m…[39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mDriver in INVITED status replying YES transitions to INTERESTED and receives text[39m[90m                           [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mDriver in INVITED status replying NO transitions to DECLINED[39m[90m                                                [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mUnknown input sends polite fallback buttons once and subsequent messages within 1 hour are throttled[39m[90m        [39m [90m0.08s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WhatsAppJobRetryAndCloudProviderTest[39m
+  [32;1m✓[39;22m[90m [39m[90mSendWhatsAppMessageJob handles permanent error without rethrowing[39m[90m                                           [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mSendWhatsAppMessageJob rethrows on retryable error to trigger queue retry[39m[90m                                   [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mCloudApiProvider sends template, text, and buttons via HTTP client[39m[90m                                          [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mCloudApiProvider uses configurable WHATSAPP_GRAPH_VERSION in request URL[39m[90m                                    [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mCloudApiProvider maps 4xx responses to WhatsAppPermanentException[39m[90m                                           [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mCloudApiProvider maps 429 and 5xx responses to WhatsAppRetryableException[39m[90m                                   [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mCloudApiProvider verifies webhook signature correctly[39m[90m                                                       [39m [90m0.03s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WhatsAppMessageSenderTest[39m
+  [32;1m✓[39;22m[90m [39m[90mFake provider round trip: sending template dispatches job and marks sent[39m[90m                                    [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mMessageSender blocks opted_out drivers with exception[39m[90m                                                       [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mMessageSender blocks blocked drivers with exception[39m[90m                                                         [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90m24-hour window logic correctly detects free-form messaging eligibility[39m[90m                                      [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mSendWhatsAppMessageJob is idempotent and skips if already sent[39m[90m                                              [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90msendOptOutConfirmation bypasses opted_out status check for final confirmation[39m[90m                               [39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WhatsAppWebhookTest[39m
+  [32;1m✓[39;22m[90m [39m[90mGET /webhooks/whatsapp verifies hub token and returns challenge[39m[90m                                             [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mGET /webhooks/whatsapp with invalid token returns 403[39m[90m                                                       [39m [90m0.03s[39m  
+  [32;1m✓[39;22m[90m [39m[90mPOST /webhooks/whatsapp stores event, dispatches job, and returns 200 immediately[39m[90m                           [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mduplicate webhook event is ignored and returns 200 without redispatching[39m[90m                                    [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstatus updates strictly advance message lifecycle in correct order[39m[90m                                          [39m [90m0.05s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfailed status update records error code and sets failed status[39m[90m                                              [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mRemoved duplicate webhook route under /api/v1/webhooks/whatsapp returns 404[39m[90m                                 [39m [90m0.04s[39m  
+  [32;1m✓[39;22m[90m [39m[90mPublic webhook endpoint /webhooks/whatsapp works without CSRF or Sanctum authentication[39m[90m                     [39m [90m0.07s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WorkOrderApiAndLifecycleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mcan create a draft work order with filters and audit log[39m[90m                                                    [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan update a draft work order but not after sending[39m[90m                                                         [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcan list and filter work orders[39m[90m                                                                             [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90msending a work order creates recipients and dispatches offer templates[39m[90m                                      [39m [90m0.11s[39m  
+  [32;1m✓[39;22m[90m [39m[90maccept and decline flow updates capacity, sequence numbers, and triggers filled status[39m[90m                      [39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90minbound button tap and free text trigger AcceptOrderOffer via InboundMessageRouter[39m[90m                          [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcancelling a work order updates status, notifies confirmed/backup drivers, and rejects late acceptances[39m[90m     [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mstaged sending stops remaining batches automatically when order is filled[39m[90m                                   [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mduplicate work order creates a new draft with identical filters and new code[39m[90m                                [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfailed recipient can be retried via retry endpoint[39m[90m                                                          [39m [90m0.08s[39m  
+
+=== Concurrency Promote Benchmark Results (20 Runs) ===
+Run #1: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #2: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #3: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #4: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #5: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #6: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #7: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #8: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #9: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #10: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #11: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #12: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #13: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #14: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #15: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #16: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #17: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #18: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #19: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #20: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+========================================================
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WorkOrderConcurrencyPromoteAndCancelTest[39m
+  [32;1m✓[39;22m[90m [39m[90mREAL Concurrency: 2 admins promoting different backups into ONE free slot across 20 consecutive runs[39m[90m       [39m [90m20.82s[39m  
+  [32;1m✓[39;22m[90m [39m[90mREAL Concurrency: Cancel racing with a promote maintains full consistency[39m[90m                                   [39m [90m7.80s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WorkOrderFollowUpTest[39m
+  [32;1m✓[39;22m[90m [39m[90mremoving confirmed driver decrements count, sets cancelled, preserves order status, and does NOT auto-promo[39m[90m…[39m [90m2.50s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromoting backup driver increments confirmed, decrements backup, re-sequences, and dispatches backup_promot[39m[90m…[39m [90m0.12s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromoting backup driver throws 422 when no slots are free[39m[90m                                                   [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mpromoting backup driver cancels recipient and throws 422 if driver became ineligible[39m[90m                        [39m [90m0.06s[39m  
+  [32;1m✓[39;22m[90m [39m[90mremoving backup driver decrements backup count and re-sequences remaining backups[39m[90m                           [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90madding driver manually respects capacity, eligibility, and sends template[39m[90m                                   [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresend offers re-opens order to filling only when free slots exist[39m[90m                                          [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90morder lifecycle transitions through filled -> in_progress -> completed, and cancelled with reason[39m[90m           [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90madmin removals do NOT count towards driver cancellations metric; only driver-initiated late cancellations c[39m[90m…[39m [90m0.10s[39m  
+  [32;1m✓[39;22m[90m [39m[90mresponded_at timestamp remains strictly unchanged when sequences are renumbered[39m[90m                             [39m [90m0.13s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WorkOrderNotificationAndEdgeCasesTest[39m
+  [32;1m✓[39;22m[90m [39m[90mfree text reply only accepts when driver has exactly ONE open offer[39m[90m                                         [39m [90m0.08s[39m  
+  [32;1m✓[39;22m[90m [39m[90mfree text reply does NOT guess when driver has 2 or more open offers and asks to tap button[39m[90m                 [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mAcceptOrderOffer re-checks driver eligibility and cancels offer if driver became opted_out, blocked, or sus[39m[90m…[39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90macceptance transaction survives simulated deadlock and retries successfully[39m[90m                                 [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mwork-orders:reconcile-notifications finds missing notifications and sends them idempotently without duplica[39m[90m…[39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WorkOrderOutcomesAndMetricsTest[39m
+  [32;1m✓[39;22m[90m [39m[90mrecording outcomes after completed calculates driver metrics and creates timeline event[39m[90m                     [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mediting an outcome recalculates driver metrics accurately without drift[39m[90m                                     [39m [90m0.09s[39m  
+  [32;1m✓[39;22m[90m [39m[90mcannot record outcomes if order is not completed[39m[90m                                                            [39m [90m0.07s[39m  
+  [32;1m✓[39;22m[90m [39m[90mdriver list API returns metrics and supports sorting by metrics[39m[90m                                             [39m [90m0.10s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WorkOrderRaceConditionTest[39m
+  [32;1m✓[39;22m[90m [39m[90m30 concurrent acceptances on a 10+5 order produces exact capacity and gapless sequence numbers (20 consecu[39m[90m…[39m [90m73.99s[39m  
+  [32;1m✓[39;22m[90m [39m[90msame driver accepting twice concurrently is idempotent and does not double count[39m[90m                            [39m [90m1.15s[39m  
+  [32;1m✓[39;22m[90m [39m[90macceptances racing concurrently with order cancellation are safely handled[39m[90m                                  [39m [90m1.21s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WorkOrderReminderCommandTest[39m
+  [32;1m✓[39;22m[90m [39m[90mwork-orders:send-reminders dispatches trip_reminder idempotently and never duplicates[39m[90m                       [39m [90m0.12s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ArabicReplyNormalizerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('مُهْتَمٌّ', 'مهتم')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('إِيْقَافٌ', 'ايقاف')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('أَهْلاً وَسَهْلاً', 'اهلا وسهلا')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('آهٍ', 'اه')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('نَعَمْ', 'نعم')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('لَا', 'لا')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('سَيَّارَةٌ', 'سياره')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('شَاحِنَةٌ', 'شاحنه')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('إلغاء', 'الغاء')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with (' تَمَامْ ', 'تمام')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('عَرَبِيَّةٌ', 'عربيه')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('مَصْرِيٌّ', 'مصري')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('سَنَتَيْنِ', 'سنتين')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('أَكِيدْ', 'اكيد')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer correctly normalizes text and removes diacritics with ('مُوافِقْ', 'موافق')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('٠١٢٣٤٥٦٧٨٩', '0123456789')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('۰۱۲۳۴۵۶۷۸۹', '0123456789')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('٥ سنوات', '5 سنوات')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('خبرة ١٠ سنين', 'خبرة 10 سنين')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('١٢.٥', '12.5')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer converts Eastern Arabic and Persian digits to ASCII with ('رقم ٧', 'رقم 7')[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('5', 5.0)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('٥', 5.0)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('١٢', 12.0)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('3.5', 3.5)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('٣,٥', 3.5)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('عندي 10 سنين خبرة', 10.0)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('حوالي ٧ سنوات', 7.0)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('لا يوجد', null)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with (null, null)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer extracts numeric values properly with ('', null)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('نعم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('نَعَمْ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('ايوه', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('أيوة', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('ايوة', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اه', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('آه', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اهه', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('تمام', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('تَمَامْ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('موافق', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('مُوافِقْ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اكيد', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('أَكِيدْ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('طبعا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('طَبْعاً', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('حاضر', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('حَاضِرْ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اوكي', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اوك', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('yes', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('YES', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('y', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('1', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('نعم مهتم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('مهتم جدا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('تمام يا فندم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('ايوه مهتم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('اكيد طبعا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('موافق جدا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('لا', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('مش عايز', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('لا شكرا', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('مش مناسب', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('no', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects affirmative / yes variants (30+ table variants) with ('2', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لَا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لأ', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لاء', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('مش عايز', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('مش موافق', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('غير موافق', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لا شكرا', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('مش هقدر', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('مش مناسب', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('مش حابب', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('غير مهتم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('no', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('NO', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('n', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('2', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('لا مش مهتم', true)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('نعم', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('ايوه', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('تمام', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('yes', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer detects negative / no variants (15+ table variants) with ('1', false)[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer matches options correctly[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer handles look-alike options and ambiguous replies without guessing[39m
+  [32;1m✓[39;22m[90m [39m[90mArabicReplyNormalizer handles misspellings and low-confidence replies explicitly[39m
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\ExampleTest[39m
+  [32;1m✓[39;22m[90m [39m[90mthat true is true[39m[90m                                                                                           [39m [90m0.05s[39m  
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Unit\PhoneNormalizerTest[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01112345678', true, '+201112345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01212345678', true, '+201212345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01512345678', true, '+201512345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('1012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('1112345678', true, '+201112345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('1212345678', true, '+201212345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('1512345678', true, '+201512345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('201012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+201012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('00201012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('201198765432', true, '+201198765432', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+201234567890', true, '+201234567890', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('00201555555555', true, '+201555555555', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('٠١٠١٢٣٤٥٦٧٨', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('٠١١٩٨٧٦٥٤٣٢', true, '+201198765432', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('١٢١٢٣٤٥٦٧٨', true, '+201212345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+٢٠١٥٥٥٥٥٥٥٥٥', true, '+201555555555', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('٠٠٢٠١٠١٢٣٤٥٦٧٨', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('۰۱۰۱۲۳۴۵۶۷۸', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('۰۱۱۱۲۳۴۵۶۷۸', true, '+201112345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010-1234-5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('(010) 1234 5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010.1234.5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+20 10 1234 5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+20-10-1234-5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with (' 01012345678 ', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010/1234/5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010 1234 5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('‏01012345678‎', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('﻿01012345678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010​1234‌5678', true, '+201012345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+966512345[39m[90m…[39m [90m0.02s[39m  
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('00966512345678', true, '+966512345678', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+971501234567', true, '+971501234567', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+96599123456', true, '+96599123456', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+14155552671', true, '+14155552671', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+447400123456', true, '+447400123456', …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('010123456', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('1012345', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('0101234567899', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01912345678', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01412345678', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('01712345678', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('0223456789', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+20223456789', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('035432100', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('0133221100', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with (null, false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with (' ', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('abc', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('0101234567a', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('سائق ممتاز', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+2010abc5678', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('00000', false, null, …)[39m
+  [32;1m✓[39;22m[90m [39m[90mPhoneNormalizer correctly normalizes and validates phone numbers (table-driven 40+ cases) with ('+999123456789', false, null, …)[39m
+
+  [90mTests:[39m    [32;1m364 passed[39;22m[90m (1743 assertions)[39m
+  [90mDuration:[39m [39m178.99s[39m
+

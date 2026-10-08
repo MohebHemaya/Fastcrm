@@ -1,0 +1,2 @@
+﻿frontend\src\components\ui\PageHeader.tsx:27: <nav aria-label="breadcrumbs" className="mb-2 flex items-center gap-1.5 text-xs text-default-500">
+frontend\src\routes\LoginPage.tsx:119: placeholder="admin@example.com"

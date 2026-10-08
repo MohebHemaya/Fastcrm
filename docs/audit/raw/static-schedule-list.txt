@@ -1,0 +1,12 @@
+﻿
+  *    * * * *  php artisan queue:work --stop-when-empty --max-time=50 .................... Next Due: 53 ثانية من الآن
+  *    * * * *  php artisan app:heartbeat ................................................. Next Due: 53 ثانية من الآن
+  0    * * * *  php artisan drivers:expire-invites ........................................ Next Due: 28 دقيقة من الآن
+  */5  * * * *  php artisan questionnaire:check-timeouts ................................... Next Due: 3 دقائق من الآن
+  */5  * * * *  php artisan work-orders:reconcile-notifications ............................ Next Due: 3 دقائق من الآن
+  */15 * * * *  php artisan work-orders:send-reminders .................................... Next Due: 13 دقيقة من الآن
+  0    0 * * *  php artisan exports:cleanup ................................................ Next Due: 15 ساعة من الآن
+  0    0 * * *  php artisan app:prune-retention-data ....................................... Next Due: 15 ساعة من الآن
+  0    0 * * *  php artisan app:backup-db --keep=7 ......................................... Next Due: 15 ساعة من الآن
+  */5  * * * *  php artisan app:check-health-alerts ........................................ Next Due: 3 دقائق من الآن
+

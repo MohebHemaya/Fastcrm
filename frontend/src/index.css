@@ -1,0 +1,261 @@
+@import "@fontsource/cairo/400.css";
+@import "@fontsource/cairo/500.css";
+@import "@fontsource/cairo/600.css";
+@import "@fontsource/cairo/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  direction: rtl;
+}
+
+html,
+body,
+#root {
+  min-height: 100dvh;
+}
+
+body {
+  margin: 0;
+  direction: rtl;
+  text-align: start;
+}
+
+/* Safe area insets for notched phones & sticky footers */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.safe-pb-sticky {
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Mobile font-size >= 16px to prevent iOS auto-zoom */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea,
+  [data-slot="input"] {
+    font-size: 16px !important;
+  }
+}
+
+/* HeroUI Input & Select design system polish */
+/* 1. Global input container & borders */
+[data-slot="input-wrapper"] {
+  border-width: 1.5px !important;
+  border-color: hsl(var(--heroui-default-300)) !important;
+  background-color: hsl(var(--heroui-background)) !important;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+[data-slot="input-wrapper"]:hover {
+  border-color: hsl(var(--heroui-default-400)) !important;
+}
+
+[data-slot="input-wrapper"][data-focus="true"],
+.group[data-focus="true"] [data-slot="input-wrapper"] {
+  border-color: hsl(var(--heroui-primary)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--heroui-primary) / 0.18) !important;
+}
+
+[data-slot="input-wrapper"][data-invalid="true"],
+.group[data-invalid="true"] [data-slot="input-wrapper"] {
+  border-color: hsl(var(--heroui-danger)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--heroui-danger) / 0.18) !important;
+}
+
+/* 2. Global fallback for any raw HeroUI input using internal label */
+[data-slot="input-wrapper"] > [data-slot="label"] {
+  position: absolute !important;
+  bottom: calc(100% + 5px) !important;
+  top: auto !important;
+  transform: none !important;
+  inset-inline-start: 0.125rem !important;
+  inset-inline-end: auto !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.25rem !important;
+  font-weight: 600 !important;
+  color: hsl(var(--heroui-foreground-700)) !important;
+  pointer-events: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  z-index: 10 !important;
+}
+
+/* Ensure raw inputs with internal labels have vertical room for the label */
+[data-slot="base"][data-has-label="true"] {
+  margin-top: 1.625rem !important;
+}
+
+/* For FormInput/FormSelect wrappers, cancel the margin-top since label is in normal flow */
+[data-slot="base"].\!mt-0,
+.\!mt-0[data-slot="base"] {
+  margin-top: 0 !important;
+}
+
+/* 3. Text & Placeholder clean rendering */
+[data-slot="input"] {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+  color: hsl(var(--heroui-foreground)) !important;
+}
+
+[data-slot="input"]::placeholder {
+  color: hsl(var(--heroui-default-400)) !important;
+  font-size: 0.875rem !important;
+  opacity: 1 !important;
+}
+
+/* Native datetime & date picker alignment in RTL */
+input[type="datetime-local"],
+input[type="date"],
+input[type="time"] {
+  font-family: inherit;
+  color: hsl(var(--heroui-foreground));
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* 4. Complete elimination of inner browser focus ring / black rectangle border on all input elements */
+input,
+textarea,
+select,
+[data-slot="input"],
+[data-slot="inner-wrapper"] input,
+[data-slot="input-wrapper"] input {
+  border: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  background-color: transparent !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+input:focus,
+input:focus-visible,
+input:active,
+input:hover,
+textarea:focus,
+textarea:focus-visible,
+textarea:active,
+textarea:hover,
+select:focus,
+select:focus-visible,
+[data-slot="input"]:focus,
+[data-slot="input"]:focus-visible,
+[data-slot="input"]:active,
+[data-slot="input"]:hover,
+[data-slot="input"][data-focus="true"],
+[data-slot="inner-wrapper"] input:focus,
+[data-slot="inner-wrapper"] input:focus-visible,
+[data-slot="inner-wrapper"] input:active,
+[data-slot="inner-wrapper"] input:hover,
+[data-slot="input-wrapper"] input:focus,
+[data-slot="input-wrapper"] input:focus-visible,
+[data-slot="input-wrapper"] input:active,
+[data-slot="input-wrapper"] input:hover {
+  border: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  outline-color: transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+/* Ensure focus-visible rings are ONLY displayed on the styled outer wrapper */
+[data-slot="input-wrapper"]:focus-within {
+  border-color: hsl(var(--heroui-primary)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--heroui-primary) / 0.18) !important;
+}
+
+[data-slot="input-wrapper"][data-invalid="true"]:focus-within {
+  border-color: hsl(var(--heroui-danger)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--heroui-danger) / 0.18) !important;
+}
+
+/* 5. Global HeroUI Pagination Active & Cursor Polish */
+[data-slot="pagination-cursor"],
+[data-slot="pagination-item"][data-active="true"] {
+  background-color: hsl(var(--heroui-primary)) !important;
+  color: hsl(var(--heroui-primary-foreground)) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+/* 6. Standardized Active Status Badge Styling */
+.badge-status-active {
+  background-color: rgb(236 253 245) !important; /* emerald-50 */
+  color: rgb(4 120 87) !important; /* emerald-700 */
+  border: 1px solid rgb(167 243 208 / 0.8) !important; /* emerald-200 */
+  font-weight: 600 !important;
+}
+
+.dark .badge-status-active {
+  background-color: rgb(6 78 59 / 0.4) !important; /* emerald-950/40 */
+  color: rgb(52 211 153) !important; /* emerald-400 */
+  border-color: rgb(6 95 70 / 0.8) !important; /* emerald-800 */
+}
+
+/* 7. Global HeroUI Tabs RTL & Active State Polish */
+/* Ensure active tab in solid/pill tab lists always has solid high-contrast primary background and readable text */
+[data-slot="tabList"].bg-default-100 [data-slot="tab"][data-selected="true"],
+[data-slot="tabList"]:not([class*="bg-transparent"]) [data-slot="tab"][data-selected="true"] {
+  background-color: hsl(var(--heroui-primary)) !important;
+  color: hsl(var(--heroui-primary-foreground)) !important;
+  font-weight: 700 !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.12), 0 1px 2px -1px rgb(0 0 0 / 0.08) !important;
+  outline: none !important;
+}
+
+[data-slot="tabList"].bg-default-100 [data-slot="tab"][data-selected="true"] [data-slot="tabContent"],
+[data-slot="tabList"].bg-default-100 [data-slot="tab"][data-selected="true"] span,
+[data-slot="tabList"].bg-default-100 [data-slot="tab"][data-selected="true"] div,
+[data-slot="tabList"]:not([class*="bg-transparent"]) [data-slot="tab"][data-selected="true"] [data-slot="tabContent"],
+[data-slot="tabList"]:not([class*="bg-transparent"]) [data-slot="tab"][data-selected="true"] span,
+[data-slot="tabList"]:not([class*="bg-transparent"]) [data-slot="tab"][data-selected="true"] div {
+  color: hsl(var(--heroui-primary-foreground)) !important;
+}
+
+/* Prevent floating buggy cursor from causing white-on-white or RTL misalignment */
+[data-slot="tabList"]:not([class*="bg-transparent"]) [data-slot="cursor"] {
+  display: none !important;
+}
+
+/* Eliminate harsh browser focus ring around tab buttons */
+[data-slot="tab"]:focus,
+[data-slot="tab"]:focus-visible {
+  outline: none !important;
+}

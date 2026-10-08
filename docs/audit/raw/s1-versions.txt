@@ -1,0 +1,125 @@
+﻿== php -v
+PHP 8.3.33 (cli) (built: Jul 28 2026 18:10:28) (ZTS Visual C++ 2019 x64)
+Copyright (c) The PHP Group
+Zend Engine v4.3.33, Copyright (c) Zend Technologies
+== php -m
+[PHP Modules]
+bcmath
+calendar
+Core
+ctype
+curl
+date
+dom
+fileinfo
+filter
+gd
+hash
+iconv
+intl
+json
+libxml
+mbstring
+mysqlnd
+openssl
+pcre
+PDO
+pdo_mysql
+Phar
+random
+readline
+Reflection
+session
+SimpleXML
+SPL
+standard
+tokenizer
+xml
+xmlreader
+xmlwriter
+zip
+zlib
+
+[Zend Modules]
+
+== composer -V
+composer : PHP Warning:  Module "mysqli" is already loaded in Unknown on line 0
+At D:\Projects\Web\fast crm\audit\stage1.ps1:13 char:89
++ ... \ProgramData\ComposerSetup\bin\composer.phar" -V 2>$null; composer -V
++                                                               ~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PHP Warning:  M...known on line 0:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Warning: Module "mysqli" is already loaded in Unknown on line 0
+Composer version 2.10.3 2026-08-27 13:34:23
+PHP version 8.2.12 (C:\xampp\php\php.exe)
+Run the "diagnose" command to get more detailed diagnostics output.
+== node -v
+v24.21.0
+== npm -v
+11.19.0
+== DB version
+VERSION()
+10.4.32-MariaDB
+== laravel
+Laravel Framework 13.34.0
+== composer show (direct)
+composer : PHP Warning:  Module "mysqli" is already loaded in Unknown on line 0
+At D:\Projects\Web\fast crm\audit\stage1.ps1:18 char:32
++   "== composer show (direct)"; composer show --direct
++                                ~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PHP Warning:  M...known on line 0:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Warning: Module "mysqli" is already loaded in Unknown on line 0
+fakerphp/faker                 1.24.1  Faker is a PHP library that generates fake data for you.
+giggsey/libphonenumber-for-php 9.0.40  A library for parsing, formatting, storing and validating international pho...
+larastan/larastan              3.12.2  Larastan - Discover bugs in your code without running it. A phpstan/phpstan...
+laravel/framework              13.34.0 The Laravel Framework.
+laravel/pail                   1.2.7   Easily delve into your Laravel application's log files directly from the co...
+laravel/pint                   1.32.1  An opinionated code formatter for PHP.
+laravel/sail                   1.68.0  Docker files for running a basic Laravel application.
+laravel/sanctum                4.3.3   Laravel Sanctum provides a featherweight authentication system for SPAs and...
+laravel/tinker                 3.0.2   Powerful REPL for the Laravel framework.
+maatwebsite/excel              4.0.3   Supercharged Excel exports and imports in Laravel
+mockery/mockery                1.6.15  Mockery is a simple yet flexible PHP mock object framework
+mpdf/mpdf                      8.3.1   PHP library generating PDF files from UTF-8 encoded HTML
+nunomaduro/collision           8.9.5   Cli error handling for console/command-line PHP applications.
+openspout/openspout            4.32.0  PHP Library to read and write spreadsheet files (CSV, XLSX and ODS), in a f...
+pestphp/pest                   4.7.8   The elegant PHP Testing Framework.
+pestphp/pest-plugin-laravel    4.1.0   The Pest Laravel Plugin
+phpunit/phpunit                12.5.33 The PHP Unit Testing framework.
+== npm ls (top-level)
+frontend@0.0.0 D:\Projects\Web\fast crm\frontend
++-- @fontsource/cairo@5.3.0
++-- @heroui/react@2.8.10
++-- @heroui/theme@2.4.15
++-- @playwright/test@1.63.0
++-- @testing-library/jest-dom@7.0.1
++-- @testing-library/react@16.3.3
++-- @testing-library/user-event@14.6.7
++-- @types/node@24.19.0
++-- @types/react-dom@19.3.0
++-- @types/react@19.3.0
++-- @vitejs/plugin-react@6.1.1
++-- autoprefixer@10.6.1
++-- axios@1.20.0
++-- framer-motion@13.4.6
++-- jsdom@30.1.1
++-- lucide-react@1.49.0
++-- msw@2.15.0
++-- oxlint@1.86.0
++-- postcss@8.5.28
++-- react-dom@19.3.0
++-- react-hook-form@7.89.0
++-- react-router-dom@7.18.4
++-- react@19.3.0
++-- recharts@3.10.1
++-- tailwindcss@3.4.19
++-- typescript@6.0.3
++-- vite@8.3.1
++-- vitest@5.0.3
+`-- zustand@5.0.15
+

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\WorkOrderRaceConditionTest" file="tests\Feature\WorkOrderRaceConditionTest.php" tests="3" assertions="167" errors="0" failures="0" skipped="0" time="79.685915">
+    <testcase name="30 concurrent acceptances on a 10+5 order produces exact capacity and gapless sequence numbers (20 consecutive runs)" file="tests\Feature\WorkOrderRaceConditionTest.php::30 concurrent acceptances on a 10+5 order produces exact capacity and gapless sequence numbers (20 consecutive runs)" class="Tests\Feature\WorkOrderRaceConditionTest" classname="Tests.Feature.WorkOrderRaceConditionTest" assertions="161" time="77.358311"/>
+    <testcase name="same driver accepting twice concurrently is idempotent and does not double count" file="tests\Feature\WorkOrderRaceConditionTest.php::same driver accepting twice concurrently is idempotent and does not double count" class="Tests\Feature\WorkOrderRaceConditionTest" classname="Tests.Feature.WorkOrderRaceConditionTest" assertions="4" time="1.132066"/>
+    <testcase name="acceptances racing concurrently with order cancellation are safely handled" file="tests\Feature\WorkOrderRaceConditionTest.php::acceptances racing concurrently with order cancellation are safely handled" class="Tests\Feature\WorkOrderRaceConditionTest" classname="Tests.Feature.WorkOrderRaceConditionTest" assertions="2" time="1.195538"/>
+  </testsuite>
+</testsuites>

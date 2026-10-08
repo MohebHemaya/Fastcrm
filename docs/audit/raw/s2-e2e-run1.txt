@@ -1,0 +1,33 @@
+﻿
+Running 14 tests using 1 worker
+
+  ok  1 [chromium] › e2e\main-flow.spec.ts:107:3 › Driver Management System — Main Flow & Hardening › 1. Negative Path: Invalid login credentials show error (4.5s)
+  ok  2 [chromium] › e2e\main-flow.spec.ts:124:3 › Driver Management System — Main Flow & Hardening › 2. Positive Path: Valid login succeeds and loads dashboard (3.7s)
+  ok  3 [chromium] › e2e\main-flow.spec.ts:139:3 › Driver Management System — Main Flow & Hardening › 3. Negative Path: Non-spreadsheet file is rejected in Import Wizard (2.1s)
+  ok  4 [chromium] › e2e\main-flow.spec.ts:155:3 › Driver Management System — Main Flow & Hardening › 4. Positive Path: Upload valid drivers sheet, preview, and commit (10.9s)
+  ok  5 [chromium] › e2e\main-flow.spec.ts:200:3 › Driver Management System — Main Flow & Hardening › 5. Positive Path: Bulk invite new drivers via WhatsApp modal (6.3s)
+  ok  6 [chromium] › e2e\main-flow.spec.ts:218:3 › Driver Management System — Main Flow & Hardening › 6. Inbound WhatsApp Simulation: Opt-out negative path and active questionnaire replies (4.4s)
+Send API response — order ID: 15 status: filling
+createdOrderId captured: 15
+Second send attempt result: {
+  status: 422,
+  body: {
+    data: null,
+    meta: { errors: [Object] },
+    message: 'البيانات المدخلة غير صالحة.',
+    errors: { status: [Array] }
+  }
+}
+Order status after double-click send verification: STATUS:filling;SENT:30;RECIPIENTS:30
+  ok  7 [chromium] › e2e\main-flow.spec.ts:254:3 › Driver Management System — Main Flow & Hardening › 7. Positive Path: Create work order (10 confirmed + 5 backup) and send (10.6s)
+Accept result: PROCESSED:30;CONFIRMED:10;BACKUP:5;STATUS:filled;ERRORS:0
+  ok  8 [chromium] › e2e\main-flow.spec.ts:361:3 › Driver Management System — Main Flow & Hardening › 8. Positive Path: Simulate 30 driver acceptances and verify 10 confirmed + 5 backup (8.2s)
+  ok  9 [chromium] › e2e\main-flow.spec.ts:428:3 › Driver Management System — Main Flow & Hardening › 9. Positive Path: Cancel confirmed driver and promote backup driver into open slot (11.4s)
+Advance status result: STATUS:completed
+  ok 10 [chromium] › e2e\main-flow.spec.ts:471:3 › Driver Management System — Main Flow & Hardening › 10. Positive Path: Advance order to completed and record outcomes (8.5s)
+  ok 11 [chromium] › e2e\main-flow.spec.ts:505:3 › Driver Management System — Main Flow & Hardening › 11. Positive Path: Export Excel and PDF downloads succeed (6.7s)
+  ok 12 [chromium] › e2e\main-flow.spec.ts:525:3 › Driver Management System — Main Flow & Hardening › 12. Negative Path: Expired session redirects to /login on protected navigation (3.9s)
+  ok 13 [chromium] › e2e\main-flow.spec.ts:538:3 › Driver Management System — Main Flow & Hardening › 13. Positive Path: Logout successfully terminates session (5.3s)
+  ok 14 [chromium] › e2e\main-flow.spec.ts:560:3 › Driver Management System — Main Flow & Hardening › 14. Security Compliance: Zero CSP violations detected across entire suite (3ms)
+
+  14 passed (1.5m)

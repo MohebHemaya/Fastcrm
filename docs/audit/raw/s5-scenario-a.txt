@@ -1,0 +1,36 @@
+﻿====================================================================
+STAGE 5 SCENARIO A: IMPORT ROBUSTNESS AUDIT
+Database: driver_system_audit
+Timestamp: 2026-10-03 08:50:26
+====================================================================
+
+[STEP_1A] Reject .php file upload                            -> PASS
+  Correctly rejected with validation errors: ["يجب أن يكون الملف ملفاً من نوع: xlsx, xls, csv."]
+
+[STEP_1B] Reject .txt file upload                            -> PASS
+  Correctly rejected non-spreadsheet extension
+
+[STEP_2] Reject oversized file (> 5MB)                      -> PASS
+  Correctly rejected: ["يجب ألا تتعدى مساحة الملف 5120 كيلوبايت."]
+
+[STEP_3] Seed existing ACTIVE driver in DB                  -> PASS
+  Seeded driver #1 with status 'active' and phone +201000000001
+
+[STEP_4] Parse messy fixture (Arabic-Indic, duplicates, invalid) -> PASS
+  Classifications: Total=13, New=6, Duplicates=2, Active=1, Invalid=4
+
+[STEP_5] Verify precise normalizations & classifications    -> PASS
+  Arabic-Indic: OK (+201012345678) | Spaces: OK | Foreign: OK (+966...) | Landline: INVALID | Active: ACTIVE
+
+[STEP_6] Commit import: groups merged, active status preserved -> PASS
+  Import Status: completed | Active Driver Status: active | Groups for +201099998888: 2 (Expected >= 2)
+
+[STEP_7] Re-import idempotency (no duplicate drivers created) -> PASS
+  Re-import completed successfully. Total drivers in DB: 7
+
+[STEP_8] Parse CSV without header row                       -> FAIL
+  Parsed 2 rows from headerless CSV (Expected: 3)
+
+====================================================================
+SCENARIO A AUDIT RESULT: FAIL
+====================================================================

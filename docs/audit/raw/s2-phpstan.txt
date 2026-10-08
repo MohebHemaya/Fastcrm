@@ -1,0 +1,10 @@
+﻿php.exe : Note: Using configuration file D:\Projects\Web\fast crm\backend\phpstan.neon.
+At D:\Projects\Web\fast crm\audit\stage2.ps1:19 char:28
++ ... .txt" $be { & $php vendor/bin/phpstan analyse --memory-limit=1G --no- ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Note: Using con...d\phpstan.neon.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+ [OK] No errors                                                                                                        
+

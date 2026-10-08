@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files
+.env
+.env.backup
+.env.production
+
+# Build artifacts
+dist/
+release/
+.vite/
+*.tsbuildinfo
+test-results/
+playwright-report/
+
+# Cache & logs
+*.log
+.phpunit.result.cache
+storage/*.key
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/logs/*
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

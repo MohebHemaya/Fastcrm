@@ -1,0 +1,32 @@
+﻿== git status
+?? .agents/
+?? .github/
+?? .gitignore
+?? AGENTS.md
+?? audit/
+?? backend/
+?? docs/
+?? frontend/
+?? plan/
+?? scripts/
+== HEAD
+git : fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+At D:\Projects\Web\fast crm\audit\stage1.ps1:25 char:14
++   "== HEAD"; git rev-parse HEAD
++              ~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (fatal: ambiguou...e working tree.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+HEAD
+== branches
+== tags
+== log
+git : fatal: your current branch 'master' does not have any commits yet
+At D:\Projects\Web\fast crm\audit\stage1.ps1:28 char:13
++   "== log"; git log --oneline -n 10
++             ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (fatal: your cur...any commits yet:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

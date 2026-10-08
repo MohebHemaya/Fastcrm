@@ -1,0 +1,400 @@
+﻿
+[1m[30m[46m RUN [49m[39m[22m [36mv5.0.3 [39m[90mD:/Projects/Web/fast crm/frontend[39m
+
+ [32m✓[39m src/test/questionService.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 250[2mms[22m[39m
+ [32m✓[39m src/test/importService.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 167[2mms[22m[39m
+ [32m✓[39m src/test/AppShell.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 660[2mms[22m[39m
+   [32m✓[39m AppShell [2m(3)[22m
+     [33m[2m✓[22m[39m renders all required sidebar navigation links in Arabic[33m 461[2mms[22m[39m
+node.exe : [90mstderr[2m | src/test/WhatsAppMessagesPage.test.tsx[2m > [22m[2mWhatsAppMessagesPage[2m > 
+[22m[2mtriggers retryMessage when clicking retry on a failed message
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([90mstderr[2m... failed message:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[22m[39mAn update to WhatsAppMessagesPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WhatsAppMessagesPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WhatsAppMessagesPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WhatsAppMessagesPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WhatsAppMessagesPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WhatsAppMessagesPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/test/WhatsAppMessagesPage.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 887[2mms[22m[39m
+   [32m✓[39m WhatsAppMessagesPage [2m(2)[22m
+     [33m[2m✓[22m[39m renders page title, provider indicator, and status tabs with counters[33m 526[2mms[22m[39m
+     [33m[2m✓[22m[39m triggers retryMessage when clicking retry on a failed message[33m 346[2mms[22m[39m
+ [32m✓[39m src/test/WhatsAppModals.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[33m 1347[2mms[22m[39m
+   [32m✓[39m WhatsApp Modals [2m(2)[22m
+     [32m✓[39m BulkInviteModal [2m(1)[22m
+       [33m[2m✓[22m[39m fetches estimate and submits invitations on confirm[33m 945[2mms[22m[39m
+     [32m✓[39m DriverChatModal [2m(1)[22m
+       [33m[2m✓[22m[39m loads chat messages and sends simulation event[33m 387[2mms[22m[39m
+ [32m✓[39m src/test/Components.test.tsx [2m([22m[2m7 tests[22m[2m)[22m[33m 1680[2mms[22m[39m
+   [32m✓[39m Reusable UI Components [2m(7)[22m
+     [32m✓[39m PageHeader [2m(1)[22m
+       [33m[2m✓[22m[39m renders title, description, and breadcrumbs correctly[33m 460[2mms[22m[39m
+     [32m✓[39m ConfirmDialog [2m(1)[22m
+       [33m[2m✓[22m[39m renders when open and triggers onConfirm and onClose[33m 683[2mms[22m[39m
+     [32m✓[39m DataTable [2m(4)[22m
+       [33m[2m✓[22m[39m handles pagination navigation[33m 315[2mms[22m[39m
+ [32m✓[39m src/test/SettingsPage.test.tsx [2m([22m[2m4 tests[22m[2m)[22m[33m 1644[2mms[22m[39m
+   [32m✓[39m SettingsPage & Questionnaire UI [2m(4)[22m
+     [33m[2m✓[22m[39m renders page header and question tabs[33m 1113[2mms[22m[39m
+     [33m[2m✓[22m[39m switches to general settings tab and displays timeout and reminder inputs[33m 438[2mms[22m[39m
+ [32m✓[39m src/test/HealthPage.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 1879[2mms[22m[39m
+   [32m✓[39m HealthPage Component [2m(3)[22m
+     [33m[2m✓[22m[39m renders system health metrics, scheduler status, and failed jobs list[33m 650[2mms[22m[39m
+     [33m[2m✓[22m[39m allows retrying a failed job[33m 1025[2mms[22m[39m
+ [32m✓[39m src/test/driverService.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 234[2mms[22m[39m
+ [32m✓[39m src/test/ExportModal.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 2071[2mms[22m[39m
+   [32m✓[39m ExportModal [2m(3)[22m
+     [33m[2m✓[22m[39m renders modal with recent exports list and status chips[33m 833[2mms[22m[39m
+     [33m[2m✓[22m[39m triggers download when clicking download button on completed export[33m 898[2mms[22m[39m
+     [33m[2m✓[22m[39m closes modal when clicking close button[33m 314[2mms[22m[39m
+ [32m✓[39m src/test/App.test.tsx [2m([22m[2m1 test[22m[2m)[22m[33m 610[2mms[22m[39m
+   [32m✓[39m App Root Layout and RTL Rendering [2m(1)[22m
+     [33m[2m✓[22m[39m renders application with RTL direction and Arabic title[33m 596[2mms[22m[39m
+ [32m✓[39m src/test/WorkOrdersPhase6.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[33m 2534[2mms[22m[39m
+   [32m✓[39m Phase 6 Frontend Follow-up Suite [2m(8)[22m
+     [32m✓[39m OpenSlotsBanner [2m(2)[22m
+       [33m[2m✓[22m[39m renders banner with open slots count and fires action callbacks[33m 417[2mms[22m[39m
+     [32m✓[39m PromoteBackupModal [2m(1)[22m
+       [33m[2m✓[22m[39m pre-selects lowest sequence backup and calls onConfirm with recipientId[33m 398[2mms[22m[39m
+     [32m✓[39m RemoveDriverModal [2m(1)[22m
+       [33m[2m✓[22m[39m validates required reason and confirms removal[33m 849[2mms[22m[39m
+     [32m✓[39m DriversPage Metrics Integration [2m(1)[22m
+       [33m[2m✓[22m[39m renders metrics columns (trips_completed, avg_rating, no_shows)[33m 339[2mms[22m[39m
+ [32m✓[39m src/test/ImportWizard.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[33m 2809[2mms[22m[39m
+   [32m✓[39m ImportWizardPage [2m(3)[22m
+     [33m[2m✓[22m[39m renders upload step initially with download template link[33m 700[2mms[22m[39m
+     [33m[2m✓[22m[39m selects file, enables upload button, and uploads[33m 964[2mms[22m[39m
+     [33m[2m✓[22m[39m allows committing from preview and navigates to report step[33m 1127[2mms[22m[39m
+ [32m✓[39m src/test/whatsappService.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m src/test/workOrderService.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+Not implemented: navigation to another Document
+ [32m✓[39m src/test/api.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 126[2mms[22m[39m
+ [32m✓[39m src/test/LoginPage.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 4774[2mms[22m[39m
+   [32m✓[39m LoginPage [2m(6)[22m
+     [33m[2m✓[22m[39m renders login form with Arabic labels and title[33m 782[2mms[22m[39m
+     [33m[2m✓[22m[39m validates required fields on empty submit[33m 452[2mms[22m[39m
+     [33m[2m✓[22m[39m validates invalid email format[33m 1065[2mms[22m[39m
+     [33m[2m✓[22m[39m maps server 422 validation errors to fields[33m 950[2mms[22m[39m
+     [33m[2m✓[22m[39m displays 403 inactive account error in general alert banner[33m 786[2mms[22m[39m
+     [33m[2m✓[22m[39m successfully logs in and updates auth store[33m 725[2mms[22m[39m
+ [32m✓[39m src/test/DriversPage.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 4259[2mms[22m[39m
+   [32m✓[39m DriversPage [2m(5)[22m
+     [33m[2m✓[22m[39m renders page header and driver action buttons[33m 1153[2mms[22m[39m
+     [33m[2m✓[22m[39m loads and displays drivers list from API[33m 457[2mms[22m[39m
+     [33m[2m✓[22m[39m filters drivers when typing in search input[33m 1408[2mms[22m[39m
+     [33m[2m✓[22m[39m opens add driver modal when clicking add driver button[33m 687[2mms[22m[39m
+     [33m[2m✓[22m[39m opens driver detail drawer when clicking view button[33m 531[2mms[22m[39m
+ [32m✓[39m src/test/DashboardPage.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 2957[2mms[22m[39m
+   [32m✓[39m ReportsPage / Dashboard [2m(5)[22m
+     [33m[2m✓[22m[39m renders dashboard title and metric cards with data from API[33m 1026[2mms[22m[39m
+     [33m[2m✓[22m[39m filters group performance table by group name search input[33m 696[2mms[22m[39m
+     [33m[2m✓[22m[39m allows clicking quick date range filters[33m 577[2mms[22m[39m
+     [33m[2m✓[22m[39m opens export modal when clicking recent exports or export excel[33m 391[2mms[22m[39m
+[90mstderr[2m | src/test/WorkOrdersPage.test.tsx[2m > [22m[2mWork Orders Frontend Suite[2m > 
+[22m[2mWorkOrderDetailPage[2m > [22m[2mpolls order data periodically when tab is visible
+[22m[39mAn update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+ [32m✓[39m src/test/WorkOrdersPage.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[33m 4504[2mms[22m[39m
+   [32m✓[39m Work Orders Frontend Suite [2m(5)[22m
+     [32m✓[39m WorkOrdersListPage [2m(1)[22m
+       [33m[2m✓[22m[39m renders list page with code, locations, and triggers duplication[33m 1066[2mms[22m[39m
+     [32m✓[39m CreateWorkOrderPage [2m(2)[22m
+       [33m[2m✓[22m[39m validates required fields on step 1 before proceeding to step 2[33m 751[2mms[22m[39m
+       [33m[2m✓[22m[39m advances steps and fetches live matching count in filters step[33m 1079[2mms[22m[39m
+     [32m✓[39m WorkOrderDetailPage [2m(2)[22m
+       [33m[2m✓[22m[39m renders order detail, tabs, counters, and handles cancel order modal[33m 1575[2mms[22m[39m
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+An update to WorkOrderDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at 
+https://react.dev/link/wrap-tests-with-act
+
+ [32m✓[39m src/test/AuthRoutes.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 124[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m21 passed[39m[22m[90m (21)[39m
+[2m      Tests [22m [1m[32m97 passed[39m[22m[90m (97)[39m
+[2m   Start at [22m 11:30:28
+[2m   Duration [22m 19.51s[2m (import 49%, environment 24%, tests 15%, setup 8%, transform 4%)[22m
+
+[2m    Isolate [22m [33m21 workers spawned[39m[2m · ~3.04s startup each (spawn + environment, per file)[22m
+[2m            [22m [2mat least ~1.22s faster with [22m[33misolate: false[39m[2m — reuses workers across files instead of one per file[22m
+

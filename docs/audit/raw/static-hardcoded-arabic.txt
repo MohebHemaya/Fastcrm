@@ -1,0 +1,272 @@
+﻿frontend\src\components\layout\AppShell.tsx:103: <span className="text-[10px] text-default-400">لوحة الإدارة</span>
+frontend\src\components\layout\AppShell.tsx:110: aria-label="إغلاق القائمة"
+frontend\src\components\layout\AppShell.tsx:147: name={user?.name || 'مدير'}
+frontend\src\components\layout\AppShell.tsx:154: {user?.name || 'المدير'}
+frontend\src\components\layout\AppShell.tsx:175: aria-label="القائمة الجانبية"
+frontend\src\components\layout\AppShell.tsx:191: aria-label="قائمة المستخدم"
+frontend\src\components\layout\AppShell.tsx:194: name={user?.name || 'مدير'}
+frontend\src\components\layout\AppShell.tsx:205: <DropdownMenu aria-label="خيارات الحساب" variant="flat">
+frontend\src\components\layout\AppShell.tsx:207: <p className="font-semibold text-xs text-default-500">تم تسجيل الدخول كـ</p>
+frontend\src\components\layout\AppShell.tsx:252: message="هل أنت متأكد من رغبتك في تسجيل الخروج من النظام؟"
+frontend\src\components\layout\RootLayout.tsx:31: <span>المرحلة 0: البنية التحتية</span>
+frontend\src\components\layout\RootLayout.tsx:49: <span>اتصال آمن بملفات تعريف الارتباط (Sanctum SPA)</span>
+frontend\src\components\layout\RootLayout.tsx:53: <span>قاعدة بيانات MariaDB/MySQL</span>
+frontend\src\components\ui\ToastContainer.tsx:41: aria-label="إغلاق التنبيه"
+frontend\src\features\drivers\components\AddDriverModal.tsx:151: placeholder="مثال: 01012345678 أو +201012345678"
+frontend\src\features\drivers\components\AddDriverModal.tsx:170: placeholder="اسم السائق (اختياري)"
+frontend\src\features\drivers\components\AddDriverModal.tsx:188: مجموعة سابقة
+frontend\src\features\drivers\components\AddDriverModal.tsx:203: بدون مجموعة
+frontend\src\features\drivers\components\AddDriverModal.tsx:237: placeholder="مثال: سائقين الجيزة"
+frontend\src\features\drivers\components\ChangeStatusModal.tsx:130: لا توجد تحويلات حالة متاحة لهذا السائق.
+frontend\src\features\drivers\components\ChangeStatusModal.tsx:136: placeholder="اختر الحالة الجديدة"
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:98: title: 'تم إعادة إرسال السؤال',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:99: message: 'تم إعادة إرسال السؤال الحالي للسائق عبر واتساب بنجاح.',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:105: title: 'خطأ',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:106: message: 'تعذر إعادة إرسال السؤال.',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:120: title: 'تم إرسال طلب التحديث',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:121: message: 'تم إرسال طلب تحديث الإجابات للأسئلة الجديدة للسائق.',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:127: title: 'تنبيه',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:128: message: err.response?.data?.message || 'تعذر طلب تحديث الإجابات.',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:141: title: 'تم حفظ التعديل',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:142: message: 'تم تعديل الإجابة وتوثيقها في سجل النشاطات بنجاح.',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:148: title: 'خطأ',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:149: message: 'تعذر تعديل الإجابة.',
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:303: ⭐ {driver.metrics.avg_rating} ({driver.metrics.ratings_count || 1} تقييم)
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:407: <p className="text-xs text-default-400">لا توجد مجموعات مرتبطة بهذا السائق حالياً.</p>
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:418: <span>إجابات الاستبيان ({answersData?.answers?.length || 0})</span>
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:431: إعادة إرسال السؤال الحالي
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:444: طلب تحديث الإجابات
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:454: <p className="font-bold">السائق يحتاج إلى مراجعة بياناته</p>
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:455: <p className="text-[11px] mt-0.5">{answersData.review_reason || 'تعذر استكمال بعض الأسئلة آلياً عبر واتساب.'}</p>
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:477: تم التخطي
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:485: تمت الإجابة: {new Date(ans.answered_at).toLocaleString('ar-EG')}
+frontend\src\features\drivers\components\DriverDetailDrawer.tsx:502: <p className="text-xs text-default-400">لم يتم تسجيل أي إجابات استبيان لهذا السائق حتى الآن.</p>
+frontend\src\features\drivers\components\EditAnswerModal.tsx:78: <span>تعديل إجابة السؤال (تدقيق يدوي)</span>
+frontend\src\features\drivers\components\EditAnswerModal.tsx:83: <p className="text-xs text-default-500 font-medium">السؤال (الإصدار v{answer.version}):</p>
+frontend\src\features\drivers\components\EditAnswerModal.tsx:90: label="اختر الإجابة المعدلة"
+frontend\src\features\drivers\components\EditAnswerModal.tsx:105: label="اختر نعم أو لا"
+frontend\src\features\drivers\components\EditAnswerModal.tsx:110: <SelectItem key="نعم">نعم</SelectItem>
+frontend\src\features\drivers\components\EditAnswerModal.tsx:111: <SelectItem key="لا">لا</SelectItem>
+frontend\src\features\drivers\components\EditAnswerModal.tsx:120: label="القيمة الرقمية المعدلة"
+frontend\src\features\drivers\components\EditAnswerModal.tsx:131: label="النص المعدل"
+frontend\src\features\drivers\components\EditAnswerModal.tsx:142: إلغاء
+frontend\src\features\drivers\components\EditAnswerModal.tsx:150: حفظ التعديل
+frontend\src\features\imports\components\ImportCommittingStep.tsx:37: setError(data.error_message || (data as any).error || 'حدث خطأ أثناء حفظ البيانات، يرجى مراجعة الدعم الفني.');
+frontend\src\features\imports\components\ImportCommittingStep.tsx:61: <h3 className="text-lg font-bold text-danger">تعذر إتمام الاستيراد</h3>
+frontend\src\features\imports\components\ImportParsingStep.tsx:39: setError(data.error_message || (data as any).error || 'فشلت معالجة الملف، يرجى التأكد من صحة التنسيق والمحاولة ثانية.');
+frontend\src\features\imports\components\ImportParsingStep.tsx:68: <h3 className="text-lg font-bold text-danger">تعذر معالجة الملف</h3>
+frontend\src\features\imports\components\ImportPreviewStep.tsx:114: title: 'تم إلغاء الاستيراد بنجاح',
+frontend\src\features\imports\components\ImportPreviewStep.tsx:115: message: 'تم إلغاء عملية الاستيراد وحذف السجلات المؤقتة.',
+frontend\src\features\imports\components\ImportPreviewStep.tsx:196: <span className="text-xs text-danger font-medium">{row.error || 'رقم غير صالح'}</span>
+frontend\src\features\imports\components\ImportPreviewStep.tsx:211: <span className="text-[11px] text-primary-600">سيتم إضافتهم كسائقين جدد</span>
+frontend\src\features\imports\components\ImportPreviewStep.tsx:218: <span className="text-[11px] text-warning-600">سيتم ربط المجموعات فقط</span>
+frontend\src\features\imports\components\ImportPreviewStep.tsx:225: <span className="text-[11px] text-success-600">سائقون نشطون حالياً</span>
+frontend\src\features\imports\components\ImportPreviewStep.tsx:232: <span className="text-[11px] text-danger-600">سيتم استبعادهم تلقائياً</span>
+frontend\src\features\imports\components\ImportPreviewStep.tsx:315: placeholder="بحث في الأرقام..."
+frontend\src\features\imports\components\ImportReportStep.tsx:42: تم تحديث قاعدة البيانات بنجاح واستيراد السائقين وربط المجموعات مع الحفاظ على سلامة الحالات السابقة.
+frontend\src\features\imports\components\ImportReportStep.tsx:101: <span className="font-bold">يوجد {counts.invalid} رقم غير صالح:</span> يمكنك تنزيل ملف CSV يوضح تفاصيل وأسباب عدم قبول الأرقام.
+frontend\src\features\imports\components\ImportUploadStep.tsx:28: setError('نوع الملف غير مدعوم. يرجى اختيار ملف Excel (.xlsx, .xls) أو CSV (.csv).');
+frontend\src\features\imports\components\ImportUploadStep.tsx:33: setError('حجم الملف يتجاوز الحد الأقصى المسموح به (10 ميجابايت).');
+frontend\src\features\imports\components\ImportUploadStep.tsx:86: ملف Excel/CSV يحتوي على الأعمدة المطلوبة (رقم الهاتف، اسم المجموعة) لتفادي أخطاء الاستيراد.
+frontend\src\features\imports\components\ImportUploadStep.tsx:140: ? `${(selectedFile.size / 1024).toFixed(1)} كيلوبايت — انقر لتغيير الملف`
+frontend\src\features\settings\QuestionModal.tsx:35: { key: 'single_choice', label: 'اختيار من متعدد (أزرار / قائمة)' },
+frontend\src\features\settings\QuestionModal.tsx:36: { key: 'yes_no', label: 'نعم / لا (زرين)' },
+frontend\src\features\settings\QuestionModal.tsx:37: { key: 'number', label: 'رقم (مثل سنوات الخبرة أو سعة الحمولة)' },
+frontend\src\features\settings\QuestionModal.tsx:38: { key: 'text', label: 'نص حر (إجابة نصية حرة)' },
+frontend\src\features\settings\QuestionModal.tsx:121: newErrors.key = 'رمز السؤال (المفتاح) مطلوب.';
+frontend\src\features\settings\QuestionModal.tsx:123: newErrors.key = 'الرمز يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطة سفلية فقط.';
+frontend\src\features\settings\QuestionModal.tsx:127: newErrors.textAr = 'نص السؤال بالعربية مطلوب.';
+frontend\src\features\settings\QuestionModal.tsx:132: newErrors.options = 'يجب إضافة خيارين على الأقل.';
+frontend\src\features\settings\QuestionModal.tsx:134: newErrors.options = 'الحد الأقصى هو 10 خيارات.';
+frontend\src\features\settings\QuestionModal.tsx:139: newErrors[`opt_label_${idx}`] = 'نص الخيار مطلوب.';
+frontend\src\features\settings\QuestionModal.tsx:141: newErrors[`opt_label_${idx}`] = `الحد الأقصى هو ${maxChars} حرفاً.`;
+frontend\src\features\settings\QuestionModal.tsx:144: newErrors[`opt_val_${idx}`] = 'رمز القيمة مطلوب.';
+frontend\src\features\settings\QuestionModal.tsx:203: <span>{question ? 'تعديل السؤال وإصدار نسخة جديدة' : 'إضافة سؤال جديد للاستبيان'}</span>
+frontend\src\features\settings\QuestionModal.tsx:213: label="رمز السؤال الفريد (Key)"
+frontend\src\features\settings\QuestionModal.tsx:214: placeholder="مثال: vehicle_type, years_exp"
+frontend\src\features\settings\QuestionModal.tsx:220: description="يستخدم برمجياً وفي الفلاتر (أحرف إنجليزية وشرطة سفلية فقط)"
+frontend\src\features\settings\QuestionModal.tsx:227: label="نوع السؤال"
+frontend\src\features\settings\QuestionModal.tsx:231: description="يحدد طريقة إرسال السؤال عبر واتساب (أزرار أو قائمة أو نص)"
+frontend\src\features\settings\QuestionModal.tsx:242: label="نص السؤال (بالعربية)"
+frontend\src\features\settings\QuestionModal.tsx:243: placeholder="اكتب السؤال بوضوح كما سيصل للسائق على واتساب..."
+frontend\src\features\settings\QuestionModal.tsx:258: <h4 className="text-sm font-semibold">خيارات الإجابة</h4>
+frontend\src\features\settings\QuestionModal.tsx:262: ستظهر كـ <b>أزرار واتساب سريعة</b> (الحد الأقصى {maxChars} حرفاً للزر)
+frontend\src\features\settings\QuestionModal.tsx:266: ستظهر كـ <b>قائمة منسدلة</b> (الحد الأقصى {maxChars} حرفاً للخيار)
+frontend\src\features\settings\QuestionModal.tsx:279: إضافة خيار ({options.length}/10)
+frontend\src\features\settings\QuestionModal.tsx:308: placeholder={`نص الخيار ${idx + 1}`}
+frontend\src\features\settings\QuestionModal.tsx:329: placeholder="رمز (Key)"
+frontend\src\features\settings\QuestionModal.tsx:378: <p className="text-xs font-semibold">إجابة مطلوبة</p>
+frontend\src\features\settings\QuestionModal.tsx:379: <p className="text-[10px] text-default-400">لا يمكن تخطيه</p>
+frontend\src\features\settings\QuestionModal.tsx:386: <p className="text-xs font-semibold">استخدام كفلتر</p>
+frontend\src\features\settings\QuestionModal.tsx:387: <p className="text-[10px] text-default-400">في طلبات التشغيل</p>
+frontend\src\features\settings\QuestionModal.tsx:394: <p className="text-xs font-semibold">نشط في الاستبيان</p>
+frontend\src\features\settings\QuestionModal.tsx:395: <p className="text-[10px] text-default-400">يرسل للسائقين</p>
+frontend\src\features\settings\QuestionModal.tsx:403: 💡 <b>ملاحظة الإصدارات:</b> تعديل نص السؤال أو نوعه أو خياراته سينشئ تلقائياً <b>إصداراً جديداً (v{question.version + 1})</b>. إجابات السائقين السابقة ستظل مرتبطة بالإصدار الذي أجابوا عليه ولن تتأثر.
+frontend\src\features\settings\QuestionModal.tsx:417: إلغاء
+frontend\src\features\settings\QuestionModal.tsx:425: {question ? 'حفظ التعديلات' : 'إضافة السؤال'}
+frontend\src\features\settings\QuestionPreview.tsx:23: <span>معاينة حية كما تظهر للسائق على واتساب</span>
+frontend\src\features\settings\QuestionPreview.tsx:34: <p className="text-xs font-semibold truncate text-white">النقل السريع</p>
+frontend\src\features\settings\QuestionPreview.tsx:35: <p className="text-[10px] text-emerald-400">متصل الآن</p>
+frontend\src\features\settings\QuestionPreview.tsx:42: اليوم
+frontend\src\features\settings\QuestionPreview.tsx:50: {textAr.trim() || 'اكتب نص السؤال هنا لمعاينته مباشرة...'}
+frontend\src\features\settings\QuestionPreview.tsx:65: نعم
+frontend\src\features\settings\QuestionPreview.tsx:71: لا
+frontend\src\features\settings\QuestionPreview.tsx:80: أضف خيارات لمعاينتها كأزرار أو قائمة
+frontend\src\features\settings\QuestionPreview.tsx:94: (أزرار رد سريع - حتى 3 خيارات)
+frontend\src\features\settings\QuestionPreview.tsx:104: <span>اختر إجابة ({displayOptions.length} خيارات)</span>
+frontend\src\features\settings\QuestionPreview.tsx:117: + {displayOptions.length - 4} خيارات أخرى في القائمة
+frontend\src\features\settings\QuestionPreview.tsx:129: يرد السائق بإرسال رقم (مثال: 5)
+frontend\src\features\settings\QuestionPreview.tsx:137: يرد السائق بنص حر عادي
+frontend\src\features\settings\SettingsPage.tsx:66: addToast({ type: 'error', message: 'تعذر تحميل الأسئلة.' });
+frontend\src\features\settings\SettingsPage.tsx:78: addToast({ type: 'error', message: 'تعذر تحميل الإعدادات العامة.' });
+frontend\src\features\settings\SettingsPage.tsx:98: message: res.is_active ? 'تم تفعيل السؤال' : 'تم تعطيل السؤال',
+frontend\src\features\settings\SettingsPage.tsx:101: addToast({ type: 'error', message: 'تعذر تغيير حالة السؤال.' });
+frontend\src\features\settings\SettingsPage.tsx:120: addToast({ type: 'success', message: 'تم تحديث ترتيب الأسئلة.' });
+frontend\src\features\settings\SettingsPage.tsx:122: addToast({ type: 'error', message: 'تعذر حفظ ترتيب الأسئلة.' });
+frontend\src\features\settings\SettingsPage.tsx:130: addToast({ type: 'success', message: 'تم تحديث السؤال بنجاح.' });
+frontend\src\features\settings\SettingsPage.tsx:133: addToast({ type: 'success', message: 'تم إضافة السؤال بنجاح.' });
+frontend\src\features\settings\SettingsPage.tsx:142: addToast({ type: 'success', message: 'تم تعطيل السؤال بنجاح.' });
+frontend\src\features\settings\SettingsPage.tsx:145: addToast({ type: 'error', message: 'تعذر تعطيل السؤال.' });
+frontend\src\features\settings\SettingsPage.tsx:157: addToast({ type: 'success', message: 'تم حفظ إعدادات النظام بنجاح.' });
+frontend\src\features\settings\SettingsPage.tsx:159: addToast({ type: 'error', message: 'تعذر حفظ الإعدادات.' });
+frontend\src\features\settings\SettingsPage.tsx:171: title="الإعدادات والأسئلة"
+frontend\src\features\settings\SettingsPage.tsx:172: description="إدارة أسئلة استبيان واتساب، إصدارات الأسئلة، وإعدادات النظام ومعدلات الإرسال"
+frontend\src\features\settings\SettingsPage.tsx:177: aria-label="خيارات الإعدادات"
+frontend\src\features\settings\SettingsPage.tsx:188: <span>الأسئلة والاستبيان ({questions.length})</span>
+frontend\src\features\settings\SettingsPage.tsx:201: <p className="text-xs text-default-500 font-medium">إجمالي الأسئلة</p>
+frontend\src\features\settings\SettingsPage.tsx:213: <p className="text-xs text-default-500 font-medium">أسئلة نشطة</p>
+frontend\src\features\settings\SettingsPage.tsx:225: <p className="text-xs text-default-500 font-medium">تستخدم كفلتر</p>
+frontend\src\features\settings\SettingsPage.tsx:237: <p className="text-xs text-default-500 font-medium">إجمالي الإجابات</p>
+frontend\src\features\settings\SettingsPage.tsx:249: <h3 className="text-lg font-bold">أسئلة الاستبيان للسائقين</h3>
+frontend\src\features\settings\SettingsPage.tsx:251: ترسل هذه الأسئلة آلياً للسائق بمجرد موافقته على الدعوة (مهتم) بالترتيب الموضح أدناه
+frontend\src\features\settings\SettingsPage.tsx:262: إضافة سؤال جديد
+frontend\src\features\settings\SettingsPage.tsx:269: <Spinner label="جاري تحميل الأسئلة..." />
+frontend\src\features\settings\SettingsPage.tsx:275: <p className="text-base font-semibold">لا توجد أسئلة مضافة بعد</p>
+frontend\src\features\settings\SettingsPage.tsx:277: أضف أسئلتك الأولى لبدء استبيان السائقين وجمع معلومات سياراتهم وخبراتهم تلقائياً
+frontend\src\features\settings\SettingsPage.tsx:287: إضافة أول سؤال
+frontend\src\features\settings\SettingsPage.tsx:341: فلتر
+frontend\src\features\settings\SettingsPage.tsx:346: إجباري
+frontend\src\features\settings\SettingsPage.tsx:357: {q.options_count} خيارات ({q.options.map((o) => o.label_ar).join('، ')})
+frontend\src\features\settings\SettingsPage.tsx:360: <span>{q.answers_count} إجابة مسجلة</span>
+frontend\src\features\settings\SettingsPage.tsx:363: ({q.versions_count} إصدارات سابقة)
+frontend\src\features\settings\SettingsPage.tsx:374: {q.is_active ? 'نشط' : 'معطل'}
+frontend\src\features\settings\SettingsPage.tsx:420: <span>إعدادات النظام العامة</span>
+frontend\src\features\settings\SettingsPage.tsx:427: <Spinner label="جاري تحميل الإعدادات..." />
+frontend\src\features\settings\SettingsPage.tsx:436: <span>مواعيد ومهلات الاستبيان والدعوات</span>
+frontend\src\features\settings\SettingsPage.tsx:439: التحكم في مهلة التذكير التلقائي ومهلات انتهاء الدعوات وتحويل السائقين غير المتجاوبين
+frontend\src\features\settings\SettingsPage.tsx:446: label="مهلة تذكير الاستبيان (ساعات)"
+frontend\src\features\settings\SettingsPage.tsx:451: description="يرسل النظام تذكيراً واحداً بعد هذه المدة من عدم إكمال الاستبيان"
+frontend\src\features\settings\SettingsPage.tsx:459: label="مهلة انتهاء الاستبيان (أيام)"
+frontend\src\features\settings\SettingsPage.tsx:464: description="يتحول السائق تلقائياً إلى حالة 'لم يرد' بعد هذه الأيام"
+frontend\src\features\settings\SettingsPage.tsx:472: label="مهلة عدم الرد على الدعوة (أيام)"
+frontend\src\features\settings\SettingsPage.tsx:477: description="تنتهي صلاحية الدعوة الأولية ويتحول السائق إلى 'لم يرد'"
+frontend\src\features\settings\SettingsPage.tsx:485: label="حجم دفعة إرسال الدعوات"
+frontend\src\features\settings\SettingsPage.tsx:490: description="عدد السائقين المدعوين في كل دفعة مجمعة"
+frontend\src\features\settings\SettingsPage.tsx:500: <span>معدلات إرسال رسائل واتساب</span>
+frontend\src\features\settings\SettingsPage.tsx:503: تحديد سقف سرعة الإرسال لتفادي حظر الرقم من قبل واتساب
+frontend\src\features\settings\SettingsPage.tsx:510: label="أقصى معدل إرسال بالدقيقة"
+frontend\src\features\settings\SettingsPage.tsx:515: description="عدد الرسائل القصوى المرسلة في الدقيقة الواحدة (الافتراضي 30)"
+frontend\src\features\settings\SettingsPage.tsx:529: حفظ الإعدادات
+frontend\src\features\settings\SettingsPage.tsx:553: title="تعطيل السؤال"
+frontend\src\features\settings\SettingsPage.tsx:554: message={`هل أنت متأكد من تعطيل السؤال "${deletingQuestion?.text_ar}"؟ لن يتم إرساله للسائقين الجدد ولكن ستظل الإجابات السابقة محفوظة.`}
+frontend\src\features\settings\SettingsPage.tsx:555: confirmText="نعم، قم بالتعطيل"
+frontend\src\features\whatsapp\components\DriverChatModal.tsx:299: onClick={() => handleSimulate('نعم، مهتم', 'invite_yes')}
+frontend\src\features\whatsapp\components\DriverChatModal.tsx:309: onClick={() => handleSimulate('لا، شكرًا', 'invite_no')}
+frontend\src\features\whatsapp\components\DriverChatModal.tsx:319: onClick={() => handleSimulate('إيقاف')}
+frontend\src\features\workOrders\components\AddDriverModal.tsx:95: <SelectItem key={d.id} textValue={`${d.name || 'كابتن'} (${d.phone})`}>
+frontend\src\features\workOrders\components\AddDriverModal.tsx:98: {d.name || 'كابتن'}
+frontend\src\features\workOrders\components\AddDriverModal.tsx:116: description={!canAddConfirmed ? 'اكتملت المقاعد المؤكدة' : undefined}
+frontend\src\features\workOrders\components\AddDriverModal.tsx:123: description={!canAddBackup ? 'اكتملت المقاعد الاحتياطية' : undefined}
+frontend\src\features\workOrders\components\OpenSlotsBanner.tsx:46: {ar.workOrders.openSlotsBanner.title} ({openSlotsCount} مكان شاغر)
+frontend\src\features\workOrders\components\OrderTimelineTab.tsx:75: <Spinner size="md" label="جاري تحميل سجل الأحداث..." />
+frontend\src\features\workOrders\components\PromoteBackupModal.tsx:74: description={`هاتف: ${b.driver_phone}`}
+frontend\src\features\workOrders\components\PromoteBackupModal.tsx:81: احتياطي #{b.sequence_number ?? '-'}
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:134: لا يوجد سائقون مؤكدون في هذا الطلب لتسجيل النتائج.
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:203: placeholder="بدون تقييم"
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:205: <SelectItem key="5" textValue="5 - ممتاز ⭐⭐⭐⭐⭐">
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:206: 5 - ممتاز ⭐⭐⭐⭐⭐
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:208: <SelectItem key="4" textValue="4 - جيد جداً ⭐⭐⭐⭐">
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:209: 4 - جيد جداً ⭐⭐⭐⭐
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:211: <SelectItem key="3" textValue="3 - جيد ⭐⭐⭐">
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:212: 3 - جيد ⭐⭐⭐
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:214: <SelectItem key="2" textValue="2 - مقبول ⭐⭐">
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:215: 2 - مقبول ⭐⭐
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:217: <SelectItem key="1" textValue="1 - سيء ⭐">
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:218: 1 - سيء ⭐
+frontend\src\features\workOrders\components\RecordOutcomesModal.tsx:228: placeholder="ملاحظات..."
+frontend\src\features\workOrders\components\ResendOffersModal.tsx:38: ملاحظة: ستعود حالة أمر العمل إلى "جاري استقبال السائقين" ويتم قبول أول السائقين ردًا حتى اكتمال العدد.
+frontend\src\lib\api.ts:76: message: 'تم تجاوز الحد المسموح من الطلبات، يرجى الانتظار قليلاً.',
+frontend\src\lib\api.ts:85: message: 'حدث خطأ غير متوقع في الخادم، يرجى المحاولة لاحقاً.',
+frontend\src\routes\CreateWorkOrderPage.tsx:792: {drv.name || 'كابتن'} ({drv.phone})
+frontend\src\routes\CreateWorkOrderPage.tsx:916: <span className="text-default-500 block">المطلوب (أساسي + احتياطي):</span>
+frontend\src\routes\CreateWorkOrderPage.tsx:918: {allWatchedValues.trips_needed} أساسي + {allWatchedValues.backup_needed || 0} احتياطي
+frontend\src\routes\CreateWorkOrderPage.tsx:926: : `${ar.workOrders.fields.strategyStaged} (${allWatchedValues.batch_size} كل ${allWatchedValues.batch_interval_minutes} دقيقة)`}
+frontend\src\routes\CreateWorkOrderPage.tsx:957: {ar.workOrders.systemFilters.lastTripDays}: {allWatchedValues.last_trip_within_days} يوم
+frontend\src\routes\DriversPage.tsx:486: emptyDescription="جرب تغيير كلمات البحث أو إعادة تعيين الفلاتر."
+frontend\src\routes\HealthPage.tsx:45: message: 'فشل في جلب تقرير حالة النظام.',
+frontend\src\routes\HealthPage.tsx:68: message: 'تمت جدولة إعادة محاولة المهمة بنجاح.',
+frontend\src\routes\HealthPage.tsx:74: message: 'فشل في إعادة محاولة المهمة.',
+frontend\src\routes\HealthPage.tsx:87: message: 'تم حذف المهمة الفاشلة بنجاح.',
+frontend\src\routes\HealthPage.tsx:93: message: 'فشل في حذف المهمة.',
+frontend\src\routes\HealthPage.tsx:106: message: res.message || 'تمت إعادة محاولة جميع المهام الفاشلة.',
+frontend\src\routes\HealthPage.tsx:112: message: 'فشل في إعادة محاولة المهام الفاشلة.',
+frontend\src\routes\HealthPage.tsx:120: if (!window.confirm('هل أنت متأكد من رغبتك في حذف جميع المهام الفاشلة نهائياً؟')) {
+frontend\src\routes\HealthPage.tsx:128: message: res.message || 'تم حذف جميع المهام الفاشلة.',
+frontend\src\routes\HealthPage.tsx:134: message: 'فشل في حذف المهام الفاشلة.',
+frontend\src\routes\HealthPage.tsx:144: <Spinner size="lg" label="جاري فحص حالة النظام والخدمات..." />
+frontend\src\routes\HealthPage.tsx:153: <p className="text-lg font-bold text-foreground">تعذر تحميل بيانات حالة النظام</p>
+frontend\src\routes\HealthPage.tsx:216: لم تسجل أية نبضة من مجدول المهام منذ{' '}
+frontend\src\routes\HealthPage.tsx:220: . يرجى التأكد من تشغيل أمر الجدولة{' '}
+frontend\src\routes\HealthPage.tsx:224: في لوحة تحكم الاستضافة (hPanel Cron Jobs).
+frontend\src\routes\HealthPage.tsx:244: {data?.scheduler.status === 'ok' ? ar.health.schedulerActive : 'متوقف'}
+frontend\src\routes\HealthPage.tsx:252: الحد الأقصى للتنبيه:{' '}
+frontend\src\routes\HealthPage.tsx:272: {data?.queue.backlog_size === 0 ? 'فارغ' : 'نشط'}
+frontend\src\routes\HealthPage.tsx:281: ? `أقدم مهمة منذ ${data.queue.oldest_job_age_seconds} ثانية`
+frontend\src\routes\HealthPage.tsx:282: : 'لا توجد مهام متراكمة في الانتظار'}
+frontend\src\routes\HealthPage.tsx:300: <span className="text-default-500 text-xs">إصدار Graph API:</span>
+frontend\src\routes\HealthPage.tsx:306: <span className="text-default-500 text-xs">رسائل فاشلة (24س):</span>
+frontend\src\routes\HealthPage.tsx:326: {data?.database.status === 'ok' ? 'متصل' : 'خطأ'}
+frontend\src\routes\HealthPage.tsx:331: <span className="text-default-500 text-xs">النسخ الاحتياطية:</span>
+frontend\src\routes\HealthPage.tsx:333: {data?.backups.count ?? 0} نسخ
+frontend\src\routes\HealthPage.tsx:337: آخر نسخة: {data?.backups.last_backup_at ? new Date(data.backups.last_backup_at).toLocaleDateString('ar-EG') : 'لا يوجد'}
+frontend\src\routes\HealthPage.tsx:358: إدارة ومتابعة المهام المعلقة التي واجهت أخطاء أثناء التنفيذ
+frontend\src\routes\HealthPage.tsx:399: كافة المهام المنفذة في طوابير العمل تمت معالجتها بسلاسة دون أخطاء.
+frontend\src\routes\HealthPage.tsx:407: <th className="px-6 py-3">المهمة (Job)</th>
+frontend\src\routes\HealthPage.tsx:408: <th className="px-6 py-3">الطابور</th>
+frontend\src\routes\HealthPage.tsx:409: <th className="px-6 py-3">وقت الفشل</th>
+frontend\src\routes\HealthPage.tsx:410: <th className="px-6 py-3">تفاصيل الخطأ</th>
+frontend\src\routes\HealthPage.tsx:411: <th className="px-6 py-3 text-center">الإجراءات</th>
+frontend\src\routes\HomePage.tsx:54: desc: 'استعراض وإدارة السائقين المسجلين في النظام',
+frontend\src\routes\HomePage.tsx:61: desc: 'رفع ملفات Excel وتصنيف أرقام الهواتف',
+frontend\src\routes\HomePage.tsx:68: desc: 'إنشاء ومتابعة أوامر الشغل وتوزيع الرحلات',
+frontend\src\routes\HomePage.tsx:75: desc: 'متابعة سجل العمليات وتغييرات النظام',
+frontend\src\routes\HomePage.tsx:85: title={`مرحباً بك، ${user?.name || 'المدير'}`}
+frontend\src\routes\HomePage.tsx:86: description="لوحة التحكم الرئيسية لإدارة واستقطاب السائقين وتوزيع أوامر الشغل"
+frontend\src\routes\HomePage.tsx:112: <span>فتح القسم</span>
+frontend\src\routes\HomePage.tsx:125: <p className="text-xs text-default-500">حالة الربط بين الخادم، قاعدة البيانات، والمجدول الزمني</p>
+frontend\src\routes\HomePage.tsx:146: <span className="text-xs font-bold text-default-900">واجهة الخادم (API)</span>
+frontend\src\routes\HomePage.tsx:208: <span className="text-xs font-bold text-default-900">توقيت الخادم</span>
+frontend\src\routes\HomePage.tsx:223: <span className="text-xs text-default-400">غير متوفر</span>
+frontend\src\routes\LoginPage.tsx:68: setGeneralError(responseData?.message || 'الحساب معطل، يرجى التواصل مع الإدارة.');
+frontend\src\routes\ReportsPage.tsx:456: {summary.orders_this_month.by_status?.completed || 0} مكتمل
+frontend\src\routes\WhatsAppMessagesPage.tsx:277: <th className="py-3 px-4 text-start">الاتجاه</th>
+frontend\src\routes\WhatsAppMessagesPage.tsx:278: <th className="py-3 px-4 text-start">النص / القالب</th>
+frontend\src\routes\WhatsAppMessagesPage.tsx:279: <th className="py-3 px-4 text-start">التاريخ</th>
+frontend\src\routes\WorkOrderDetailPage.tsx:306: addToast({ message: 'تمت ترقية السائق الاحتياطي إلى مؤكد بنجاح.', type: 'success' });
+frontend\src\routes\WorkOrderDetailPage.tsx:332: addToast({ message: 'تم إلغاء تكليف السائق بنجاح.', type: 'success' });
+frontend\src\routes\WorkOrderDetailPage.tsx:355: addToast({ message: 'تمت إضافة السائق بنجاح وإرسال الإشعار.', type: 'success' });
+frontend\src\routes\WorkOrderDetailPage.tsx:378: message: `تمت إعادة إرسال العروض إلى ${res.data.resent_count} سائقين وإعادة فتح الطلب.`,
+frontend\src\routes\WorkOrderDetailPage.tsx:405: addToast({ message: 'تم تحديث حالة أمر العمل بنجاح.', type: 'success' });
+frontend\src\routes\WorkOrderDetailPage.tsx:605: إلغاء تكليف
+frontend\src\routes\WorkOrderDetailPage.tsx:624: ترقية
+frontend\src\routes\WorkOrderDetailPage.tsx:635: حذف
+frontend\src\routes\WorkOrderDetailPage.tsx:649: description={`تاريخ الموعد: ${new Date(order.scheduled_at).toLocaleString('ar-EG')}`}
+frontend\src\routes\WorkOrdersListPage.tsx:136: header: 'خط السير',
+frontend\src\routes\WorkOrdersListPage.tsx:147: الحمولة: {row.cargo_type}
+frontend\src\routes\WorkOrdersListPage.tsx:176: header: 'الرحلات / التأكيدات',
+frontend\src\routes\WorkOrdersListPage.tsx:181: <span className="text-default-600">المؤكد:</span>
+frontend\src\routes\WorkOrdersListPage.tsx:188: <span>الاحتياطي:</span>
+frontend\src\routes\WorkOrdersListPage.tsx:303: placeholder="من تاريخ"
+frontend\src\routes\WorkOrdersListPage.tsx:311: aria-label="من تاريخ"
+frontend\src\routes\WorkOrdersListPage.tsx:317: placeholder="إلى تاريخ"
+frontend\src\routes\WorkOrdersListPage.tsx:325: aria-label="إلى تاريخ"

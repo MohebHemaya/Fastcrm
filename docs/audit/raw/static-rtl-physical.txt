@@ -1,0 +1,2 @@
+﻿frontend\src\features\settings\QuestionPreview.tsx:47: <div className="bg-[#202c33] rounded-2xl rounded-tr-none p-3 shadow-md max-w-[92%] ms-auto text-start relative mb-2">
+frontend\src\routes\HealthPage.tsx:404: <table className="w-full text-right text-sm">

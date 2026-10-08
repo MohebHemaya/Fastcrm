@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\WorkOrderConcurrencyPromoteAndCancelTest" file="tests\Feature\WorkOrderConcurrencyPromoteAndCancelTest.php" tests="2" assertions="155" errors="0" failures="0" skipped="0" time="30.448427">
+    <testcase name="REAL Concurrency: 2 admins promoting different backups into ONE free slot across 20 consecutive runs" file="tests\Feature\WorkOrderConcurrencyPromoteAndCancelTest.php::REAL Concurrency: 2 admins promoting different backups into ONE free slot across 20 consecutive runs" class="Tests\Feature\WorkOrderConcurrencyPromoteAndCancelTest" classname="Tests.Feature.WorkOrderConcurrencyPromoteAndCancelTest" assertions="140" time="22.919611">
+      <system-out>
+=== Concurrency Promote Benchmark Results (20 Runs) ===
+Run #1: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #2: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #3: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #4: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #5: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #6: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #7: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #8: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #9: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #10: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #11: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #12: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #13: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #14: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #15: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #16: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #17: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #18: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #19: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #20: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+========================================================
+</system-out>
+    </testcase>
+    <testcase name="REAL Concurrency: Cancel racing with a promote maintains full consistency" file="tests\Feature\WorkOrderConcurrencyPromoteAndCancelTest.php::REAL Concurrency: Cancel racing with a promote maintains full consistency" class="Tests\Feature\WorkOrderConcurrencyPromoteAndCancelTest" classname="Tests.Feature.WorkOrderConcurrencyPromoteAndCancelTest" assertions="15" time="7.528816"/>
+  </testsuite>
+</testsuites>

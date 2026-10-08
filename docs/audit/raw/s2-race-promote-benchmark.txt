@@ -1,0 +1,31 @@
+﻿
+=== Concurrency Promote Benchmark Results (20 Runs) ===
+Run #1: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #2: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #3: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #4: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #5: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #6: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #7: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #8: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #9: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #10: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #11: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #12: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #13: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #14: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #15: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #16: SUCCESS (Winner: Backup 2, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #17: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #18: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #19: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+Run #20: SUCCESS (Winner: Backup 1, Confirmed: 2/2, Backup: 1/2, Sequences: 1..2)
+========================================================
+
+  [30;42;1m PASS [39;49;22m[39m Tests\Feature\WorkOrderConcurrencyPromoteAndCancelTest[39m
+  [32;1m✓[39;22m[90m [39m[90mREAL Concurrency: 2 admins promoting different backups into ONE free slot across 20 consecutive runs[39m[90m       [39m [90m22.92s[39m  
+  [32;1m✓[39;22m[90m [39m[90mREAL Concurrency: Cancel racing with a promote maintains full consistency[39m[90m                                   [39m [90m7.53s[39m  
+
+  [90mTests:[39m    [32;1m2 passed[39;22m[90m (155 assertions)[39m
+  [90mDuration:[39m [39m30.74s[39m
+

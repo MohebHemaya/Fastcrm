@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\ConcurrentWebhookSmokeTest" file="tests\Feature\ConcurrentWebhookSmokeTest.php" tests="1" assertions="3" errors="0" failures="0" skipped="0" time="2.097677">
+    <testcase name="concurrent webhook smoke test processes 100 requests with exactly 8 intentional duplicates and 0 deadlocks" file="tests\Feature\ConcurrentWebhookSmokeTest.php::concurrent webhook smoke test processes 100 requests with exactly 8 intentional duplicates and 0 deadlocks" class="Tests\Feature\ConcurrentWebhookSmokeTest" classname="Tests.Feature.ConcurrentWebhookSmokeTest" assertions="3" time="2.097677"/>
+  </testsuite>
+</testsuites>

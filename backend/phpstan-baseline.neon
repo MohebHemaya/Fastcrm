@@ -1,0 +1,535 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#1 \$stream of function fclose expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/BenchmarkPhase8Command.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fputcsv expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Console/Commands/BenchmarkPhase8Command.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fwrite expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/BenchmarkPhase8Command.php
+
+		-
+			message: '#^Parameter \$timestamp of class App\\DTOs\\WhatsApp\\InboundMessage constructor expects int, float\|int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/SimulateInboundWhatsAppMessageCommand.php
+
+		-
+			message: '#^Parameter \$providerMessageId of class App\\DTOs\\WhatsApp\\StatusUpdate constructor expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/SimulateWhatsAppStatusCommand.php
+
+		-
+			message: '#^Parameter \#1 \$string of method Illuminate\\Console\\Command\:\:line\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Console/Commands/TestAcceptOrderOfferCommand.php
+
+		-
+			message: '#^Parameter \#1 \$string of method Illuminate\\Console\\Command\:\:line\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Console/Commands/TestCancelOrderCommand.php
+
+		-
+			message: '#^Parameter \#1 \$string of method Illuminate\\Console\\Command\:\:line\(\) expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 4
+			path: app/Console/Commands/TestFollowUpCommand.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\ApiController\:\:error\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/ApiController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\ApiController\:\:paginated\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/ApiController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\ApiController\:\:paginated\(\) has parameter \$paginator with generic class Illuminate\\Pagination\\LengthAwarePaginator but does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Http/Controllers/Api/ApiController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\ApiController\:\:success\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/ApiController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\QuestionOption\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\QuestionOption\>\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/DriverAnswerController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\QuestionOption\|Illuminate\\Database\\Eloquent\\Collection\<\(int\|string\), App\\Models\\QuestionOption\>\:\:\$label_ar\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Api/DriverAnswerController.php
+
+		-
+			message: '#^Cannot access property \$display_value on App\\Models\\DriverAnswer\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/DriverAnswerController.php
+
+		-
+			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: app/Http/Controllers/Api/DriverController.php
+
+		-
+			message: '#^Cannot access property \$id on App\\Models\\User\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Controllers/Api/ImportController.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fclose expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Api/ImportController.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fputcsv expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 7
+			path: app/Http/Controllers/Api/ImportController.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fwrite expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Api/ImportController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\QuestionController\:\:formatQuestion\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/QuestionController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\QuestionController\:\:haveOptionsChanged\(\) has parameter \$existing with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/QuestionController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\QuestionController\:\:haveOptionsChanged\(\) has parameter \$incoming with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/QuestionController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\Api\\QuestionController\:\:validateOptions\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Http/Controllers/Api/QuestionController.php
+
+		-
+			message: '#^Parameter \$providerMessageId of class App\\DTOs\\WhatsApp\\StatusUpdate constructor expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WhatsAppController.php
+
+		-
+			message: '#^Parameter \$timestamp of class App\\DTOs\\WhatsApp\\InboundMessage constructor expects int, float\|int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WhatsAppController.php
+
+		-
+			message: '#^Parameter \#2 \$userId of method App\\Services\\WorkOrderService\:\:createDraft\(\) expects int\|null, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WorkOrderController.php
+
+		-
+			message: '#^Parameter \#2 \$userId of method App\\Services\\WorkOrderService\:\:duplicate\(\) expects int\|null, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WorkOrderController.php
+
+		-
+			message: '#^Parameter \$userId of method App\\Services\\WorkOrderFollowUpService\:\:addDriverManually\(\) expects int\|null, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WorkOrderFollowUpController.php
+
+		-
+			message: '#^Parameter \$userId of method App\\Services\\WorkOrderFollowUpService\:\:changeOrderStatus\(\) expects int\|null, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WorkOrderFollowUpController.php
+
+		-
+			message: '#^Parameter \$userId of method App\\Services\\WorkOrderFollowUpService\:\:promoteBackup\(\) expects int\|null, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WorkOrderFollowUpController.php
+
+		-
+			message: '#^Parameter \$userId of method App\\Services\\WorkOrderFollowUpService\:\:recordOutcomes\(\) expects int\|null, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WorkOrderFollowUpController.php
+
+		-
+			message: '#^Parameter \$userId of method App\\Services\\WorkOrderFollowUpService\:\:removeBackupDriver\(\) expects int\|null, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WorkOrderFollowUpController.php
+
+		-
+			message: '#^Parameter \$userId of method App\\Services\\WorkOrderFollowUpService\:\:removeConfirmedDriver\(\) expects int\|null, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WorkOrderFollowUpController.php
+
+		-
+			message: '#^Parameter \$userId of method App\\Services\\WorkOrderFollowUpService\:\:resendOffers\(\) expects int\|null, int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Api/WorkOrderFollowUpController.php
+
+		-
+			message: '#^Method App\\Http\\Controllers\\WebhookController\:\:receive\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: app/Http/Controllers/WebhookController.php
+
+		-
+			message: '#^Method App\\Http\\Requests\\BaseFormRequest\:\:attributes\(\) should return array\<string, string\> but returns array\|string\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Http/Requests/BaseFormRequest.php
+
+		-
+			message: '#^Cannot call method toIso8601String\(\) on Carbon\\Carbon\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Resources/WorkOrderEventResource.php
+
+		-
+			message: '#^Class App\\Models\\ActivityLog uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ActivityLog.php
+
+		-
+			message: '#^Method App\\Models\\ActivityLog\:\:record\(\) has parameter \$properties with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/ActivityLog.php
+
+		-
+			message: '#^Class App\\Models\\Driver uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Driver.php
+
+		-
+			message: '#^Class App\\Models\\DriverAnswer uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DriverAnswer.php
+
+		-
+			message: '#^Method App\\Models\\DriverAnswer\:\:driver\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DriverAnswer.php
+
+		-
+			message: '#^Method App\\Models\\DriverAnswer\:\:option\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DriverAnswer.php
+
+		-
+			message: '#^Method App\\Models\\DriverAnswer\:\:question\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DriverAnswer.php
+
+		-
+			message: '#^Method App\\Models\\DriverAnswer\:\:version\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DriverAnswer.php
+
+		-
+			message: '#^Class App\\Models\\DriverMetric uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DriverMetric.php
+
+		-
+			message: '#^Class App\\Models\\DriverStatusHistory uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/DriverStatusHistory.php
+
+		-
+			message: '#^Class App\\Models\\Export uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Export.php
+
+		-
+			message: '#^Method App\\Models\\Export\:\:user\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Export.php
+
+		-
+			message: '#^Class App\\Models\\Import uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Import.php
+
+		-
+			message: '#^Class App\\Models\\ImportRow uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/ImportRow.php
+
+		-
+			message: '#^Class App\\Models\\Question uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Question.php
+
+		-
+			message: '#^Method App\\Models\\Question\:\:answers\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Question.php
+
+		-
+			message: '#^Method App\\Models\\Question\:\:scopeActive\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Question.php
+
+		-
+			message: '#^Method App\\Models\\Question\:\:scopeActive\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Question.php
+
+		-
+			message: '#^Method App\\Models\\Question\:\:scopeFilterOnly\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Question.php
+
+		-
+			message: '#^Method App\\Models\\Question\:\:scopeFilterOnly\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Question.php
+
+		-
+			message: '#^Method App\\Models\\Question\:\:scopeOrdered\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Question.php
+
+		-
+			message: '#^Method App\\Models\\Question\:\:scopeOrdered\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Question.php
+
+		-
+			message: '#^Class App\\Models\\QuestionOption uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuestionOption.php
+
+		-
+			message: '#^Method App\\Models\\QuestionOption\:\:answers\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuestionOption.php
+
+		-
+			message: '#^Method App\\Models\\QuestionOption\:\:question\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuestionOption.php
+
+		-
+			message: '#^Method App\\Models\\QuestionOption\:\:scopeActive\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuestionOption.php
+
+		-
+			message: '#^Method App\\Models\\QuestionOption\:\:scopeActive\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuestionOption.php
+
+		-
+			message: '#^Class App\\Models\\QuestionVersion has PHPDoc tag @property for property \$options_snapshot with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/QuestionVersion.php
+
+		-
+			message: '#^Class App\\Models\\QuestionVersion uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuestionVersion.php
+
+		-
+			message: '#^Method App\\Models\\QuestionVersion\:\:question\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/QuestionVersion.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:activityLogs\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Class App\\Models\\WebhookEvent has PHPDoc tag @property for property \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/WebhookEvent.php
+
+		-
+			message: '#^Class App\\Models\\WhatsAppMessage has PHPDoc tag @property for property \$payload with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Models/WhatsAppMessage.php
+
+		-
+			message: '#^Class App\\Models\\WhatsappGroup uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/WhatsappGroup.php
+
+		-
+			message: '#^Class App\\Models\\WorkOrder uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/WorkOrder.php
+
+		-
+			message: '#^Class App\\Models\\WorkOrderEvent uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/WorkOrderEvent.php
+
+		-
+			message: '#^Class App\\Models\\WorkOrderFilter uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/WorkOrderFilter.php
+
+		-
+			message: '#^Class App\\Models\\WorkOrderRecipient uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/WorkOrderRecipient.php
+
+		-
+			message: '#^Call to an undefined method Traversable\<\(int\|string\), App\\Models\\QuestionOption\>\:\:values\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Services/ArabicReplyNormalizer.php
+
+		-
+			message: '#^Property App\\Services\\ArabicReplyNormalizer\:\:\$easternDigits type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ArabicReplyNormalizer.php
+
+		-
+			message: '#^Property App\\Services\\ArabicReplyNormalizer\:\:\$noKeywords type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ArabicReplyNormalizer.php
+
+		-
+			message: '#^Property App\\Services\\ArabicReplyNormalizer\:\:\$yesKeywords type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ArabicReplyNormalizer.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$value\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/DriverMatcher.php
+
+		-
+			message: '#^Parameter \#1 \$haystack of function str_starts_with expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/InboundMessageRouter.php
+
+		-
+			message: '#^Parameter \#1 \$string of function ltrim expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/InboundMessageRouter.php
+
+		-
+			message: '#^Property App\\Services\\PhoneNormalizer\:\:\$digitMap type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/PhoneNormalizer.php
+
+		-
+			message: '#^Method App\\Services\\QuestionnaireService\:\:handlePayloadReply\(\) has parameter \$version with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Services/QuestionnaireService.php
+
+		-
+			message: '#^Method App\\Services\\QuestionnaireService\:\:handleTextReply\(\) has parameter \$version with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Services/QuestionnaireService.php
+
+		-
+			message: '#^Method App\\Services\\QuestionnaireService\:\:saveAnswer\(\) has parameter \$version with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Services/QuestionnaireService.php
+
+		-
+			message: '#^Method App\\Services\\WorkOrderFollowUpService\:\:resendOffers\(\) has parameter \$recipientIds with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/WorkOrderFollowUpService.php
+
+		-
+			message: '#^Parameter \#2 \$length of function array_chunk expects int\<1, max\>, int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/WorkOrderService.php

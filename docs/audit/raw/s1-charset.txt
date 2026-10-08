@@ -1,0 +1,48 @@
+﻿== tables (engine/collation) NOT InnoDB or NOT utf8mb4_unicode_ci
+== columns with non-utf8mb4 charset/collation
+TABLE_NAME	COLUMN_NAME	CHARACTER_SET_NAME	COLLATION_NAME
+activity_logs	properties	utf8mb4	utf8mb4_bin
+exports	params	utf8mb4	utf8mb4_bin
+imports	counts	utf8mb4	utf8mb4_bin
+question_versions	options_snapshot	utf8mb4	utf8mb4_bin
+webhook_events	payload	utf8mb4	utf8mb4_bin
+whatsapp_messages	payload	utf8mb4	utf8mb4_bin
+work_order_events	metadata	utf8mb4	utf8mb4_bin
+work_order_filters	value	utf8mb4	utf8mb4_bin
+== all tables
+TABLE_NAME	ENGINE	TABLE_COLLATION	TABLE_ROWS
+activity_logs	InnoDB	utf8mb4_unicode_ci	0
+cache	InnoDB	utf8mb4_unicode_ci	0
+cache_locks	InnoDB	utf8mb4_unicode_ci	0
+drivers	InnoDB	utf8mb4_unicode_ci	0
+driver_answers	InnoDB	utf8mb4_unicode_ci	0
+driver_group	InnoDB	utf8mb4_unicode_ci	0
+driver_metrics	InnoDB	utf8mb4_unicode_ci	0
+driver_status_histories	InnoDB	utf8mb4_unicode_ci	0
+exports	InnoDB	utf8mb4_unicode_ci	0
+failed_jobs	InnoDB	utf8mb4_unicode_ci	0
+imports	InnoDB	utf8mb4_unicode_ci	0
+import_rows	InnoDB	utf8mb4_unicode_ci	0
+jobs	InnoDB	utf8mb4_unicode_ci	0
+job_batches	InnoDB	utf8mb4_unicode_ci	0
+migrations	InnoDB	utf8mb4_unicode_ci	22
+password_reset_tokens	InnoDB	utf8mb4_unicode_ci	0
+personal_access_tokens	InnoDB	utf8mb4_unicode_ci	0
+questions	InnoDB	utf8mb4_unicode_ci	5
+question_options	InnoDB	utf8mb4_unicode_ci	7
+question_versions	InnoDB	utf8mb4_unicode_ci	5
+sessions	InnoDB	utf8mb4_unicode_ci	0
+settings	InnoDB	utf8mb4_unicode_ci	5
+users	InnoDB	utf8mb4_unicode_ci	1
+webhook_events	InnoDB	utf8mb4_unicode_ci	0
+whatsapp_groups	InnoDB	utf8mb4_unicode_ci	0
+whatsapp_messages	InnoDB	utf8mb4_unicode_ci	0
+work_orders	InnoDB	utf8mb4_unicode_ci	0
+work_order_events	InnoDB	utf8mb4_unicode_ci	0
+work_order_filters	InnoDB	utf8mb4_unicode_ci	0
+work_order_recipients	InnoDB	utf8mb4_unicode_ci	0
+== schema default
+DEFAULT_CHARACTER_SET_NAME	DEFAULT_COLLATION_NAME
+utf8mb4	utf8mb4_unicode_ci
+utf8mb4	utf8mb4_unicode_ci
+utf8mb4	utf8mb4_unicode_ci

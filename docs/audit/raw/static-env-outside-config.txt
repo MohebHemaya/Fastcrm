@@ -1,0 +1,6 @@
+﻿backend\database\seeders\AdminUserSeeder.php:20: $admin1Email = env('ADMIN_EMAIL') ?: env('ADMIN_1_EMAIL');
+backend\database\seeders\AdminUserSeeder.php:21: $admin1Password = env('ADMIN_PASSWORD') ?: env('ADMIN_1_PASSWORD');
+backend\database\seeders\AdminUserSeeder.php:22: $admin1Name = env('ADMIN_NAME') ?: env('ADMIN_1_NAME', 'مدير النظام الأول');
+backend\database\seeders\AdminUserSeeder.php:49: $admin2Email = env('ADMIN_2_EMAIL');
+backend\database\seeders\AdminUserSeeder.php:50: $admin2Password = env('ADMIN_2_PASSWORD');
+backend\database\seeders\AdminUserSeeder.php:64: 'name' => env('ADMIN_2_NAME', 'مدير النظام الثاني'),

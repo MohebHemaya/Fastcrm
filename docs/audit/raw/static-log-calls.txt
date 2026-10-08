@@ -1,0 +1,37 @@
+﻿backend\app\Console\Commands\BackupDatabaseCommand.php:58: Log::error('[Backup] Database backup failed', compact('targetFile', 'method'));
+backend\app\Console\Commands\BackupDatabaseCommand.php:93: Log::warning("[Backup] Failed to copy backup to secondary disk [{$secondaryDisk}]: {$e->getMessage()}");
+backend\app\Console\Commands\BackupDatabaseCommand.php:101: Log::info('[Backup] Database backup completed successfully', [
+backend\app\Console\Commands\CheckHealthAlertsCommand.php:91: Log::warning('[HealthMonitoring] Alert email dispatched', [
+backend\app\Console\Commands\CheckHealthAlertsCommand.php:97: Log::error('[HealthMonitoring] Alert email dispatch error: '.$e->getMessage());
+backend\app\Console\Commands\PruneRetentionDataCommand.php:78: Log::info('[Retention] Prune retention data completed', [
+backend\app\Console\Commands\RestoreDatabaseCommand.php:106: Log::info('[Backup] Database restored from file', ['file' => $filePath]);
+backend\app\Console\Commands\RestoreDatabaseCommand.php:112: Log::error('[Backup] Database restoration failed', ['file' => $filePath, 'error' => $e->getMessage()]);
+backend\app\Console\Commands\SendWorkOrderRemindersCommand.php:84: Log::warning("[SendWorkOrderRemindersCommand] Failed to send reminder to driver {$driver->id}: {$e->getMessage()}");
+backend\app\Http\Controllers\WebhookController.php:31: Log::error('[WebhookController] Verification error: '.$e->getMessage());
+backend\app\Http\Controllers\WebhookController.php:50: Log::error('[WebhookController] Webhook parse error: '.$e->getMessage());
+backend\app\Jobs\DispatchStagedWorkOrderBatchJob.php:35: Log::info("[DispatchStagedWorkOrderBatchJob] Order {$order->id} is {$order->status->value}; stopping batch {$this->batchNumber}.");
+backend\app\Jobs\DispatchStagedWorkOrderBatchJob.php:92: Log::warning("[DispatchStagedWorkOrderBatchJob] Failed to send order offer to driver {$driver->id}: {$e->getMessage()}");
+backend\app\Jobs\ProcessExportJob.php:110: Log::error("[ProcessExportJob] Export {$export->id} failed: {$e->getMessage()}", [
+backend\app\Jobs\ProcessWebhookEventJob.php:58: Log::error('[ProcessWebhookEventJob] Error routing inbound message', [
+backend\app\Jobs\ProcessWebhookEventJob.php:75: Log::error('[ProcessWebhookEventJob] Error processing status update', [
+backend\app\Services\AcceptOrderOffer.php:309: Log::warning('Failed to send post-acceptance WhatsApp message', [
+backend\app\Services\Audit.php:61: Log::warning("Audit logging failed for action '{$action}': ".$e->getMessage());
+backend\app\Services\InboundMessageRouter.php:36: Log::info("[InboundMessageRouter] No driver found for phone: {$inbound->from}");
+backend\app\Services\InboundMessageRouter.php:74: Log::info("[InboundMessageRouter] Driver {$driver->id} is {$driver->status->value}; ignoring message.");
+backend\app\Services\InboundMessageRouter.php:305: Log::info("[InboundMessageRouter] Suppressed repeated fallback message for driver {$driver->id}");
+backend\app\Services\InboundMessageRouter.php:324: Log::warning("[InboundMessageRouter] Could not send fallback buttons to driver {$driver->id}: {$e->getMessage()}");
+backend\app\Services\QuestionnaireService.php:159: Log::warning("[QuestionnaireService] Could not send thank you message to driver {$driver->id}: {$e->getMessage()}");
+backend\app\Services\QuestionnaireService.php:224: Log::info("[QuestionnaireService] Ignoring reply to already answered or different question id {$targetQuestionId}");
+backend\app\Services\QuestionnaireService.php:533: Log::warning("[QuestionnaireService] Could not send reminder to driver {$driver->id}: {$e->getMessage()}");
+backend\app\Services\WebhookStatusUpdater.php:20: Log::debug("[WebhookStatusUpdater] Message not found for provider_message_id: {$update->providerMessageId}");
+backend\app\Services\WebhookStatusUpdater.php:28: Log::warning("[WebhookStatusUpdater] Unknown status value received: {$update->status}");
+backend\app\Services\WorkOrderFollowUpService.php:300: Log::warning("[WorkOrderFollowUpService] Failed to send backup_promoted to driver {$driver->id}: {$e->getMessage()}");
+backend\app\Services\WorkOrderFollowUpService.php:528: Log::warning("[WorkOrderFollowUpService] Failed to notify manually added driver {$driver->id}: {$e->getMessage()}");
+backend\app\Services\WorkOrderFollowUpService.php:620: Log::warning("[WorkOrderFollowUpService] Failed to resend offer to driver {$driver->id}: {$e->getMessage()}");
+backend\app\Services\WorkOrderService.php:229: Log::warning("[WorkOrderService] Failed to send offer to driver {$driver->id}: {$e->getMessage()}");
+backend\app\Services\WorkOrderService.php:307: Log::warning("[WorkOrderService] Cancellation notice failed for driver {$driver->id}: {$e->getMessage()}");
+backend\app\WhatsApp\CloudApiProvider.php:252: Log::warning("[CloudApiProvider] {$operation} failed", compact('code', 'message', 'isRetryable'));
+backend\app\WhatsApp\FakeWhatsAppProvider.php:28: Log::debug("[FakeWhatsApp] sendTemplate to={$to} name={$name} lang={$lang}", compact('params', 'buttons'));
+backend\app\WhatsApp\FakeWhatsAppProvider.php:36: Log::debug("[FakeWhatsApp] sendText to={$to}", compact('body'));
+backend\app\WhatsApp\FakeWhatsAppProvider.php:44: Log::debug("[FakeWhatsApp] sendButtons to={$to}", compact('body', 'buttons'));
+backend\app\WhatsApp\FakeWhatsAppProvider.php:52: Log::debug("[FakeWhatsApp] sendList to={$to}", compact('body', 'buttonLabel', 'rows'));

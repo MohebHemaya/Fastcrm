@@ -1,0 +1,6 @@
+﻿===========================================
+PHPStan Baseline Size Check
+===========================================
+Current baseline rule entries: 89 (Max allowed: 89)
+Current total baseline errors: 103 (Max allowed: 103)
+PASSED: Baseline has not grown beyond current limits.
