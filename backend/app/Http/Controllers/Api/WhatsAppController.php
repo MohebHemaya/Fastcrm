@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Contracts\WhatsAppProvider;
 use App\DTOs\WhatsApp\InboundMessage;
 use App\DTOs\WhatsApp\StatusUpdate;
 use App\Enums\DriverStatus;
@@ -72,8 +73,22 @@ class WhatsAppController extends Controller
     /**
      * Get chat/message log for a specific driver.
      */
-    public function driverMessages(Driver $driver): JsonResponse
+    public function driverMessages(Driver $driver, WhatsAppProvider $provider): JsonResponse
     {
+        // Actively check for any incoming messages from driver that might have missed the webhook
+        $provider->syncChatInbound($driver->phone);
+
+        // If there are recent outgoing messages awaiting final delivery status, sync them
+        $hasPending = WhatsAppMessage::where('driver_id', $driver->id)
+            ->where('direction', WhatsAppMessageDirection::OUT)
+            ->whereIn('status', [WhatsAppMessageStatus::QUEUED, WhatsAppMessageStatus::SENT, WhatsAppMessageStatus::DELIVERED])
+            ->where('created_at', '>=', now()->subHours(2))
+            ->exists();
+
+        if ($hasPending) {
+            $provider->syncRecentStatuses(25);
+        }
+
         $messages = WhatsAppMessage::with('driver')
             ->where('driver_id', $driver->id)
             ->orderBy('created_at', 'asc')
@@ -97,6 +112,14 @@ class WhatsAppController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $request->validate([
+            'status' => ['nullable', 'string', 'max:50'],
+            'direction' => ['nullable', 'string', 'in:in,out'],
+            'driver_id' => ['nullable', 'integer'],
+            'search' => ['nullable', 'string', 'max:255'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
         $query = WhatsAppMessage::with('driver');
 
         if ($request->filled('status')) {
@@ -215,73 +238,16 @@ class WhatsAppController extends Controller
     }
 
     /**
-     * Dev/test simulation endpoint: inbound message.
-     */
-    public function simulateInbound(Request $request, InboundMessageRouter $router): JsonResponse
-    {
-        $validated = $request->validate([
-            'phone' => ['required', 'string'],
-            'text' => ['nullable', 'string'],
-            'payload_id' => ['nullable', 'string'],
-        ]);
-
-        $inbound = new InboundMessage(
-            from: $validated['phone'],
-            type: ! empty($validated['payload_id']) ? 'button' : 'text',
-            text: $validated['text'] ?? null,
-            payloadId: $validated['payload_id'] ?? null,
-            providerMessageId: 'sim_'.uniqid('', true),
-            timestamp: now()->timestamp,
-        );
-
-        $router->handle($inbound);
-
-        return response()->json([
-            'data' => ['handled' => true, 'provider_message_id' => $inbound->providerMessageId],
-            'meta' => null,
-            'message' => 'تمت محاكاة الرسالة الواردة ومعالجتها بنجاح',
-        ]);
-    }
-
-    /**
-     * Dev/test simulation endpoint: status update.
-     */
-    public function simulateStatus(Request $request, WebhookStatusUpdater $updater): JsonResponse
-    {
-        $validated = $request->validate([
-            'message_id' => ['required'],
-            'status' => ['required', 'in:sent,delivered,read,failed'],
-            'error_code' => ['nullable', 'string'],
-        ]);
-
-        $msg = WhatsAppMessage::where('id', $validated['message_id'])
-            ->orWhere('provider_message_id', $validated['message_id'])
-            ->firstOrFail();
-
-        if (! $msg->provider_message_id) {
-            $msg->update(['provider_message_id' => 'fake_'.uniqid('sim_', true)]);
-        }
-
-        $update = new StatusUpdate(
-            providerMessageId: $msg->provider_message_id,
-            status: $validated['status'],
-            errorCode: $validated['error_code'] ?? null,
-        );
-
-        $updater->handle($update);
-
-        return response()->json([
-            'data' => new WhatsAppMessageResource($msg->fresh()),
-            'meta' => null,
-            'message' => 'تم تحديث حالة الرسالة بنجاح',
-        ]);
-    }
-
-    /**
      * Get recent conversations list for the split-pane WhatsApp inbox.
      */
     public function conversations(Request $request): JsonResponse
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'page' => ['nullable', 'integer', 'min:1'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
         $search = trim((string) $request->query('search', ''));
 
         $driverQuery = Driver::query();
@@ -340,6 +306,125 @@ class WhatsAppController extends Controller
     }
 
     /**
+     * Mark all inbound messages from a driver as read ("seen").
+     * Called automatically when the operator opens a driver conversation.
+     */
+    public function markRead(Driver $driver): JsonResponse
+    {
+        WhatsAppMessage::where('driver_id', $driver->id)
+            ->where('direction', WhatsAppMessageDirection::IN)
+            ->where('status', '!=', WhatsAppMessageStatus::READ)
+            ->update([
+                'status'  => WhatsAppMessageStatus::READ,
+                'read_at' => now(),
+            ]);
+
+        return response()->json([
+            'data'    => ['driver_id' => $driver->id],
+            'meta'    => null,
+            'message' => 'تم تعيين الرسائل كمقروءة',
+        ]);
+    }
+
+    /**
+     * Fetch messages received after a given message ID (incremental polling).
+     * Returns only new rows — avoids re-fetching entire chat history.
+     * Also returns recent outbound message statuses so ticks update in real-time.
+     */
+    public function newMessages(Request $request, Driver $driver, WhatsAppProvider $provider): JsonResponse
+    {
+        $afterId = (int) $request->query('after_id', 0);
+
+        // Actively check for incoming messages from this driver (throttled every 2 seconds)
+        $inboundCacheKey = "whatsapp_sync_inbound_{$driver->id}";
+        if (! cache()->has($inboundCacheKey)) {
+            cache()->put($inboundCacheKey, true, now()->addSeconds(2));
+            $provider->syncChatInbound($driver->phone);
+        }
+
+        // Check if there are active outbound messages awaiting final delivery status
+        $hasPending = WhatsAppMessage::where('driver_id', $driver->id)
+            ->where('direction', WhatsAppMessageDirection::OUT)
+            ->whereIn('status', [WhatsAppMessageStatus::QUEUED, WhatsAppMessageStatus::SENT, WhatsAppMessageStatus::DELIVERED])
+            ->where('created_at', '>=', now()->subHours(2))
+            ->exists();
+
+        if ($hasPending) {
+            $cacheKey = "whatsapp_sync_pending_{$driver->id}";
+            if (! cache()->has($cacheKey)) {
+                cache()->put($cacheKey, true, now()->addSeconds(5));
+                $provider->syncRecentStatuses(25);
+            }
+        }
+
+        $messages = WhatsAppMessage::with('driver')
+            ->where('driver_id', $driver->id)
+            ->when($afterId > 0, fn ($q) => $q->where('id', '>', $afterId))
+            ->orderBy('id', 'asc')
+            ->limit(50)
+            ->get();
+
+        $recentStatuses = WhatsAppMessage::where('driver_id', $driver->id)
+            ->where('direction', WhatsAppMessageDirection::OUT)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->orderBy('id', 'desc')
+            ->limit(30)
+            ->get(['id', 'status', 'sent_at', 'delivered_at', 'read_at', 'error_message']);
+
+        $freshDriver = $driver->fresh();
+
+        return response()->json([
+            'data'    => WhatsAppMessageResource::collection($messages),
+            'meta'    => [
+                'driver_id'     => $driver->id,
+                'driver_name'   => $driver->name,
+                'driver_phone'  => $driver->phone,
+                'driver_status' => $freshDriver->status->value,
+                'can_message'   => ! in_array($freshDriver->status, [DriverStatus::OPTED_OUT, DriverStatus::BLOCKED], true),
+                'after_id'      => $afterId,
+                'statuses'      => $recentStatuses,
+            ],
+            'message' => null,
+        ]);
+    }
+
+    /**
+     * Connection / provider health widget.
+     * Returns whether the WhatsApp session is considered healthy.
+     */
+    public function connectionStatus(): JsonResponse
+    {
+        $provider   = config('whatsapp.provider', 'fake');
+        $isFake     = ($provider === 'fake');
+
+        // For real providers: a simple proxy check — look for recent sent messages
+        // within the last 10 minutes as a liveness signal.
+        $recentSent = WhatsAppMessage::where('direction', WhatsAppMessageDirection::OUT)
+            ->where('status', WhatsAppMessageStatus::SENT)
+            ->where('sent_at', '>=', now()->subMinutes(10))
+            ->exists();
+
+        // Consider connected if: fake (always OK) or had a recent sent message
+        // OR the queue is healthy (no stuck queued messages > 30 minutes)
+        $stuckQueued = WhatsAppMessage::where('status', WhatsAppMessageStatus::QUEUED)
+            ->where('queued_at', '<=', now()->subMinutes(30))
+            ->exists();
+
+        $isConnected = $isFake || ($recentSent && ! $stuckQueued) || ! $stuckQueued;
+
+        return response()->json([
+            'data' => [
+                'provider'      => $provider,
+                'is_fake'       => $isFake,
+                'is_connected'  => $isConnected,
+                'stuck_queued'  => $stuckQueued,
+            ],
+            'meta'    => null,
+            'message' => null,
+        ]);
+    }
+
+    /**
      * Send direct message from operator to driver.
      */
     public function directMessage(Request $request, Driver $driver, MessageSender $sender): JsonResponse
@@ -351,7 +436,15 @@ class WhatsAppController extends Controller
             'message.max' => 'تجاوزت الرسالة الحد الأقصى المسموح به (4000 حرف)',
         ]);
 
-        $msg = $sender->sendText($driver, $validated['message']);
+        try {
+            $msg = $sender->sendText($driver, $validated['message']);
+        } catch (\RuntimeException $e) {
+            return response()->json([
+                'data' => null,
+                'meta' => null,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
 
         return response()->json([
             'data' => new WhatsAppMessageResource($msg),
@@ -406,6 +499,44 @@ class WhatsAppController extends Controller
             ],
             'meta' => null,
             'message' => 'تم حفظ صيغ وقوالب الرسائل بنجاح',
+        ]);
+    }
+
+    /**
+     * Background sync: poll UltraMsg for any incoming messages across all active drivers.
+     * Keeps questionnaire bots and incoming chats alive without needing any specific modal open.
+     */
+    public function syncActiveInbound(WhatsAppProvider $provider): JsonResponse
+    {
+        $activeDrivers = Driver::query()
+            ->whereIn('status', [
+                DriverStatus::INVITED,
+                DriverStatus::QUESTIONNAIRE_IN_PROGRESS,
+            ])
+            ->orWhereHas('workOrderRecipients', function ($q) {
+                $q->where('status', 'sent');
+            })
+            ->orWhereHas('whatsappMessages', function ($q) {
+                $q->where('direction', 'out')
+                  ->where('created_at', '>=', now()->subHours(2));
+            })
+            ->orWhere('updated_at', '>=', now()->subMinutes(30))
+            ->distinct()
+            ->limit(25)
+            ->get();
+
+        $processed = 0;
+        foreach ($activeDrivers as $driver) {
+            $processed += $provider->syncChatInbound($driver->phone);
+        }
+
+        return response()->json([
+            'data' => [
+                'synced_drivers'     => $activeDrivers->count(),
+                'processed_messages' => $processed,
+            ],
+            'meta'    => null,
+            'message' => 'تمت مزامنة الرسائل الواردة بنجاح',
         ]);
     }
 }

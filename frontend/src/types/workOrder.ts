@@ -32,9 +32,11 @@ export interface WorkOrderFilter {
 export interface WorkOrder {
   id: number;
   code: string;
-  from_location: string;
-  to_location: string;
-  scheduled_at: string;
+  from_location?: string | null;
+  to_location?: string | null;
+  scheduled_at?: string | null;
+  scheduled_dispatch_at?: string | null;
+  offer_expires_in_minutes?: number | null;
   cargo_type: string | null;
   pay_amount: number | string | null;
   notes: string | null;
@@ -127,9 +129,11 @@ export interface WorkOrderQueryParams {
 }
 
 export interface CreateWorkOrderPayload {
-  from_location: string;
-  to_location: string;
-  scheduled_at: string;
+  from_location?: string;
+  to_location?: string;
+  scheduled_at?: string;
+  scheduled_dispatch_at?: string;
+  offer_expires_in_minutes?: number;
   cargo_type?: string;
   pay_amount?: number;
   notes?: string;

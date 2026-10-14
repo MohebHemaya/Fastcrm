@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Cache;
 
 beforeEach(function () {
     app()->instance(WhatsAppProvider::class, new FakeWhatsAppProvider);
+    \App\Models\Question::query()->delete();
     Cache::flush();
 });
 

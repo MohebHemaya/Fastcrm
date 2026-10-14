@@ -9,10 +9,13 @@ use App\Enums\WhatsAppMessageStatus;
 use App\Enums\WhatsAppMessageType;
 use App\Enums\WorkOrderRecipientStatus;
 use App\Enums\WorkOrderStatus;
+use App\Events\WhatsAppConversationUpdated;
+use App\Events\WhatsAppMessageReceived;
 use App\Models\Driver;
 use App\Models\Question;
 use App\Models\WhatsAppMessage;
 use App\Models\WorkOrderRecipient;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -33,9 +36,15 @@ class InboundMessageRouter
         $driver = $this->resolveDriver($inbound->from);
 
         if (! $driver) {
-            Log::info("[InboundMessageRouter] No driver found for phone: {$inbound->from}");
+            $norm = $this->phoneNormalizer->normalize($inbound->from);
+            $cleanPhone = $norm->isValid && $norm->e164 ? $norm->e164 : (str_starts_with($inbound->from, '+') ? $inbound->from : '+' . preg_replace('/[^\d]/', '', $inbound->from));
 
-            return;
+            $driver = Driver::create([
+                'name' => 'سائق جديد ' . substr($cleanPhone, -4),
+                'phone' => $cleanPhone,
+                'status' => DriverStatus::NEW,
+            ]);
+            Log::info("[InboundMessageRouter] Auto-created driver {$driver->id} for phone: {$cleanPhone}");
         }
 
         // Persist the inbound message (idempotent by provider_message_id)
@@ -115,7 +124,7 @@ class InboundMessageRouter
             default => WhatsAppMessageType::TEXT,
         };
 
-        return WhatsAppMessage::create([
+        $msg = WhatsAppMessage::create([
             'driver_id' => $driver->id,
             'direction' => WhatsAppMessageDirection::IN,
             'provider_message_id' => $inbound->providerMessageId,
@@ -130,6 +139,35 @@ class InboundMessageRouter
             'status' => WhatsAppMessageStatus::DELIVERED,
             'delivered_at' => now(),
         ]);
+
+        // Broadcast real-time events via Pusher
+        $body = $inbound->text ?? '';
+        $createdAt = $msg->created_at?->toIso8601String() ?? now()->toIso8601String();
+
+        try {
+            broadcast(new WhatsAppMessageReceived(
+                driverId: $driver->id,
+                messageId: $msg->id,
+                body: $body,
+                direction: 'in',
+                createdAt: $createdAt,
+            ));
+
+            broadcast(new WhatsAppConversationUpdated(
+                driverId: $driver->id,
+                driverName: $driver->name ?? '',
+                lastMessage: mb_substr($body, 0, 60),
+                unreadCount: WhatsAppMessage::where('driver_id', $driver->id)
+                    ->where('direction', WhatsAppMessageDirection::IN)
+                    ->whereNull('read_at')
+                    ->count(),
+                updatedAt: $createdAt,
+            ));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Inbound WhatsApp broadcast failed: ' . $e->getMessage());
+        }
+
+        return $msg;
     }
 
     /**
@@ -290,8 +328,19 @@ class InboundMessageRouter
             return;
         }
 
-        // Neither yes nor no: send throttled fallback
-        $this->handleUnknownOrFallback($driver);
+        // Neither yes nor no: send throttled guidance back to invitation choices
+        $cacheKey = "whatsapp_invite_guidance:{$driver->id}";
+        if (! Cache::has($cacheKey)) {
+            Cache::put($cacheKey, true, now()->addMinutes(30));
+            $this->messageSender->sendButtons(
+                $driver,
+                'أهلاً بك يا كابتن! لتأكيد رغبتك بالانضمام للأسطول وبدء العمل معنا، برجاء الاختيار:',
+                [
+                    ['id' => 'invite_yes', 'title' => 'نعم، مهتم'],
+                    ['id' => 'invite_no', 'title' => 'لا، شكرًا'],
+                ]
+            );
+        }
     }
 
     /**

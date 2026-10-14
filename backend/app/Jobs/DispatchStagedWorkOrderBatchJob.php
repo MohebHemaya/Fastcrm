@@ -73,9 +73,9 @@ class DispatchStagedWorkOrderBatchJob implements ShouldQueue
                     params: [
                         $driverName,
                         $order->code,
-                        $order->from_location,
-                        $order->to_location,
-                        $order->scheduled_at->format('Y-m-d H:i'),
+                        $order->from_location ?? 'غير محدد',
+                        $order->to_location ?? 'غير محدد',
+                        $order->scheduled_at?->format('Y-m-d H:i') ?? 'غير محدد',
                         $order->pay_amount ? number_format((float) $order->pay_amount, 2) : 'حسب الاتفاق',
                     ],
                     buttons: $buttons,
@@ -86,6 +86,7 @@ class DispatchStagedWorkOrderBatchJob implements ShouldQueue
                 $recipient->update([
                     'status' => WorkOrderRecipientStatus::SENT,
                     'sent_at' => now(),
+                    'expires_at' => $order->offer_expires_in_minutes ? now()->addMinutes($order->offer_expires_in_minutes) : null,
                 ]);
                 $sentInBatch++;
             } catch (\Throwable $e) {

@@ -205,3 +205,36 @@ test('can list whatsapp groups with driver count', function () {
     expect($data[0]['name'])->toBe('جروب الإسكندرية');
     expect($data[0]['drivers_count'])->toBe(1);
 });
+
+test('authenticated user can delete a driver (soft delete)', function () {
+    $driver = Driver::factory()->create([
+        'name' => 'سائق للحذف',
+        'phone' => '+201099112233',
+    ]);
+
+    $response = $this->actingAs($this->user)
+        ->deleteJson("/api/v1/drivers/{$driver->id}");
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'message' => 'تم حذف السائق بنجاح.',
+        ]);
+
+    $this->assertSoftDeleted('drivers', [
+        'id' => $driver->id,
+    ]);
+
+    $this->assertDatabaseHas('activity_logs', [
+        'action' => 'driver_deleted',
+        'subject_id' => $driver->id,
+    ]);
+});
+
+test('unauthenticated request to delete driver is rejected', function () {
+    $driver = Driver::factory()->create();
+
+    $response = $this->deleteJson("/api/v1/drivers/{$driver->id}");
+
+    $response->assertStatus(401);
+});
+

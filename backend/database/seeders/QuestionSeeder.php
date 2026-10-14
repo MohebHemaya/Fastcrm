@@ -12,8 +12,18 @@ class QuestionSeeder extends Seeder
     {
         $questions = [
             [
-                'key' => 'vehicle_type',
+                'key' => 'driver_name',
                 'sort_order' => 1,
+                'is_active' => true,
+                'is_required' => true,
+                'is_filter' => false,
+                'type' => QuestionType::TEXT,
+                'text_ar' => 'ما هو اسمك بالكامل يا كابتن؟',
+                'options' => [],
+            ],
+            [
+                'key' => 'vehicle_type',
+                'sort_order' => 2,
                 'is_active' => true,
                 'is_required' => true,
                 'is_filter' => true,
@@ -28,7 +38,7 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'key' => 'has_refrigeration',
-                'sort_order' => 2,
+                'sort_order' => 3,
                 'is_active' => true,
                 'is_required' => true,
                 'is_filter' => true,
@@ -38,7 +48,7 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'key' => 'years_experience',
-                'sort_order' => 3,
+                'sort_order' => 4,
                 'is_active' => true,
                 'is_required' => true,
                 'is_filter' => false,
@@ -48,7 +58,7 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'key' => 'daily_availability',
-                'sort_order' => 4,
+                'sort_order' => 5,
                 'is_active' => true,
                 'is_required' => true,
                 'is_filter' => true,
@@ -62,7 +72,7 @@ class QuestionSeeder extends Seeder
             ],
             [
                 'key' => 'preferred_routes',
-                'sort_order' => 5,
+                'sort_order' => 6,
                 'is_active' => true,
                 'is_required' => false,
                 'is_filter' => false,

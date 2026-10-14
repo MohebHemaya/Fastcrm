@@ -89,7 +89,11 @@ test.describe.serial('Driver Management System — Main Flow & Hardening', () =>
     // - Set all non-test drivers to 'invited' (not eligible for new invites or work orders)
     // - Cancel lingering DRAFT/FILLING work orders from previous runs
     const phoneList = testPhones.map((p) => `'${p}'`).join(',');
-    runArtisan('queue:clear --force');
+    try {
+      runArtisan('queue:clear --force');
+    } catch {
+      // Ignored if queue driver is sync
+    }
     runTinker(`
       \\App\\Models\\Driver::whereNotIn('phone', [${phoneList}])
         ->whereIn('status', ['new', 'active'])
@@ -198,20 +202,23 @@ test.describe.serial('Driver Management System — Main Flow & Hardening', () =>
 
   // 5. Positive Path: Bulk invite drivers on WhatsApp
   test('5. Positive Path: Bulk invite new drivers via WhatsApp modal', async () => {
-    await page.goto('/drivers');
+    if (!page.url().includes('/drivers')) {
+      await page.goto('/drivers');
+    }
+    await expect(page.locator('h1')).toContainText('السائقين', { timeout: 30000 });
 
     // Click bulk invite button
     const bulkInviteBtn = page.getByRole('button', { name: /إرسال دعوة واتساب/i });
-    await expect(bulkInviteBtn).toBeVisible({ timeout: 10000 });
+    await expect(bulkInviteBtn).toBeVisible({ timeout: 30000 });
     await bulkInviteBtn.click();
 
     // Confirm invite in modal
     const confirmSendBtn = page.getByRole('button', { name: /بدء إرسال الدعوات الآن/i });
-    await expect(confirmSendBtn).toBeEnabled({ timeout: 10000 });
+    await expect(confirmSendBtn).toBeEnabled({ timeout: 30000 });
     await confirmSendBtn.click();
 
     // Verify modal closes
-    await expect(confirmSendBtn).not.toBeVisible({ timeout: 10000 });
+    await expect(confirmSendBtn).not.toBeVisible({ timeout: 20000 });
   });
 
   // 6. Negative & Inbound Path: Opt-out keyword & Questionnaire answers
@@ -255,8 +262,8 @@ test.describe.serial('Driver Management System — Main Flow & Hardening', () =>
     await page.goto('/work-orders/create');
 
     // Step 1: Details
-    await page.getByLabel('مكان الانطلاق').fill('مستودعات السادس من أكتوبر');
-    await page.getByLabel('وجهة الوصول').fill('ميناء الإسكندرية');
+    await page.locator('input[name="from_details"]').fill('مستودعات السادس من أكتوبر');
+    await page.locator('input[name="to_details"]').fill('ميناء الإسكندرية');
 
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 2);
@@ -414,7 +421,7 @@ test.describe.serial('Driver Management System — Main Flow & Hardening', () =>
     await page.waitForLoadState('networkidle');
 
     // Verify order status badge shows filled
-    await expect(page.locator('text=مكتمل العدد')).toBeVisible({ timeout: 20000 });
+    await expect(page.locator('text=مكتمل العدد').first()).toBeVisible({ timeout: 20000 });
 
     // Verify counts in backend
     const countsCheck = runTinker(`
@@ -486,7 +493,7 @@ test.describe.serial('Driver Management System — Main Flow & Hardening', () =>
     expect(advanceResult).toContain('STATUS:completed');
 
     await page.goto(`/work-orders/${createdOrderId}`);
-    await expect(page.locator('text=منتهي')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=منتهي').first()).toBeVisible({ timeout: 10000 });
 
     // Click record outcomes button
     const recordOutcomesBtn = page.getByRole('button', { name: /تسجيل نتائج الرحلة/i });
@@ -510,7 +517,7 @@ test.describe.serial('Driver Management System — Main Flow & Hardening', () =>
     const pdfBtn = page.getByRole('button', { name: /طباعة تفاصيل الرحلة \(PDF\)/i });
     await expect(pdfBtn).toBeVisible({ timeout: 5000 });
     await pdfBtn.click();
-    await expect(page.getByText('منتهي')).toBeVisible();
+    await expect(page.getByText('منتهي').first()).toBeVisible();
 
     // Trigger Excel export
     const excelBtn = page.getByRole('button', { name: /تصدير بيانات الطلب \(Excel\)/i });

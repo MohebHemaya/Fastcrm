@@ -65,6 +65,9 @@ class ReconcileWorkOrderNotificationsCommand extends Command
 
             try {
                 if ($recipient->status === WorkOrderRecipientStatus::CONFIRMED) {
+                    $scheduledFormatted = $order->scheduled_at ? $order->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
+                    $payFormatted = $order->pay_amount ? "{$order->pay_amount} ج.م" : 'حسب الاتفاق';
+
                     $messageSender->sendTemplate(
                         driver: $driver,
                         templateName: 'order_confirmation',
@@ -73,11 +76,11 @@ class ReconcileWorkOrderNotificationsCommand extends Command
                             $driverName,
                             $order->code,
                             $order->from_location,
-                            $order->scheduled_at->format('Y-m-d H:i'),
+                            $scheduledFormatted,
                             'مشرف العمليات',
                         ],
                         orderId: $order->id,
-                        body: "مبروك يا {$driverName}! تم تأكيد تكليفك بالرحلة رقم {$order->code}.\n- خط السير: من {$order->from_location} إلى {$order->to_location}\n- الموعد: {$order->scheduled_at->format('Y-m-d H:i')}\n- المقابل: {$order->pay_amount} ج.م\nنتمنى لك رحلة موفقة!"
+                        body: "مبروك يا {$driverName}! تم تأكيد تكليفك بالرحلة رقم {$order->code}.\n- خط السير: من {$order->from_location} إلى {$order->to_location}\n- الموعد: {$scheduledFormatted}\n- المقابل: {$payFormatted}\nنتمنى لك رحلة موفقة!"
                     );
                     $reconciledCount++;
                 } elseif ($recipient->status === WorkOrderRecipientStatus::BACKUP) {

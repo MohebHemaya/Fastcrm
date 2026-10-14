@@ -28,7 +28,9 @@ import {
   PencilSquareIcon,
   ExclamationCircleIcon,
   SparklesIcon,
+  TrashIcon,
 } from '@/components/icons';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { ar } from '@/i18n/ar';
 import { useUiStore } from '@/lib/stores/useUiStore';
 import driverService from '@/services/driverService';
@@ -44,6 +46,7 @@ interface DriverDetailDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onDriverUpdated?: (driver: Driver) => void;
+  onDriverDeleted?: (driverId: number) => void;
 }
 
 export const DriverDetailDrawer: React.FC<DriverDetailDrawerProps> = ({
@@ -51,11 +54,14 @@ export const DriverDetailDrawer: React.FC<DriverDetailDrawerProps> = ({
   isOpen,
   onClose,
   onDriverUpdated,
+  onDriverDeleted,
 }) => {
   const isMobile = useIsMobile();
   const [driver, setDriver] = useState<Driver | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSavingNotes, setIsSavingNotes] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [name, setName] = useState('');
   const [notes, setNotes] = useState('');
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
@@ -132,6 +138,30 @@ export const DriverDetailDrawer: React.FC<DriverDetailDrawerProps> = ({
       });
     } finally {
       setIsRequestingUpdate(false);
+    }
+  };
+
+  const handleDeleteDriver = async () => {
+    if (!driver) return;
+    setIsDeleting(true);
+    try {
+      await driverService.deleteDriver(driver.id);
+      addToast({
+        title: ar.drivers.deleteDriver,
+        message: ar.drivers.driverDeleted,
+        type: 'success',
+      });
+      setIsDeleteConfirmOpen(false);
+      onClose();
+      onDriverDeleted?.(driver.id);
+    } catch {
+      addToast({
+        title: ar.errors.generalError,
+        message: ar.errors.generalError,
+        type: 'error',
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -560,8 +590,18 @@ export const DriverDetailDrawer: React.FC<DriverDetailDrawerProps> = ({
                 ) : null}
               </ModalBody>
 
-              <ModalFooter className="safe-bottom">
-                <Button variant="flat" color="default" className="w-full sm:w-auto min-h-[44px]" onPress={onClose}>
+              <ModalFooter className="safe-bottom flex justify-between items-center w-full">
+                {driver ? (
+                  <Button
+                    variant="light"
+                    color="danger"
+                    startContent={<TrashIcon className="w-4 h-4" />}
+                    onPress={() => setIsDeleteConfirmOpen(true)}
+                  >
+                    {ar.drivers.deleteDriver}
+                  </Button>
+                ) : <div />}
+                <Button variant="flat" color="default" className="min-h-[44px]" onPress={onClose}>
                   {ar.common.close}
                 </Button>
               </ModalFooter>
@@ -584,6 +624,21 @@ export const DriverDetailDrawer: React.FC<DriverDetailDrawerProps> = ({
         onClose={() => setSelectedAnswerToEdit(null)}
         answer={selectedAnswerToEdit}
         onSave={handleSaveAnswerEdit}
+      />
+
+      {/* Delete Driver Confirmation */}
+      <ConfirmDialog
+        isOpen={isDeleteConfirmOpen}
+        onClose={() => !isDeleting && setIsDeleteConfirmOpen(false)}
+        onConfirm={handleDeleteDriver}
+        title={ar.drivers.deleteConfirmTitle}
+        message={ar.drivers.deleteConfirmMessage(
+          driver?.name || driver?.phone || ar.drivers.unnamed
+        )}
+        confirmText={ar.common.delete}
+        cancelText={ar.common.cancel}
+        variant="danger"
+        isLoading={isDeleting}
       />
     </>
   );

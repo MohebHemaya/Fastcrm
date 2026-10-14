@@ -48,7 +48,7 @@ class WorkOrderSummarySheet extends DefaultValueBinder implements FromArray, Sho
             ['الحالة', $wo->status->label()],
             ['خط السير (من)', $wo->from_location],
             ['خط السير (إلى)', $wo->to_location],
-            ['موعد التحرك', $wo->scheduled_at->format('Y-m-d H:i')],
+            ['موعد التحرك', $wo->scheduled_at ? $wo->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق'],
             ['نوع الحمولة', $wo->cargo_type ?: 'غير محدد'],
             ['المقابل المادي', $wo->pay_amount ? number_format((float) $wo->pay_amount, 2).' ج.م' : 'حسب الاتفاق'],
             ['الرحلات المطلوبة', $wo->trips_needed],

@@ -24,6 +24,7 @@ import {
   ClockIcon,
   DocumentTextIcon,
   DocumentArrowDownIcon,
+  ChatBubbleLeftRightIcon,
 } from '@/components/icons';
 import PageHeader from '@/components/ui/PageHeader';
 import PageContainer from '@/components/layout/PageContainer';
@@ -49,6 +50,9 @@ import ChangeOrderStatusModal from '@/features/workOrders/components/ChangeOrder
 import RecordOutcomesModal from '@/features/workOrders/components/RecordOutcomesModal';
 import OrderTimelineTab from '@/features/workOrders/components/OrderTimelineTab';
 import ExportModal from '@/components/exports/ExportModal';
+import OrderStatusStepper from '@/features/workOrders/components/OrderStatusStepper';
+import ShareTripSummaryModal from '@/features/workOrders/components/ShareTripSummaryModal';
+import { useWorkOrderUpdates, playSuccessChime } from '@/hooks/useWorkOrderUpdates';
 import { useUiStore } from '@/lib/stores/useUiStore';
 
 export const WorkOrderDetailPage: React.FC = () => {
@@ -110,6 +114,7 @@ export const WorkOrderDetailPage: React.FC = () => {
   const [activeExportId, setActiveExportId] = useState<number | null>(null);
   const [isExportingExcel, setIsExportingExcel] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const handleDownloadPdf = async () => {
     if (!order) return;
@@ -238,6 +243,43 @@ export const WorkOrderDetailPage: React.FC = () => {
 
     return () => clearInterval(interval);
   }, [fetchOrderData, fetchRecipients, fetchModalData]);
+
+  // Real-time updates via Pusher
+  useWorkOrderUpdates({
+    workOrderId: orderId,
+    onOrderUpdated: (payload) => {
+      // Audio chime and celebration toast if order is filled
+      if (payload.is_filled || payload.status === 'filled') {
+        playSuccessChime();
+        addToast({
+          message: ar.workOrders.orderFilledAlert,
+          type: 'success',
+        });
+      } else if (payload.message) {
+        addToast({
+          message: payload.message,
+          type: 'info',
+        });
+      }
+
+      // Optimistically update counts and status
+      setOrder((prev) =>
+        prev
+          ? {
+              ...prev,
+              status: payload.status as any,
+              confirmed_count: payload.confirmed_count,
+              backup_count: payload.backup_count,
+            }
+          : prev
+      );
+
+      // Refresh data dynamically without page reload
+      fetchOrderData(false);
+      fetchRecipients(false);
+      fetchModalData();
+    },
+  });
 
   // Handle Send Draft Order
   const handleSendOrder = async () => {
@@ -647,8 +689,8 @@ export const WorkOrderDetailPage: React.FC = () => {
     <PageContainer className="space-y-6">
       {/* Page Header */}
       <PageHeader
-        title={`${order.code} — ${order.from_location} ← ${order.to_location}`}
-        description={`تاريخ الموعد: ${new Date(order.scheduled_at).toLocaleString('ar-EG')}`}
+        title={`${order.code} — ${order.from_location || 'غير محدد'} ← ${order.to_location || 'غير محدد'}`}
+        description={`تاريخ الموعد: ${order.scheduled_at ? new Date(order.scheduled_at).toLocaleString('ar-EG') : 'غير محدد'}`}
         breadcrumbs={[
           { label: ar.nav.dashboard, href: '/' },
           { label: ar.workOrders.title, href: '/work-orders' },
@@ -709,6 +751,16 @@ export const WorkOrderDetailPage: React.FC = () => {
             )}
 
             <Button
+              color="success"
+              variant="flat"
+              className="min-h-[44px] text-success-700 dark:text-success-400 font-semibold"
+              startContent={<ChatBubbleLeftRightIcon className="w-4 h-4 text-success" />}
+              onPress={() => setIsShareModalOpen(true)}
+            >
+              {ar.workOrders.shareWhatsApp}
+            </Button>
+
+            <Button
               variant="flat"
               className="min-h-[44px]"
               startContent={<DocumentDuplicateIcon className="w-4 h-4" />}
@@ -756,6 +808,9 @@ export const WorkOrderDetailPage: React.FC = () => {
           </div>
         }
       />
+
+      {/* Order Status Stepper */}
+      <OrderStatusStepper status={order.status} className="my-1" />
 
       {/* Open Slots Warning Banner */}
       {hasOpenSlots && (
@@ -1025,6 +1080,14 @@ export const WorkOrderDetailPage: React.FC = () => {
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         activeExportId={activeExportId}
+      />
+
+      {/* Share Trip Summary Modal */}
+      <ShareTripSummaryModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        order={order}
+        confirmedRecipients={confirmedRecipients}
       />
     </PageContainer>
   );

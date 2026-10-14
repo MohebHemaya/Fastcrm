@@ -36,8 +36,7 @@ export const handlers = [
   http.get('/api/v1/whatsapp/provider-status', () => {
     return HttpResponse.json({
       data: {
-        provider: 'fake',
-        is_fake: true,
+        provider: 'ultramsg',
         send_rate_per_minute: 30,
         invite_batch_size: 50,
         free_form_window: 24,
@@ -45,6 +44,17 @@ export const handlers = [
       },
       meta: null,
       message: null,
+    });
+  }),
+
+  http.post('/api/v1/whatsapp/sync-active-inbound', () => {
+    return HttpResponse.json({
+      data: {
+        synced_drivers: 1,
+        processed_messages: 0,
+      },
+      meta: null,
+      message: 'تمت مزامنة الرسائل الواردة بنجاح',
     });
   }),
 
@@ -420,6 +430,15 @@ export const handlers = [
       },
       meta: null,
       message: 'تم تغيير حالة السائق بنجاح.',
+    });
+  }),
+
+  // Phase 2: Delete Driver
+  http.delete('/api/v1/drivers/:id', () => {
+    return HttpResponse.json({
+      data: null,
+      meta: null,
+      message: 'تم حذف السائق بنجاح.',
     });
   }),
 
@@ -947,7 +966,7 @@ export const handlers = [
           age_minutes: 3.5,
         },
         whatsapp: {
-          provider: 'fake',
+          provider: 'ultramsg',
           graph_version: 'v25.0',
           failed_messages_24h: 0,
         },

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTOs\WhatsApp\InboundMessage;
 use App\Enums\DriverStatus;
 use App\Enums\QuestionType;
+use App\Events\QuestionnaireProgressUpdated;
 use App\Models\Driver;
 use App\Models\DriverAnswer;
 use App\Models\Question;
@@ -427,7 +428,29 @@ class QuestionnaireService
                 'answered_at' => now(),
             ]);
 
-            $driver->update(['questionnaire_retries' => 0]);
+            $updateData = ['questionnaire_retries' => 0];
+
+            if ($question->key === 'driver_name' && ! empty($valueText) && ! $isSkipped) {
+                $updateData['name'] = trim($valueText);
+            }
+
+            $driver->update($updateData);
+
+            try {
+                $answeredCount = DriverAnswer::where('driver_id', $driver->id)->where('is_current', true)->count();
+                $totalQuestions = Question::active()->count();
+
+                broadcast(new QuestionnaireProgressUpdated(
+                    driverId: $driver->id,
+                    questionText: $version?->text_ar ?? $question->key,
+                    answer: $valueText ?? (string) ($valueNumber ?? ''),
+                    answeredCount: $answeredCount,
+                    totalQuestions: $totalQuestions,
+                    updatedAt: now()->toISOString(),
+                ));
+            } catch (\Throwable $e) {
+                Log::warning("[QuestionnaireService] Broadcast failed: {$e->getMessage()}");
+            }
 
             return $answer;
         });

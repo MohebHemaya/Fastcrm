@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use App\Services\Audit;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -228,6 +229,12 @@ class AdminHealthController extends ApiController
 
         usort($backupFiles, fn ($a, $b) => $b->getMTime() <=> $a->getMTime());
         $latest = reset($backupFiles);
+
+        Audit::log('database_backup_downloaded', null, [
+            'filename' => $latest->getFilename(),
+            'size' => $latest->getSize(),
+            'user_id' => auth()->id(),
+        ]);
 
         return response()->download($latest->getPathname(), $latest->getFilename(), [
             'Content-Type' => 'application/octet-stream',

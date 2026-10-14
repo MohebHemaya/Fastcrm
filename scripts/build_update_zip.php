@@ -1,34 +1,69 @@
 <?php
-$zip = new ZipArchive();
-$zipPath = __DIR__ . '/../release/update.zip';
+ini_set('memory_limit', '512M');
+set_time_limit(300);
+
+echo "=== BUILDING UNIVERSAL UPDATE.ZIP ===\n\n";
+
+$base = dirname(__DIR__);
+$releaseDir = $base . '/release';
+$zipPath = $releaseDir . '/update.zip';
 
 if (file_exists($zipPath)) {
     unlink($zipPath);
 }
 
-if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-    $base = dirname(__DIR__);
-    $files = [
-        'backend/app/Http/Controllers/Api/ImportController.php' => $base . '/release/backend/app/Http/Controllers/Api/ImportController.php',
-        'backend/app/Http/Controllers/Api/SidebarBadgeController.php' => $base . '/release/backend/app/Http/Controllers/Api/SidebarBadgeController.php',
-        'backend/app/Http/Controllers/Api/AdminHealthController.php' => $base . '/release/backend/app/Http/Controllers/Api/AdminHealthController.php',
-        'backend/routes/api.php' => $base . '/release/backend/routes/api.php',
-        'public_html/index.html' => $base . '/release/public_html/index.html',
-        'public_html/updater.php' => $base . '/release/public_html/updater.php',
-        'public_html/assets/index-CZp1yKvy.js' => $base . '/release/public_html/assets/index-CZp1yKvy.js',
-        'public_html/assets/index-DK0nhene.css' => $base . '/release/public_html/assets/index-DK0nhene.css',
-        'public_html/assets/dist-DKjr5tBM.js' => $base . '/release/public_html/assets/dist-DKjr5tBM.js',
-    ];
-
-    foreach ($files as $entryName => $realPath) {
-        if (!file_exists($realPath)) {
-            die("ERROR: Missing file $realPath\n");
-        }
-        $zip->addFile($realPath, $entryName);
-    }
-
-    $zip->close();
-    echo "SUCCESS: Recreated update.zip with POSIX forward slashes! Total files: " . count($files) . "\n";
-} else {
+$zip = new ZipArchive();
+if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
     die("ERROR: Could not open $zipPath for writing.\n");
 }
+
+function addFolderToZip($zip, $sourceDir, $prefix = '', $excludePatterns = []) {
+    $sourceDir = rtrim(str_replace('\\', '/', realpath($sourceDir)), '/');
+    $files = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($sourceDir, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::SELF_FIRST
+    );
+    $count = 0;
+    foreach ($files as $file) {
+        $filePath = str_replace('\\', '/', $file->getRealPath());
+        $relPath = substr($filePath, strlen($sourceDir) + 1);
+
+        $skip = false;
+        foreach ($excludePatterns as $pattern) {
+            if (preg_match($pattern, $relPath)) {
+                $skip = true;
+                break;
+            }
+        }
+        if ($skip) continue;
+
+        $entryName = $prefix !== '' ? rtrim($prefix, '/') . '/' . $relPath : $relPath;
+        if ($file->isDir()) {
+            $zip->addEmptyDir($entryName);
+        } elseif ($file->isFile()) {
+            $zip->addFile($filePath, $entryName);
+            $count++;
+        }
+    }
+    return $count;
+}
+
+// 1. Add backend (excluding vendor, logs, caches, .sql.enc)
+echo "1. Adding backend application files...\n";
+$bCount = addFolderToZip($zip, $releaseDir . '/backend', 'backend', [
+    '/^vendor\//',
+    '/\.log$/',
+    '/\.sql\.enc$/',
+    '/bootstrap\/cache\/.*\.php$/',
+]);
+
+// 2. Add public_html (excluding zips)
+echo "2. Adding public_html assets...\n";
+$pCount = addFolderToZip($zip, $releaseDir . '/public_html', 'public_html', [
+    '/\.zip$/',
+    '/\.tar$/',
+]);
+
+$zip->close();
+$sizeMb = round(filesize($zipPath) / 1024 / 1024, 2);
+echo "\nSUCCESS: Created universal update.zip ($sizeMb MB, " . ($bCount + $pCount) . " files)!\n";

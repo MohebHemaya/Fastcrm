@@ -141,10 +141,17 @@ class WhatsAppTemplateService
         // Standardize Arabic and English tags
         $mappedReplacements = [];
         foreach ($replacements as $tag => $val) {
-            $cleanTag = trim($tag, '{} ');
+            $cleanTag = trim((string) $tag, '{} ');
             $valStr = (string) $val;
             $mappedReplacements['{{' . $cleanTag . '}}'] = $valStr;
             $mappedReplacements['{{ ' . $cleanTag . ' }}'] = $valStr;
+
+            if ($cleanTag === '0' || $cleanTag === '1') {
+                $mappedReplacements['{{اسم_السائق}}'] = $valStr;
+                $mappedReplacements['{{ اسم_السائق }}'] = $valStr;
+                $mappedReplacements['{{driver_name}}'] = $valStr;
+                $mappedReplacements['{{ driver_name }}'] = $valStr;
+            }
         }
 
         return str_replace(array_keys($mappedReplacements), array_values($mappedReplacements), $text);

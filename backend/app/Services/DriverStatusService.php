@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\DriverStatus;
+use App\Events\DriverStatusUpdated;
 use App\Exceptions\InvalidDriverStatusTransitionException;
 use App\Models\Driver;
 use App\Models\DriverStatusHistory;
@@ -147,6 +148,19 @@ class DriverStatusService
             'reason' => $reason,
             'user_id' => $user?->id,
         ]);
+
+        // Broadcast driver status change via Pusher for real-time table updates (safely caught)
+        try {
+            broadcast(new DriverStatusUpdated(
+                driverId: $driver->id,
+                driverName: $driver->name ?? '',
+                oldStatus: $from->value,
+                newStatus: $to->value,
+                updatedAt: now()->toIso8601String(),
+            ));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('DriverStatusUpdated broadcast failed: ' . $e->getMessage());
+        }
 
         return $driver;
     }

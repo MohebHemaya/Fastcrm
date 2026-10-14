@@ -16,11 +16,13 @@ import {
   PaperAirplaneIcon,
   DocumentTextIcon,
   FunnelIcon,
+  TrashIcon,
 } from '@/components/icons';
 import PageContainer from '@/components/layout/PageContainer';
 import { SearchInput } from '@/components/form';
 import PageHeader from '@/components/ui/PageHeader';
 import DataTable, { type ColumnDef } from '@/components/ui/DataTable';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { ar } from '@/i18n/ar';
 import driverService from '@/services/driverService';
 import exportService from '@/services/exportService';
@@ -32,6 +34,7 @@ import BulkInviteModal from '@/features/whatsapp/components/BulkInviteModal';
 import DriverChatModal from '@/features/whatsapp/components/DriverChatModal';
 import ExportModal from '@/components/exports/ExportModal';
 import { useUiStore } from '@/lib/stores/useUiStore';
+import { useDriverUpdates } from '@/hooks/useDriverUpdates';
 
 export const DriversPage: React.FC = () => {
   const navigate = useNavigate();
@@ -66,7 +69,34 @@ export const DriversPage: React.FC = () => {
   const [activeExportId, setActiveExportId] = useState<number | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [downloadingPdfId, setDownloadingPdfId] = useState<number | null>(null);
+  const [driverToDelete, setDriverToDelete] = useState<Driver | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const addToast = useUiStore((state) => state.addToast);
+
+  const handleDeleteDriver = async () => {
+    if (!driverToDelete) return;
+    setIsDeleting(true);
+    try {
+      await driverService.deleteDriver(driverToDelete.id);
+      addToast({
+        title: ar.drivers.deleteDriver,
+        message: ar.drivers.driverDeleted,
+        type: 'success',
+      });
+      const deletedId = driverToDelete.id;
+      setDriverToDelete(null);
+      setDrivers((prev) => prev.filter((d) => d.id !== deletedId));
+      setTotal((prev) => Math.max(0, prev - 1));
+    } catch {
+      addToast({
+        title: ar.errors.generalError,
+        message: ar.errors.generalError,
+        type: 'error',
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const handleExportDrivers = async () => {
     setIsExporting(true);
@@ -137,6 +167,26 @@ export const DriversPage: React.FC = () => {
     };
     loadGroups();
   }, []);
+
+  // Real-time Pusher updates for driver statuses
+  useDriverUpdates({
+    onStatusUpdated: (payload) => {
+      setDrivers((prev) =>
+        prev.map((d) =>
+          d.id === payload.driver_id
+            ? {
+                ...d,
+                status: {
+                  value: payload.new_status as DriverStatusValue,
+                  label: (ar.statuses as Record<string, string>)[payload.new_status] || payload.new_status,
+                },
+                name: payload.driver_name || d.name,
+              }
+            : d
+        )
+      );
+    },
+  });
 
   // Fetch drivers list
   const fetchDrivers = useCallback(async () => {
@@ -371,6 +421,18 @@ export const DriversPage: React.FC = () => {
           >
             <EyeIcon className="h-4 w-4" />
           </Button>
+          <Button
+            size="sm"
+            variant="light"
+            color="danger"
+            isIconOnly
+            className="min-w-[40px] min-h-[40px]"
+            onPress={() => setDriverToDelete(driver)}
+            title={ar.drivers.deleteDriver}
+            aria-label={ar.drivers.deleteDriver}
+          >
+            <TrashIcon className="h-4 w-4" />
+          </Button>
         </div>
       ),
     },
@@ -556,6 +618,12 @@ export const DriversPage: React.FC = () => {
           setSelectedDriverId(null);
         }}
         onDriverUpdated={handleDriverUpdated}
+        onDriverDeleted={(deletedId) => {
+          setIsDetailDrawerOpen(false);
+          setSelectedDriverId(null);
+          setDrivers((prev) => prev.filter((d) => d.id !== deletedId));
+          setTotal((prev) => Math.max(0, prev - 1));
+        }}
       />
 
       {/* WhatsApp Bulk Invite Modal */}
@@ -581,6 +649,21 @@ export const DriversPage: React.FC = () => {
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}
         activeExportId={activeExportId}
+      />
+
+      {/* Delete Driver Confirmation Modal */}
+      <ConfirmDialog
+        isOpen={Boolean(driverToDelete)}
+        onClose={() => !isDeleting && setDriverToDelete(null)}
+        onConfirm={handleDeleteDriver}
+        title={ar.drivers.deleteConfirmTitle}
+        message={ar.drivers.deleteConfirmMessage(
+          driverToDelete?.name || driverToDelete?.phone || ar.drivers.unnamed
+        )}
+        confirmText={ar.common.delete}
+        cancelText={ar.common.cancel}
+        variant="danger"
+        isLoading={isDeleting}
       />
     </PageContainer>
   );

@@ -111,7 +111,9 @@ class SendWhatsAppMessageJob implements ShouldQueue
                 $driver->phone,
                 $payload['templateName'] ?? $msg->template_name,
                 $payload['lang'] ?? 'ar',
-                $payload['params'] ?? [],
+                array_merge($payload['params'] ?? [], [
+                    '_rendered_body' => $msg->body ?? ($payload['body'] ?? ''),
+                ]),
                 $payload['buttons'] ?? null,
             ),
             WhatsAppMessageType::BUTTON => $provider->sendButtons(

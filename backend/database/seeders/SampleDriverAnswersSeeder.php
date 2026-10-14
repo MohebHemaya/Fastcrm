@@ -22,6 +22,21 @@ class SampleDriverAnswersSeeder extends Seeder
         $availabilities = ['morning', 'evening', 'any'];
 
         foreach ($drivers as $idx => $driver) {
+            // 0. driver_name
+            if (isset($questions['driver_name'])) {
+                $q = $questions['driver_name'];
+                DriverAnswer::updateOrCreate(
+                    ['driver_id' => $driver->id, 'question_id' => $q->id],
+                    [
+                        'question_version_id' => $q->current_version_id,
+                        'value_text' => $driver->name ?: 'كابتن ' . ($idx + 1),
+                        'is_current' => true,
+                        'is_skipped' => false,
+                        'answered_at' => now(),
+                    ]
+                );
+            }
+
             // 1. vehicle_type
             if (isset($questions['vehicle_type'])) {
                 $q = $questions['vehicle_type'];

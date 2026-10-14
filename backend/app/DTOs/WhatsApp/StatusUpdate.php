@@ -11,5 +11,6 @@ final readonly class StatusUpdate
         public string $providerMessageId,
         public string $status,            // sent|delivered|read|failed
         public ?string $errorCode = null, // non-null on failed
+        public ?string $altProviderMessageId = null,
     ) {}
 }

@@ -11,7 +11,8 @@ vi.mock('@/services/whatsappService', () => ({
     estimateInvites: vi.fn(),
     inviteDrivers: vi.fn(),
     getDriverMessages: vi.fn(),
-    simulateInbound: vi.fn(),
+    getNewMessages: vi.fn().mockResolvedValue({ data: [], meta: { statuses: [] } }),
+    sendDirectMessage: vi.fn(),
     retryMessage: vi.fn(),
   },
 }));
@@ -66,7 +67,7 @@ describe('WhatsApp Modals', () => {
   });
 
   describe('DriverChatModal', () => {
-    it('loads chat messages and sends simulation event', async () => {
+    it('loads chat messages and sends direct message to driver', async () => {
       const mockChatMessages = [
         {
           id: 10,
@@ -94,10 +95,10 @@ describe('WhatsApp Modals', () => {
         message: null,
       });
 
-      vi.mocked(whatsappService.simulateInbound).mockResolvedValueOnce({
-        data: { handled: true },
+      vi.mocked(whatsappService.sendDirectMessage).mockResolvedValueOnce({
+        data: { id: 11, status: 'queued' } as any,
         meta: null,
-        message: 'simulated',
+        message: 'sent',
       });
 
       render(
@@ -116,16 +117,15 @@ describe('WhatsApp Modals', () => {
         expect(screen.getByText('دعوة انضمام')).toBeInTheDocument();
       });
 
-      // Click "نعم، مهتم" simulation button
-      const simButton = screen.getByText(ar.whatsapp.simulateYes);
-      fireEvent.click(simButton);
+      // Type in direct WhatsApp message input
+      const input = screen.getByPlaceholderText('اكتب ردك للسائق هنا عبر واتساب...');
+      fireEvent.change(input, { target: { value: 'مرحباً كابتن طارق' } });
+
+      const sendButton = screen.getByRole('button', { name: 'إرسال' });
+      fireEvent.click(sendButton);
 
       await waitFor(() => {
-        expect(whatsappService.simulateInbound).toHaveBeenCalledWith(
-          '+201011223344',
-          'نعم، مهتم',
-          'invite_yes'
-        );
+        expect(whatsappService.sendDirectMessage).toHaveBeenCalledWith(5, 'مرحباً كابتن طارق');
       });
     });
   });

@@ -111,7 +111,11 @@ export const workOrderService = {
    * Preview matching drivers count and sample list for given filters.
    */
   async previewMatch(payload: MatchPreviewPayload): Promise<SingleResponse<MatchPreviewResponse>> {
-    const res = await api.post<SingleResponse<MatchPreviewResponse>>('/work-orders/match-preview', payload);
+    const res = await api.post<SingleResponse<MatchPreviewResponse>>(
+      '/work-orders/match-preview',
+      payload,
+      { skipAuthRedirect: true } as any
+    );
     return res.data;
   },
 

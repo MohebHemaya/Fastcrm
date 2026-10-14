@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Enums\DriverStatus;
 use App\Enums\ImportRowClassification;
 use App\Enums\ImportStatus;
+use App\Events\ImportProgressUpdated;
 use App\Models\Driver;
 use App\Models\Import;
 use App\Models\ImportRow;
@@ -42,11 +43,26 @@ class CommitImportJob implements ShouldQueue
             'error' => null,
         ]);
 
+        $totalRows = ImportRow::where('import_id', $this->import->id)
+            ->where('classification', '!=', ImportRowClassification::INVALID->value)
+            ->count();
+        $processed = 0;
+
         try {
-            DB::transaction(function () {
+            broadcast(new ImportProgressUpdated(
+                jobId: (string) $this->import->id,
+                processed: 0,
+                total: $totalRows,
+                completed: false,
+                status: 'processing'
+            ));
+        } catch (Throwable) {}
+
+        try {
+            DB::transaction(function () use ($totalRows, &$processed) {
                 ImportRow::where('import_id', $this->import->id)
                     ->where('classification', '!=', ImportRowClassification::INVALID->value)
-                    ->chunkById(500, function ($rows) {
+                    ->chunkById(500, function ($rows) use ($totalRows, &$processed) {
                         // 1. Resolve WhatsApp groups in chunk
                         $groupNames = $rows->pluck('group_name')->filter()->unique()->values()->all();
                         $groupMap = [];
@@ -100,6 +116,8 @@ class CommitImportJob implements ShouldQueue
                         if (! empty($pivotInserts)) {
                             DB::table('driver_group')->insertOrIgnore($pivotInserts);
                         }
+
+                        $processed += $rows->count();
                     });
 
                 $this->import->update([
@@ -111,11 +129,32 @@ class CommitImportJob implements ShouldQueue
                     'user_id' => $this->user?->id,
                 ]);
             });
+
+            try {
+                broadcast(new ImportProgressUpdated(
+                    jobId: (string) $this->import->id,
+                    processed: $totalRows,
+                    total: $totalRows,
+                    completed: true,
+                    status: 'completed'
+                ));
+            } catch (Throwable) {}
         } catch (Throwable $e) {
             $this->import->update([
                 'status' => ImportStatus::FAILED,
                 'error' => 'حدث خطأ أثناء اعتماد الاستيراد: '.$e->getMessage(),
             ]);
+
+            try {
+                broadcast(new ImportProgressUpdated(
+                    jobId: (string) $this->import->id,
+                    processed: $processed,
+                    total: $totalRows,
+                    completed: true,
+                    status: 'failed',
+                    error: $e->getMessage()
+                ));
+            } catch (Throwable) {}
         }
     }
 }

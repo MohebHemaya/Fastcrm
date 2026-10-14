@@ -31,6 +31,14 @@ class WorkOrderController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $request->validate([
+            'status' => ['nullable', 'string', 'max:50'],
+            'search' => ['nullable', 'string', 'max:255'],
+            'date_from' => ['nullable', 'date'],
+            'date_to' => ['nullable', 'date'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
         $query = WorkOrder::query()
             ->with(['creator', 'filters.question.currentVersion'])
             ->latest('id');
@@ -78,9 +86,11 @@ class WorkOrderController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'from_location' => ['required', 'string', 'max:255'],
-            'to_location' => ['required', 'string', 'max:255'],
-            'scheduled_at' => ['required', 'date'],
+            'from_location' => ['nullable', 'string', 'max:255'],
+            'to_location' => ['nullable', 'string', 'max:255'],
+            'scheduled_at' => ['nullable', 'date'],
+            'scheduled_dispatch_at' => ['nullable', 'date'],
+            'offer_expires_in_minutes' => ['nullable', 'integer', 'min:1'],
             'cargo_type' => ['nullable', 'string', 'max:255'],
             'pay_amount' => ['nullable', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string', 'max:2000'],
@@ -102,9 +112,6 @@ class WorkOrderController extends Controller
             'filters.*.operator' => ['required_with:filters', 'string', Rule::in(['in', 'eq', 'gte', 'lte'])],
             'filters.*.value' => ['required_with:filters'],
         ], [
-            'from_location.required' => 'حقل مكان الانطلاق مطلوب.',
-            'to_location.required' => 'حقل وجهة الوصول مطلوب.',
-            'scheduled_at.required' => 'تاريخ وموعد الرحلة مطلوب.',
             'trips_needed.required' => 'عدد الرحلات الأساسية المطلوبة إلزامي.',
             'trips_needed.min' => 'يجب أن يكون عدد الرحلات المطلوبة 1 على الأقل.',
             'filters.*.question_id.exists' => 'أحد الأسئلة المحددة في الفلاتر غير صالح أو غير متاح كفلتر.',
@@ -156,9 +163,11 @@ class WorkOrderController extends Controller
     public function update(Request $request, WorkOrder $workOrder): JsonResponse
     {
         $validated = $request->validate([
-            'from_location' => ['sometimes', 'required', 'string', 'max:255'],
-            'to_location' => ['sometimes', 'required', 'string', 'max:255'],
-            'scheduled_at' => ['sometimes', 'required', 'date'],
+            'from_location' => ['nullable', 'string', 'max:255'],
+            'to_location' => ['nullable', 'string', 'max:255'],
+            'scheduled_at' => ['nullable', 'date'],
+            'scheduled_dispatch_at' => ['nullable', 'date'],
+            'offer_expires_in_minutes' => ['nullable', 'integer', 'min:1'],
             'cargo_type' => ['nullable', 'string', 'max:255'],
             'pay_amount' => ['nullable', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string', 'max:2000'],
@@ -293,6 +302,8 @@ class WorkOrderController extends Controller
         $driverName = $driver->name ?: 'كابتن';
         $payFormatted = $workOrder->pay_amount ? number_format((float) $workOrder->pay_amount, 2).' ج.م' : 'حسب الاتفاق';
 
+        $scheduledFormatted = $workOrder->scheduled_at ? $workOrder->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
+
         $this->messageSender->sendTemplate(
             driver: $driver,
             templateName: 'order_offer',
@@ -302,12 +313,12 @@ class WorkOrderController extends Controller
                 $workOrder->code,
                 $workOrder->from_location,
                 $workOrder->to_location,
-                $workOrder->scheduled_at->format('Y-m-d H:i'),
+                $scheduledFormatted,
                 $payFormatted,
             ],
             buttons: $buttons,
             orderId: $workOrder->id,
-            body: "فرصة رحلة جديدة 🚗\nمرحبًا يا {$driverName}، تتوفر رحلة جديدة مطابقة لبياناتك:\n- رقم الطلب: {$workOrder->code}\n- خط السير: من {$workOrder->from_location} إلى {$workOrder->to_location}\n- الموعد: {$workOrder->scheduled_at->format('Y-m-d H:i')}\n- المقابل المادي: {$payFormatted}\nهل ترغب في قبول هذه الرحلة؟ (الأولوية لأسبقية الرد)"
+            body: "فرصة رحلة جديدة 🚗\nمرحبًا يا {$driverName}، تتوفر رحلة جديدة مطابقة لبياناتك:\n- رقم الطلب: {$workOrder->code}\n- خط السير: من {$workOrder->from_location} إلى {$workOrder->to_location}\n- الموعد: {$scheduledFormatted}\n- المقابل المادي: {$payFormatted}\nهل ترغب في قبول هذه الرحلة؟ (الأولوية لأسبقية الرد)"
         );
 
         $recipient->update([

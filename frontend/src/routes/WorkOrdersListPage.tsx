@@ -27,6 +27,7 @@ import { ar } from '@/i18n/ar';
 import { workOrderService } from '@/services/workOrderService';
 import type { WorkOrder } from '@/types/workOrder';
 import WorkOrderStatusBadge from '@/features/workOrders/components/WorkOrderStatusBadge';
+import { useWorkOrderUpdates, playSuccessChime } from '@/hooks/useWorkOrderUpdates';
 import { useUiStore } from '@/lib/stores/useUiStore';
 
 export const WorkOrdersListPage: React.FC = () => {
@@ -35,6 +36,35 @@ export const WorkOrdersListPage: React.FC = () => {
 
   const [orders, setOrders] = useState<WorkOrder[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Pusher real-time updates for work orders list
+  useWorkOrderUpdates({
+    onOrderUpdated: (payload) => {
+      // Audio chime and celebration toast if any order becomes filled
+      if (payload.is_filled || payload.status === 'filled') {
+        playSuccessChime();
+        addToast({
+          message: ar.workOrders.orderFilledAlert,
+          type: 'success',
+        });
+      }
+
+      // Live update table rows
+      setOrders((prev) =>
+        prev.map((ord) => {
+          if (ord.id === payload.work_order_id) {
+            return {
+              ...ord,
+              status: payload.status as any,
+              confirmed_count: payload.confirmed_count,
+              backup_count: payload.backup_count,
+            };
+          }
+          return ord;
+        })
+      );
+    },
+  });
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -143,9 +173,9 @@ export const WorkOrdersListPage: React.FC = () => {
         <div className="flex flex-col text-sm">
           <div className="flex items-center gap-1.5 font-medium text-foreground">
             <MapPinIcon className="w-3.5 h-3.5 text-default-400 shrink-0" />
-            <span>{row.from_location}</span>
+            <span>{row.from_location || 'غير محدد'}</span>
             <span className="text-default-400">←</span>
-            <span>{row.to_location}</span>
+            <span>{row.to_location || 'غير محدد'}</span>
           </div>
           {row.cargo_type && (
             <span className="text-xs text-default-500 mt-0.5">
@@ -159,6 +189,14 @@ export const WorkOrdersListPage: React.FC = () => {
       id: 'scheduled_at',
       header: ar.workOrders.fields.scheduledAt,
       render: (row) => {
+        if (!row.scheduled_at) {
+          return (
+            <div className="flex items-center gap-1.5 text-xs text-default-400">
+              <CalendarIcon className="w-3.5 h-3.5" />
+              <span>غير محدد</span>
+            </div>
+          );
+        }
         const dateObj = new Date(row.scheduled_at);
         return (
           <div className="flex items-center gap-1.5 text-xs text-default-600">

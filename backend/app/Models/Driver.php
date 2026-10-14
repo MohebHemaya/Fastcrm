@@ -209,22 +209,47 @@ class Driver extends Model
                         $sub->whereIn('option_id', $numericValues)
                             ->orWhereIn('value_number', $numericValues);
                     }
+
                     $stringValues = array_values(array_map('strval', $values));
-                    $sub->orWhereIn('value_text', $stringValues)
-                        ->orWhereHas('option', fn (Builder $qOpt) => $qOpt->whereIn('value', $stringValues));
-                });
-            } else {
-                $q->where(function (Builder $sub) use ($op, $value) {
-                    if (is_numeric($value)) {
-                        $sub->where('value_number', $op, $value)
-                            ->orWhere('option_id', $op, (int) $value);
+                    $lowerValues = array_map('strtolower', $stringValues);
+                    $hasYes = count(array_intersect($lowerValues, ['yes', 'نعم', 'true', '1'])) > 0;
+                    $hasNo = count(array_intersect($lowerValues, ['no', 'لا', 'false', '0'])) > 0;
+
+                    if ($hasYes) {
+                        $stringValues = array_unique(array_merge($stringValues, ['نعم', 'yes', 'true', '1']));
+                    }
+                    if ($hasNo) {
+                        $stringValues = array_unique(array_merge($stringValues, ['لا', 'no', 'false', '0']));
                     }
 
-                    if (is_string($value)) {
-                        $sub->orWhere('value_text', $op, $value)
-                            ->orWhereHas('option', fn (Builder $qOpt) => $qOpt->where('value', $op, $value));
-                    }
+                    $sub->orWhereIn('value_text', $stringValues)
+                        ->orWhereHas('option', fn (Builder $qOpt) => $qOpt->whereIn('value', $stringValues)->orWhereIn('label_ar', $stringValues));
                 });
+            } else {
+                $lowVal = is_string($value) ? strtolower(trim($value)) : (is_bool($value) ? ($value ? 'yes' : 'no') : '');
+                if (in_array($lowVal, ['yes', 'نعم', 'true'], true)) {
+                    $q->where(function (Builder $sub) {
+                        $sub->whereIn('value_text', ['نعم', 'yes', '1', 'true'])
+                            ->orWhere('value_number', 1);
+                    });
+                } elseif (in_array($lowVal, ['no', 'لا', 'false'], true)) {
+                    $q->where(function (Builder $sub) {
+                        $sub->whereIn('value_text', ['لا', 'no', '0', 'false'])
+                            ->orWhere('value_number', 0);
+                    });
+                } else {
+                    $q->where(function (Builder $sub) use ($op, $value) {
+                        if (is_numeric($value)) {
+                            $sub->where('value_number', $op, $value)
+                                ->orWhere('option_id', $op, (int) $value);
+                        }
+
+                        if (is_string($value)) {
+                            $sub->orWhere('value_text', $op, $value)
+                                ->orWhereHas('option', fn (Builder $qOpt) => $qOpt->where('value', $op, $value)->orWhere('label_ar', $op, $value));
+                        }
+                    });
+                }
             }
         });
     }

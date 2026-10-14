@@ -6,16 +6,16 @@ return [
     |--------------------------------------------------------------------------
     | WhatsApp Provider
     |--------------------------------------------------------------------------
-    | Supported: "fake", "cloud"
+    | Supported: "fake", "cloud", "ultramsg"
     */
-    'provider' => env('WHATSAPP_PROVIDER', 'fake'),
+    'provider' => env('WHATSAPP_PROVIDER', 'ultramsg'),
 
     /*
     |--------------------------------------------------------------------------
     | Webhook Verification Token
     |--------------------------------------------------------------------------
     */
-    'verify_token' => env('WHATSAPP_VERIFY_TOKEN', 'fake_verify_token'),
+    'verify_token' => env('WHATSAPP_VERIFY_TOKEN', 'fastcrm_zimpact_2026'),
 
     /*
     |--------------------------------------------------------------------------
@@ -27,6 +27,17 @@ return [
         'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID', ''),
         'app_secret' => env('WHATSAPP_APP_SECRET', ''),
         'version' => env('WHATSAPP_GRAPH_VERSION', 'v25.0'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | UltraMsg API credentials (https://ultramsg.com)
+    |--------------------------------------------------------------------------
+    */
+    'ultramsg' => [
+        'base_url' => env('ULTRAMSG_BASE_URL', 'https://api.ultramsg.com'),
+        'token' => env('ULTRAMSG_TOKEN', ''),
+        'instance_id' => env('ULTRAMSG_INSTANCE_ID', ''),
     ],
 
     /*

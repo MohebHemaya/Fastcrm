@@ -16,6 +16,12 @@ class EndToEnd2000RowImportTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Driver::query()->delete();
+    }
+
     public function test_2000_row_sample_file_imports_commits_and_reimports_without_duplicates(): void
     {
         $user = User::factory()->create();

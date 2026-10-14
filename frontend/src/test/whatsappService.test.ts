@@ -83,27 +83,36 @@ describe('whatsappService', () => {
   it('getProviderStatus calls GET /whatsapp/provider-status', async () => {
     vi.mocked(api.get).mockResolvedValueOnce({
       data: {
-        data: { provider: 'fake', is_fake: true, send_rate_per_minute: 30, invite_batch_size: 50, free_form_window: 24, no_response_days: 3 },
+        data: { provider: 'ultramsg', is_fake: false, send_rate_per_minute: 30, invite_batch_size: 50, free_form_window: 24, no_response_days: 3 },
       },
     } as any);
 
     const res = await whatsappService.getProviderStatus();
 
     expect(api.get).toHaveBeenCalledWith('/whatsapp/provider-status');
-    expect(res.data.is_fake).toBe(true);
+    expect(res.data.provider).toBe('ultramsg');
   });
 
-  it('simulateInbound calls POST /whatsapp/simulate-inbound', async () => {
+  it('sendDirectMessage calls POST /drivers/:id/send-message', async () => {
     vi.mocked(api.post).mockResolvedValueOnce({
-      data: { data: { handled: true }, message: 'simulated' },
+      data: { data: { id: 1, body: 'مرحبا' }, message: 'sent' },
     } as any);
 
-    await whatsappService.simulateInbound('+201012345678', 'نعم، مهتم', 'invite_yes');
+    await whatsappService.sendDirectMessage(5, 'مرحبا');
 
-    expect(api.post).toHaveBeenCalledWith('/whatsapp/simulate-inbound', {
-      phone: '+201012345678',
-      text: 'نعم، مهتم',
-      payload_id: 'invite_yes',
+    expect(api.post).toHaveBeenCalledWith('/drivers/5/send-message', {
+      message: 'مرحبا',
     });
+  });
+
+  it('syncActiveInbound calls POST /whatsapp/sync-active-inbound', async () => {
+    vi.mocked(api.post).mockResolvedValueOnce({
+      data: { data: { synced_drivers: 2, processed_messages: 1 }, message: 'synced' },
+    } as any);
+
+    const res = await whatsappService.syncActiveInbound();
+
+    expect(api.post).toHaveBeenCalledWith('/whatsapp/sync-active-inbound', {}, { skipAuthRedirect: true });
+    expect(res.data.synced_drivers).toBe(2);
   });
 });

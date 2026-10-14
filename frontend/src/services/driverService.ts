@@ -97,6 +97,14 @@ export const driverService = {
   async requestAnswerUpdate(driverId: number): Promise<void> {
     await api.post(`/drivers/${driverId}/request-answer-update`);
   },
+
+  /**
+   * Delete a driver (soft delete)
+   */
+  async deleteDriver(id: number): Promise<ApiEnvelope<null>> {
+    const response = await api.delete<ApiEnvelope<null>>(`/drivers/${id}`);
+    return response.data;
+  },
 };
 
 export default driverService;

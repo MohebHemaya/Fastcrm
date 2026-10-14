@@ -23,6 +23,11 @@ class ImportController extends ApiController
      */
     public function index(Request $request): JsonResponse
     {
+        $request->validate([
+            'status' => ['nullable', 'string', 'max:50'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:50'],
+        ]);
+
         $query = Import::with('user')->latest('id');
 
         if ($request->filled('status')) {
@@ -44,7 +49,7 @@ class ImportController extends ApiController
     public function upload(UploadImportRequest $request): JsonResponse
     {
         $file = $request->file('file');
-        $originalName = $file->getClientOriginalName();
+        $originalName = strip_tags(basename((string) $file->getClientOriginalName()));
         $storedPath = $file->store('imports', 'local');
 
         $import = Import::create([
@@ -94,6 +99,12 @@ class ImportController extends ApiController
      */
     public function rows(Request $request, Import $import): JsonResponse
     {
+        $request->validate([
+            'classification' => ['nullable', 'string', 'max:50'],
+            'search' => ['nullable', 'string', 'max:255'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
         $query = $import->rows();
 
         if ($request->filled('classification')) {

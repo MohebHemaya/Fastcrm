@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Modal,
   ModalContent,
@@ -19,13 +19,13 @@ import {
   ClockIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
-  SparklesIcon,
 } from '@/components/icons';
 import { ar } from '@/i18n/ar';
 import { useUiStore } from '@/lib/stores/useUiStore';
 import { whatsappService } from '@/services/whatsappService';
 import type { WhatsAppMessage, DriverChatMeta } from '@/types/whatsapp';
 import { useIsMobile } from '@/hooks/useMediaQuery';
+import { useDriverChat } from '@/hooks/useDriverChat';
 
 interface DriverChatModalProps {
   driverId: number | null;
@@ -47,25 +47,31 @@ export const DriverChatModal: React.FC<DriverChatModalProps> = ({
   const isMobile = useIsMobile();
   const [messages, setMessages] = useState<WhatsAppMessage[]>([]);
   const [meta, setMeta] = useState<DriverChatMeta | null>(null);
+  const [replyText, setReplyText] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [customReplyText, setCustomReplyText] = useState('');
   const [retryingMessageId, setRetryingMessageId] = useState<number | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const lastMessageIdRef = useRef<number>(0);
+  const isPollingRef = useRef<boolean>(false);
   const addToast = useUiStore((state) => state.addToast);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView?.({ behavior: 'smooth' });
+  const scrollToBottom = (smooth = true) => {
+    messagesEndRef.current?.scrollIntoView?.({ behavior: smooth ? 'smooth' : 'auto' });
   };
 
   const loadMessages = async (id: number) => {
     setIsLoading(true);
     try {
       const res = await whatsappService.getDriverMessages(id);
-      setMessages(res.data);
+      const msgs = res.data || [];
+      setMessages(msgs);
       setMeta(res.meta);
-      setTimeout(scrollToBottom, 100);
+      if (msgs.length > 0) {
+        lastMessageIdRef.current = Math.max(...msgs.map((m) => m.id));
+      }
+      setTimeout(() => scrollToBottom(false), 80);
     } catch {
       addToast({
         title: ar.errors.generalError,
@@ -77,14 +83,114 @@ export const DriverChatModal: React.FC<DriverChatModalProps> = ({
     }
   };
 
+  const pollIncremental = useCallback(async (id: number) => {
+    if (isPollingRef.current) return;
+    isPollingRef.current = true;
+    try {
+      const res = await whatsappService.getNewMessages(id, lastMessageIdRef.current);
+      const newMsgs = res.data || [];
+      const updatedStatuses = res.meta?.statuses;
+
+      const newStatus = res.meta?.driver_status;
+      if (newStatus) {
+        setMeta((prev) => {
+          if (!prev) return prev;
+          if (prev.driver_status !== newStatus) {
+            onStatusChanged?.();
+            return {
+              ...prev,
+              driver_status: newStatus,
+              can_message: res.meta?.can_message ?? prev.can_message,
+            };
+          }
+          return prev;
+        });
+      }
+
+      setMessages((prev) => {
+        let hasChanges = false;
+        let updatedList = prev;
+
+        // 1. Sync delivery ticks on existing outbound messages
+        if (updatedStatuses && updatedStatuses.length > 0) {
+          const statusMap = new Map(updatedStatuses.map((s) => [s.id, s]));
+          updatedList = updatedList.map((m) => {
+            const st = statusMap.get(m.id);
+            if (st && (st.status !== m.status || st.delivered_at !== m.delivered_at || st.read_at !== m.read_at)) {
+              hasChanges = true;
+              return {
+                ...m,
+                status: st.status,
+                delivered_at: st.delivered_at ?? m.delivered_at,
+                read_at: st.read_at ?? m.read_at,
+                error_message: st.error_message ?? m.error_message,
+              };
+            }
+            return m;
+          });
+        }
+
+        // 2. Append newly arrived messages
+        if (newMsgs.length > 0) {
+          const existingIds = new Set(updatedList.map((m) => m.id));
+          const fresh = newMsgs.filter((m) => !existingIds.has(m.id));
+          if (fresh.length > 0) {
+            hasChanges = true;
+            updatedList = [...updatedList, ...fresh];
+            const maxId = Math.max(...fresh.map((m) => m.id));
+            if (maxId > lastMessageIdRef.current) {
+              lastMessageIdRef.current = maxId;
+            }
+            setTimeout(() => scrollToBottom(true), 50);
+          }
+        }
+
+        return hasChanges ? updatedList : prev;
+      });
+    } catch {
+      // background poll errors are swallowed silently
+    } finally {
+      isPollingRef.current = false;
+    }
+  }, [onStatusChanged]);
+
+  const handlePusherNewMessage = useCallback((msg: WhatsAppMessage) => {
+    setMessages((prev) => {
+      const exists = prev.some((m) => m.id === msg.id);
+      if (exists) {
+        return prev.map((m) => (m.id === msg.id ? { ...m, ...msg } : m));
+      }
+      return [...prev, msg];
+    });
+    if (msg.id > lastMessageIdRef.current) {
+      lastMessageIdRef.current = msg.id;
+    }
+    setTimeout(() => scrollToBottom(true), 60);
+  }, []);
+
+  const { isConnected: isPusherConnected } = useDriverChat({
+    driverId: isOpen ? driverId : null,
+    onNewMessage: handlePusherNewMessage,
+  });
+
   useEffect(() => {
     if (isOpen && driverId) {
       loadMessages(driverId);
+      // Fallback: relaxed 15s poll when Pusher is live, faster 3s fallback if disconnected
+      const pollDelay = isPusherConnected ? 15000 : 3000;
+      const interval = setInterval(() => {
+        if (document.visibilityState === 'visible' && !isSending) {
+          pollIncremental(driverId);
+        }
+      }, pollDelay);
+
+      return () => clearInterval(interval);
     } else {
       setMessages([]);
       setMeta(null);
+      lastMessageIdRef.current = 0;
     }
-  }, [isOpen, driverId]);
+  }, [isOpen, driverId, pollIncremental, isSending, isPusherConnected]);
 
   const handleRetry = async (messageId: number) => {
     setRetryingMessageId(messageId);
@@ -109,31 +215,23 @@ export const DriverChatModal: React.FC<DriverChatModalProps> = ({
     }
   };
 
-  const handleSimulate = async (text: string, payloadId?: string) => {
-    const phone = meta?.driver_phone || driverPhone;
-    if (!phone) return;
-
-    setIsSimulating(true);
+  const handleSendMessage = async () => {
+    if (!driverId || !replyText.trim() || isSending) return;
+    const textToSend = replyText.trim();
+    setIsSending(true);
     try {
-      await whatsappService.simulateInbound(phone, text, payloadId);
-      addToast({
-        title: ar.whatsapp.simulateSuccess,
-        message: ar.whatsapp.simulateSuccess,
-        type: 'success',
-      });
-      setCustomReplyText('');
-      if (driverId) {
-        await loadMessages(driverId);
-      }
+      await whatsappService.sendDirectMessage(driverId, textToSend);
+      setReplyText('');
+      await loadMessages(driverId);
       onStatusChanged?.();
-    } catch {
+    } catch (e: any) {
       addToast({
         title: ar.errors.generalError,
-        message: ar.errors.generalError,
+        message: e?.response?.data?.message || 'فشل إرسال الرسالة',
         type: 'error',
       });
     } finally {
-      setIsSimulating(false);
+      setIsSending(false);
     }
   };
 
@@ -222,11 +320,18 @@ export const DriverChatModal: React.FC<DriverChatModalProps> = ({
                 </p>
               </div>
             </div>
-            {meta && (
-              <Chip size="sm" variant="flat" color={meta.can_message ? 'success' : 'danger'}>
-                {meta.driver_status}
-              </Chip>
-            )}
+            <div className="flex items-center gap-2">
+              {isPusherConnected && (
+                <Chip size="sm" variant="dot" color="success" className="text-[11px] h-6">
+                  مباشر
+                </Chip>
+              )}
+              {meta && (
+                <Chip size="sm" variant="flat" color={meta.can_message ? 'success' : 'danger'}>
+                  {meta.driver_status}
+                </Chip>
+              )}
+            </div>
           </div>
         </ModalHeader>
 
@@ -297,75 +402,35 @@ export const DriverChatModal: React.FC<DriverChatModalProps> = ({
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Dev Simulation Toolbar */}
-          <div className="border-t border-default-200 bg-white p-3 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-default-600 flex items-center gap-1">
-                <SparklesIcon className="w-3.5 h-3.5 text-secondary-500" />
-                {ar.whatsapp.simulateIncoming}:
-              </span>
-              <div className="flex items-center gap-1.5">
-                <Button
-                  size="sm"
-                  variant="flat"
-                  color="success"
-                  className="h-7 text-xs"
-                  isLoading={isSimulating}
-                  onClick={() => handleSimulate('نعم، مهتم', 'invite_yes')}
-                >
-                  {ar.whatsapp.simulateYes}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="flat"
-                  color="warning"
-                  className="h-7 text-xs"
-                  isLoading={isSimulating}
-                  onClick={() => handleSimulate('لا، شكرًا', 'invite_no')}
-                >
-                  {ar.whatsapp.simulateNo}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="flat"
-                  color="danger"
-                  className="h-7 text-xs"
-                  isLoading={isSimulating}
-                  onClick={() => handleSimulate('إيقاف')}
-                >
-                  {ar.whatsapp.simulateStop}
-                </Button>
-              </div>
-            </div>
-
-            {/* Custom simulation input */}
+          {/* Real WhatsApp Message Composer */}
+          <div className="border-t border-default-200 bg-white dark:bg-content1 p-3">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                if (customReplyText.trim()) {
-                  handleSimulate(customReplyText.trim());
-                }
+                handleSendMessage();
               }}
               className="flex items-center gap-2"
             >
               <Input
                 size="sm"
                 variant="bordered"
-                placeholder={ar.whatsapp.searchPlaceholder}
-                value={customReplyText}
-                onChange={(e) => setCustomReplyText(e.target.value)}
-                disabled={isSimulating}
-                className="flex-1"
+                placeholder="اكتب ردك للسائق هنا عبر واتساب..."
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                disabled={isSending}
+                className="flex-1 text-xs"
               />
               <Button
                 size="sm"
                 color="primary"
                 type="submit"
                 isIconOnly
-                isLoading={isSimulating}
-                disabled={!customReplyText.trim()}
+                isLoading={isSending}
+                disabled={!replyText.trim() || isSending}
+                aria-label="إرسال"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white min-w-[36px] min-h-[36px]"
               >
-                <PaperAirplaneIcon className="w-4 h-4 rtl:-scale-x-100" />
+                <PaperAirplaneIcon className="w-4 h-4 rtl:rotate-180" />
               </Button>
             </form>
           </div>

@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Spinner, Button } from '@heroui/react';
+import { Spinner, Button, Progress } from '@heroui/react';
 import { ExclamationCircleIcon, ArrowPathIcon } from '@/components/icons';
 import { ar } from '@/i18n/ar';
 import importService from '@/services/importService';
 import type { ImportItem } from '@/types/import';
+import { useImportProgress } from '@/hooks/useImportProgress';
 
 interface ImportCommittingStepProps {
   importId: number;
@@ -41,14 +42,21 @@ export const ImportCommittingStep: React.FC<ImportCommittingStepProps> = ({
     }
   };
 
+  // Real-time Pusher progress
+  const liveProgress = useImportProgress(importId, () => {
+    pollStatus();
+  });
+
   useEffect(() => {
     pollStatus();
-    timerRef.current = setInterval(pollStatus, 2500);
+    // Relaxed polling when Pusher is tracking
+    const pollInterval = liveProgress.status === 'processing' ? 6000 : 2500;
+    timerRef.current = setInterval(pollStatus, pollInterval);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [importId]);
+  }, [importId, liveProgress.status]);
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 max-w-lg mx-auto py-12 text-center w-full">
@@ -82,6 +90,20 @@ export const ImportCommittingStep: React.FC<ImportCommittingStepProps> = ({
               {ar.imports.committingNotice}
             </p>
           </div>
+
+          {liveProgress.total > 0 && (
+            <div className="w-full max-w-md pt-2">
+              <Progress
+                size="md"
+                radius="full"
+                color="success"
+                label={`تم حفظ ${liveProgress.processed} من إجمالي ${liveProgress.total} صف`}
+                value={liveProgress.percent}
+                showValueLabel={true}
+                className="w-full text-xs"
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

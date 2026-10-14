@@ -1,5 +1,6 @@
 export type WhatsAppDirection = 'out' | 'in';
 export type WhatsAppStatus = 'queued' | 'sent' | 'delivered' | 'read' | 'failed';
+export type WhatsAppMessageStatus = WhatsAppStatus;
 export type WhatsAppMessageType = 'template' | 'text' | 'button' | 'list';
 
 export interface WhatsAppMessage {
@@ -44,8 +45,8 @@ export interface WhatsAppMessagesMeta {
 }
 
 export interface WhatsAppProviderStatus {
-  provider: 'fake' | 'cloud';
-  is_fake: boolean;
+  provider: 'ultramsg' | 'cloud' | string;
+  is_fake?: boolean;
   send_rate_per_minute: number;
   invite_batch_size: number;
   free_form_window: number;

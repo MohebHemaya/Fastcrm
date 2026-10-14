@@ -67,7 +67,7 @@ describe('Sidebar Redesign & Badges', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/وضع تجريبي \(Fake\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/ألترا مسج \(UltraMsg\)/i)).toBeInTheDocument();
     });
   });
 

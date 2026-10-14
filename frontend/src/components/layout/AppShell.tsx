@@ -53,9 +53,11 @@ import {
 import { useAuthStore } from '@/lib/stores/useAuthStore';
 import { useUiStore } from '@/lib/stores/useUiStore';
 import { useSidebarBadges } from '@/hooks/useSidebarBadges';
+import { useBackgroundWhatsAppSync } from '@/hooks/useBackgroundWhatsAppSync';
 import { whatsappService } from '@/services/whatsappService';
 import type { WhatsAppProviderStatus } from '@/types/whatsapp';
 import ToastContainer from '@/components/ui/ToastContainer';
+import RealtimeNotifications from '@/components/RealtimeNotifications';
 import ChangePasswordDialog from '@/components/auth/ChangePasswordDialog';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { ar } from '@/i18n/ar';
@@ -84,9 +86,12 @@ export const AppShell: React.FC = () => {
 
   const { user, logout } = useAuthStore();
   const { isSidebarCollapsed, toggleSidebarCollapsed, addToast } = useUiStore();
-  const { badges } = useSidebarBadges();
+  const { badges, refresh: refreshBadges } = useSidebarBadges();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Run global background sync for WhatsApp bot replies & questionnaires across all CRM pages
+  useBackgroundWhatsAppSync(refreshBadges);
 
   useEffect(() => {
     whatsappService
@@ -491,26 +496,22 @@ export const AppShell: React.FC = () => {
               <Chip
                 size="sm"
                 variant="flat"
-                color={providerStatus?.provider === 'cloud' ? 'success' : 'warning'}
+                color="success"
                 className="text-[10px] font-bold h-5 px-1.5"
               >
-                {providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'وضع تجريبي (Fake)'}
+                {providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'ألترا مسج (UltraMsg)'}
               </Chip>
             </div>
           ) : (
             <div className="flex justify-center pt-1">
               <Tooltip
                 content={`مزود الواتساب: ${
-                  providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'وضع تجريبي (Fake)'
+                  providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'ألترا مسج (UltraMsg)'
                 }`}
                 placement="left"
                 closeDelay={0}
               >
-                <span
-                  className={`h-2.5 w-2.5 rounded-full ${
-                    providerStatus?.provider === 'cloud' ? 'bg-success' : 'bg-warning'
-                  }`}
-                />
+                <span className="h-2.5 w-2.5 rounded-full bg-success" />
               </Tooltip>
             </div>
           )}
@@ -568,10 +569,10 @@ export const AppShell: React.FC = () => {
                   <Chip
                     size="sm"
                     variant="flat"
-                    color={providerStatus?.provider === 'cloud' ? 'success' : 'warning'}
+                    color="success"
                     className="text-[10px] font-bold h-5"
                   >
-                    {providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'وضع تجريبي (Fake)'}
+                    {providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'ألترا مسج (UltraMsg)'}
                   </Chip>
                 </div>
               </DrawerFooter>
@@ -652,8 +653,9 @@ export const AppShell: React.FC = () => {
         </main>
       </div>
 
-      {/* Global Toast Container */}
+      {/* Global Toast Container & Realtime WebSocket Notifications */}
       <ToastContainer />
+      <RealtimeNotifications />
 
       {/* Change Password Dialog */}
       <ChangePasswordDialog

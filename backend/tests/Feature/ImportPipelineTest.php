@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 beforeEach(function () {
     Storage::fake('local');
     $this->user = User::factory()->create();
+    Driver::query()->delete();
 });
 
 test('template download returns valid CSV with Arabic UTF-8 BOM and headers', function () {

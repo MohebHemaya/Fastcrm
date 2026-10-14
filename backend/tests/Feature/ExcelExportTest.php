@@ -27,6 +27,7 @@ beforeEach(function () {
     $this->user = User::factory()->create();
     $this->actingAs($this->user);
     Storage::fake('local');
+    Question::query()->delete();
 });
 
 test('drivers export generates RTL sheet, correct headers, preserves phone as string, and respects filters', function () {

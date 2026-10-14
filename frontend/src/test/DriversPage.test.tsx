@@ -83,4 +83,32 @@ describe('DriversPage', () => {
       expect(screen.getByText(ar.drivers.changeStatus)).toBeInTheDocument();
     });
   });
+
+  it('opens confirmation modal and deletes driver when clicking delete button', async () => {
+    const user = userEvent.setup();
+    renderDriversPage();
+
+    await waitFor(() => {
+      expect(screen.getByText('+201012345678')).toBeInTheDocument();
+    });
+
+    const deleteButtons = screen.getAllByTitle(ar.drivers.deleteDriver);
+    expect(deleteButtons.length).toBeGreaterThan(0);
+
+    await user.click(deleteButtons[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText(ar.drivers.deleteConfirmTitle)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: ar.common.delete })).toBeInTheDocument();
+    });
+
+    const confirmDeleteBtn = screen.getByRole('button', { name: ar.common.delete });
+    await user.click(confirmDeleteBtn);
+
+    await waitFor(() => {
+      expect(screen.queryByText(ar.drivers.deleteConfirmTitle)).not.toBeInTheDocument();
+      expect(screen.queryByText('+201012345678')).not.toBeInTheDocument();
+    });
+  });
 });
+

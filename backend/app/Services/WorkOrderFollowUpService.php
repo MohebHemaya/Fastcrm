@@ -282,6 +282,8 @@ class WorkOrderFollowUpService
                         ['id' => "decline_backup:{$lockedOrder->id}:{$driver->id}", 'title' => 'اعتذار'],
                     ];
 
+                    $scheduledFormatted = $lockedOrder->scheduled_at ? $lockedOrder->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
+
                     $body = app(\App\Services\WhatsAppTemplateService::class)->render('backup_promoted', [
                         'اسم_السائق' => $driverName,
                         'driver_name' => $driverName,
@@ -289,8 +291,8 @@ class WorkOrderFollowUpService
                         'order_code' => $lockedOrder->code,
                         'وجهة_الوصول' => $lockedOrder->to_location,
                         'to_location' => $lockedOrder->to_location,
-                        'موعد_الرحلة' => $lockedOrder->scheduled_at->format('Y-m-d H:i'),
-                        'scheduled_at' => $lockedOrder->scheduled_at->format('Y-m-d H:i'),
+                        'موعد_الرحلة' => $scheduledFormatted,
+                        'scheduled_at' => $scheduledFormatted,
                     ]);
 
                     $this->messageSender->sendTemplate(
@@ -301,7 +303,7 @@ class WorkOrderFollowUpService
                             $driverName,
                             $lockedOrder->code,
                             $lockedOrder->to_location,
-                            $lockedOrder->scheduled_at->format('Y-m-d H:i'),
+                            $scheduledFormatted,
                         ],
                         buttons: $buttons,
                         orderId: $lockedOrder->id,
@@ -507,6 +509,9 @@ class WorkOrderFollowUpService
             // Notify driver after commit
             DB::afterCommit(function () use ($driver, $driverName, $lockedOrder, $isConfirmed, $recipient) {
                 try {
+                    $scheduledFormatted = $lockedOrder->scheduled_at ? $lockedOrder->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
+                    $payFormatted = $lockedOrder->pay_amount ? "{$lockedOrder->pay_amount} ج.م" : 'حسب الاتفاق';
+
                     if ($isConfirmed) {
                         $this->messageSender->sendTemplate(
                             driver: $driver,
@@ -516,11 +521,11 @@ class WorkOrderFollowUpService
                                 $driverName,
                                 $lockedOrder->code,
                                 $lockedOrder->from_location,
-                                $lockedOrder->scheduled_at->format('Y-m-d H:i'),
+                                $scheduledFormatted,
                                 'مشرف العمليات',
                             ],
                             orderId: $lockedOrder->id,
-                            body: "مبروك يا {$driverName}! تم تأكيد تكليفك بالرحلة رقم {$lockedOrder->code}.\n- خط السير: من {$lockedOrder->from_location} إلى {$lockedOrder->to_location}\n- الموعد: {$lockedOrder->scheduled_at->format('Y-m-d H:i')}\n- المقابل: {$lockedOrder->pay_amount} ج.م\nنتمنى لك رحلة موفقة!"
+                            body: "مبروك يا {$driverName}! تم تأكيد تكليفك بالرحلة رقم {$lockedOrder->code}.\n- خط السير: من {$lockedOrder->from_location} إلى {$lockedOrder->to_location}\n- الموعد: {$scheduledFormatted}\n- المقابل: {$payFormatted}\nنتمنى لك رحلة موفقة!"
                         );
                     } else {
                         $this->messageSender->sendTemplate(
@@ -611,6 +616,8 @@ class WorkOrderFollowUpService
                         $driverName = $driver->name ?: 'كابتن';
                         $payFormatted = $lockedOrder->pay_amount ? number_format((float) $lockedOrder->pay_amount, 2).' ج.م' : 'حسب الاتفاق';
 
+                        $scheduledFormatted = $lockedOrder->scheduled_at ? $lockedOrder->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
+
                         $this->messageSender->sendTemplate(
                             driver: $driver,
                             templateName: 'order_offer',
@@ -620,12 +627,12 @@ class WorkOrderFollowUpService
                                 $lockedOrder->code,
                                 $lockedOrder->from_location,
                                 $lockedOrder->to_location,
-                                $lockedOrder->scheduled_at->format('Y-m-d H:i'),
+                                $scheduledFormatted,
                                 $payFormatted,
                             ],
                             buttons: $buttons,
                             orderId: $lockedOrder->id,
-                            body: "فرصة رحلة جديدة 🚗\nمرحبًا يا {$driverName}، تتوفر رحلة جديدة مطابقة لبياناتك:\n- رقم الطلب: {$lockedOrder->code}\n- خط السير: من {$lockedOrder->from_location} إلى {$lockedOrder->to_location}\n- الموعد: {$lockedOrder->scheduled_at->format('Y-m-d H:i')}\n- المقابل المادي: {$payFormatted}\nهل ترغب في قبول هذه الرحلة؟ (الأولوية لأسبقية الرد)"
+                            body: "فرصة رحلة جديدة 🚗\nمرحبًا يا {$driverName}، تتوفر رحلة جديدة مطابقة لبياناتك:\n- رقم الطلب: {$lockedOrder->code}\n- خط السير: من {$lockedOrder->from_location} إلى {$lockedOrder->to_location}\n- الموعد: {$scheduledFormatted}\n- المقابل المادي: {$payFormatted}\nهل ترغب في قبول هذه الرحلة؟ (الأولوية لأسبقية الرد)"
                         );
                     } catch (\Throwable $e) {
                         Log::warning("[WorkOrderFollowUpService] Failed to resend offer to driver {$driver->id}: {$e->getMessage()}");

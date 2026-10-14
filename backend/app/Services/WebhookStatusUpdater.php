@@ -16,6 +16,10 @@ class WebhookStatusUpdater
     {
         $msg = WhatsAppMessage::where('provider_message_id', $update->providerMessageId)->first();
 
+        if (! $msg && ! empty($update->altProviderMessageId)) {
+            $msg = WhatsAppMessage::where('provider_message_id', $update->altProviderMessageId)->first();
+        }
+
         if (! $msg) {
             Log::debug("[WebhookStatusUpdater] Message not found for provider_message_id: {$update->providerMessageId}");
 

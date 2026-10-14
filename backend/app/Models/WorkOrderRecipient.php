@@ -50,6 +50,7 @@ class WorkOrderRecipient extends Model
         'cancellation_reason',
         'cancelled_at',
         'reminder_sent_at',
+        'expires_at',
     ];
 
     protected function casts(): array
@@ -61,6 +62,7 @@ class WorkOrderRecipient extends Model
             'stage_batch' => 'integer',
             'rating' => 'integer',
             'sent_at' => 'datetime',
+            'expires_at' => 'datetime',
             'responded_at' => 'datetime',
             'outcome_recorded_at' => 'datetime',
             'cancelled_at' => 'datetime',

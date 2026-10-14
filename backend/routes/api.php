@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\WhatsAppController;
 use App\Http\Controllers\Api\WhatsappGroupController;
 use App\Http\Controllers\Api\WorkOrderController;
 use App\Http\Controllers\Api\WorkOrderFollowUpController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 // Public endpoints
@@ -27,6 +28,8 @@ Route::prefix('auth')->group(function () {
 
 // Authenticated endpoints
 Route::middleware('auth:sanctum')->group(function () {
+    Broadcast::routes(['middleware' => ['api', 'auth:sanctum']]);
+
     Route::prefix('auth')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
@@ -56,6 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/drivers', [DriverController::class, 'store']);
     Route::get('/drivers/{driver}', [DriverController::class, 'show']);
     Route::patch('/drivers/{driver}', [DriverController::class, 'update']);
+    Route::delete('/drivers/{driver}', [DriverController::class, 'destroy']);
     Route::post('/drivers/{driver}/status', [DriverController::class, 'changeStatus']);
 
     // Driver Questionnaire Answers & Actions
@@ -79,6 +83,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/whatsapp/messages', [WhatsAppController::class, 'index']);
     Route::post('/whatsapp/messages/{message}/retry', [WhatsAppController::class, 'retry']);
     Route::get('/whatsapp/provider-status', [WhatsAppController::class, 'providerStatus']);
+    Route::get('/whatsapp/connection-status', [WhatsAppController::class, 'connectionStatus']);
+    Route::post('/drivers/{driver}/mark-read', [WhatsAppController::class, 'markRead']);
+    Route::get('/drivers/{driver}/new-messages', [WhatsAppController::class, 'newMessages']);
+    Route::post('/whatsapp/sync-active-inbound', [WhatsAppController::class, 'syncActiveInbound']);
 
     // Questions Management
     Route::post('/questions/reorder', [QuestionController::class, 'reorder']);
@@ -117,6 +125,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard/group-performance', [DashboardController::class, 'groupPerformance']);
     Route::post('/dashboard/bust-cache', [DashboardController::class, 'bustCache']);
 
+    // Advanced Reports & Analytics
+    Route::get('/reports/list', [\App\Http\Controllers\Api\ReportController::class, 'list']);
+    Route::get('/reports/data/{reportType}', [\App\Http\Controllers\Api\ReportController::class, 'show']);
+    Route::get('/reports/download/{reportType}', [\App\Http\Controllers\Api\ReportController::class, 'download']);
+    Route::get('/reports/overview', [\App\Http\Controllers\Api\ReportController::class, 'overview']);
+    Route::get('/reports/funnel', [\App\Http\Controllers\Api\ReportController::class, 'funnel']);
+    Route::get('/reports/whatsapp', [\App\Http\Controllers\Api\ReportController::class, 'whatsapp']);
+    Route::get('/reports/fulfillment', [\App\Http\Controllers\Api\ReportController::class, 'fulfillment']);
+
     // Exports & PDF (Phase 7)
     Route::get('/exports', [ExportController::class, 'index']);
     Route::post('/exports', [ExportController::class, 'store'])->middleware('throttle:exports');
@@ -135,8 +152,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/admin/health/failed-jobs/{id}', [AdminHealthController::class, 'deleteFailedJob']);
     Route::post('/admin/health/failed-jobs/retry-all', [AdminHealthController::class, 'retryAllFailedJobs']);
     Route::delete('/admin/health/failed-jobs/flush', [AdminHealthController::class, 'flushFailedJobs']);
-
-    // Dev Simulation (Fake provider / local testing)
-    Route::post('/whatsapp/simulate-inbound', [WhatsAppController::class, 'simulateInbound']);
-    Route::post('/whatsapp/simulate-status', [WhatsAppController::class, 'simulateStatus']);
 });

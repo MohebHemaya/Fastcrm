@@ -108,7 +108,9 @@ describe('workOrderService', () => {
 
     const res = await workOrderService.previewMatch(payload);
 
-    expect(api.post).toHaveBeenCalledWith('/work-orders/match-preview', payload);
+    expect(api.post).toHaveBeenCalledWith('/work-orders/match-preview', payload, {
+      skipAuthRedirect: true,
+    });
     expect(res.data.count).toBe(18);
   });
 });

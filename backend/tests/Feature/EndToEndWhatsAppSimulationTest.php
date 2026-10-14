@@ -8,6 +8,7 @@ use App\Enums\WhatsAppMessageDirection;
 use App\Enums\WhatsAppMessageStatus;
 use App\Jobs\SendWhatsAppMessageJob;
 use App\Models\Driver;
+use App\Models\Question;
 use App\Models\WhatsAppMessage;
 use App\Services\InboundMessageRouter;
 use App\Services\InviteDriversService;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Queue;
 
 beforeEach(function () {
     app()->instance(WhatsAppProvider::class, new FakeWhatsAppProvider);
+    Question::query()->delete();
 });
 
 test('Full WhatsApp Lifecycle E2E: Import/New -> Invite -> Delivered -> Read -> Reply Yes -> Interested -> Opt-out -> Blocked', function () {

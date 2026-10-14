@@ -63,6 +63,8 @@ class SendWorkOrderRemindersCommand extends Command
                     ['id' => "reminder_ok:{$order->id}:{$driver->id}", 'title' => 'أنا جاهز ومستعد'],
                 ];
 
+                $scheduledFormatted = $order->scheduled_at ? $order->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
+
                 $messageSender->sendTemplate(
                     driver: $driver,
                     templateName: 'trip_reminder',
@@ -70,12 +72,12 @@ class SendWorkOrderRemindersCommand extends Command
                     params: [
                         $driverName,
                         $order->code,
-                        $order->scheduled_at->format('Y-m-d H:i'),
+                        $scheduledFormatted,
                         $order->from_location,
                     ],
                     buttons: $buttons,
                     orderId: $order->id,
-                    body: "تذكير بموعد رحلتك غدًا:\n- كابتن: {$driverName}\n- الرحلة رقم: {$order->code}\n- الموعد: {$order->scheduled_at->format('Y-m-d H:i')}\n- نقطة التجمع: {$order->from_location}\nنرجو التأكد من جاهزية المركبة ونظافتها والوصول قبل الموعد بـ 15 دقيقة على الأقل. نتمنى لك رحلة آمنة."
+                    body: "تذكير بموعد رحلتك غدًا:\n- كابتن: {$driverName}\n- الرحلة رقم: {$order->code}\n- الموعد: {$scheduledFormatted}\n- نقطة التجمع: {$order->from_location}\nنرجو التأكد من جاهزية المركبة ونظافتها والوصول قبل الموعد بـ 15 دقيقة على الأقل. نتمنى لك رحلة آمنة."
                 );
 
                 $recipient->update(['reminder_sent_at' => now()]);

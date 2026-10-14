@@ -35,11 +35,22 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const responseData = error.response?.data as any;
 
-    // 401 Unauthorized -> Clear auth state and redirect to login
+    // 401 Unauthorized -> Clear auth state and redirect to login ONLY for critical app requests
     if (status === 401) {
-      useAuthStore.getState().clearAuth();
-      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
-        window.location.href = '/login';
+      const url = originalRequest?.url || '';
+      const isBackgroundOrPreview =
+        url.includes('/broadcasting/auth') ||
+        url.includes('/work-orders/match-preview') ||
+        url.includes('/whatsapp/sync-active-inbound') ||
+        url.includes('/sidebar-badges') ||
+        url.includes('/health') ||
+        Boolean((originalRequest as any)?.skipAuthRedirect);
+
+      if (!isBackgroundOrPreview) {
+        useAuthStore.getState().clearAuth();
+        if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
       }
       return Promise.reject(error);
     }

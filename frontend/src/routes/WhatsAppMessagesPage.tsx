@@ -111,6 +111,10 @@ export const WhatsAppMessagesPage: React.FC = () => {
 
   useEffect(() => {
     loadMessages();
+    const interval = setInterval(() => {
+      loadMessages();
+    }, 4000);
+    return () => clearInterval(interval);
   }, [loadMessages]);
 
   const handleRetry = async (messageId: number) => {
@@ -287,13 +291,15 @@ export const WhatsAppMessagesPage: React.FC = () => {
           {providerStatus && (
             <Chip
               variant="flat"
-              color={providerStatus.is_fake ? 'warning' : 'success'}
-              startContent={
-                <SignalIcon className={`w-3.5 h-3.5 ${providerStatus.is_fake ? 'text-warning-500' : 'text-success-500'}`} />
-              }
+              color="success"
+              startContent={<SignalIcon className="w-3.5 h-3.5 text-success-500" />}
               className="text-xs font-semibold px-3 py-1.5"
             >
-              {providerStatus.is_fake ? ar.whatsapp.fakeProvider : ar.whatsapp.cloudProvider}
+              {providerStatus.provider === 'ultramsg'
+                ? ar.whatsapp.ultramsgProvider
+                : providerStatus.provider === 'cloud'
+                ? ar.whatsapp.cloudProvider
+                : 'مزود واتساب'}
             </Chip>
           )}
 

@@ -257,4 +257,14 @@ class CloudApiProvider implements WhatsAppProvider
 
         throw new WhatsAppPermanentException("[{$code}] {$message}", (int) $errorSubCode);
     }
+
+    public function syncRecentStatuses(int $limit = 30): int
+    {
+        return 0;
+    }
+
+    public function syncChatInbound(string $phone): int
+    {
+        return 0;
+    }
 }

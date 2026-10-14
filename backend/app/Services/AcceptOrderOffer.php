@@ -232,7 +232,7 @@ class AcceptOrderOffer
             ];
         }, attempts: 3);
 
-        // 8. AFTER COMMIT: Dispatch Messages and Notifications
+        // 8. AFTER COMMIT: Dispatch Messages, Pusher Broadcasts, and Notifications
         if (! $isDuplicate && $orderRecord && $recipientRecord && $assignedStatus !== 'cancelled') {
             $driver = Driver::find($driverId);
             if ($driver) {
@@ -241,6 +241,45 @@ class AcceptOrderOffer
 
             if ($shouldNotifyFilled) {
                 NotifyOrderFilledJob::dispatch($orderRecord->id);
+            }
+
+            $isFilled = ($orderRecord->status === WorkOrderStatus::FILLED);
+            $driverName = $driver?->name ?: 'كابتن';
+            $msg = match ($assignedStatus) {
+                'confirmed' => "قام الكابتن {$driverName} بتأكيد قبوله للرحلة {$orderRecord->code} (مؤكد رقم {$sequenceNumber})",
+                'backup' => "انضم الكابتن {$driverName} كاحتياطي رقم {$sequenceNumber} للرحلة {$orderRecord->code}",
+                'declined' => "اعتذر الكابتن {$driverName} عن الرحلة {$orderRecord->code}",
+                'too_late' => "رد الكابتن {$driverName} بعد اكتمال العدد للرحلة {$orderRecord->code}",
+                default => null,
+            };
+
+            if ($isFilled) {
+                $msg = "تم اكتمال العدد المطلوب بالكامل للرحلة {$orderRecord->code}! 🎉";
+            }
+
+            try {
+                broadcast(new \App\Events\WorkOrderUpdated(
+                    workOrderId: $orderRecord->id,
+                    orderCode: $orderRecord->code,
+                    status: $orderRecord->status->value,
+                    confirmedCount: $orderRecord->confirmed_count,
+                    backupCount: $orderRecord->backup_count,
+                    tripsNeeded: $orderRecord->trips_needed,
+                    backupNeeded: $orderRecord->backup_needed,
+                    isFilled: $isFilled,
+                    recipient: [
+                        'id' => $recipientRecord->id,
+                        'driver_id' => $driverId,
+                        'driver_name' => $driverName,
+                        'phone' => $driver?->phone,
+                        'status' => $recipientRecord->status->value,
+                        'sequence_number' => $sequenceNumber,
+                        'responded_at' => $recipientRecord->responded_at?->toIso8601String(),
+                    ],
+                    notificationMessage: $msg
+                ));
+            } catch (\Throwable $e) {
+                Log::warning("[AcceptOrderOffer] Failed to broadcast WorkOrderUpdated: {$e->getMessage()}");
             }
         }
 
@@ -262,6 +301,8 @@ class AcceptOrderOffer
             $tplService = app(\App\Services\WhatsAppTemplateService::class);
 
             if ($assignedStatus === 'confirmed') {
+                $scheduledFormatted = $order->scheduled_at ? $order->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
+
                 $body = $tplService->render('order_confirmation', [
                     'اسم_السائق' => $driverName,
                     'driver_name' => $driverName,
@@ -272,8 +313,8 @@ class AcceptOrderOffer
                     'جهة_الوصول' => $order->to_location,
                     'وجهة_الوصول' => $order->to_location,
                     'to_location' => $order->to_location,
-                    'موعد_الرحلة' => $order->scheduled_at->format('Y-m-d H:i'),
-                    'scheduled_at' => $order->scheduled_at->format('Y-m-d H:i'),
+                    'موعد_الرحلة' => $scheduledFormatted,
+                    'scheduled_at' => $scheduledFormatted,
                     'المقابل_المادي' => ($order->pay_amount ? "{$order->pay_amount} ج.م" : 'حسب الاتفاق'),
                     'pay_amount' => ($order->pay_amount ? "{$order->pay_amount} ج.م" : 'حسب الاتفاق'),
                 ]);
@@ -286,7 +327,7 @@ class AcceptOrderOffer
                         $driverName,
                         $order->code,
                         $order->from_location,
-                        $order->scheduled_at->format('Y-m-d H:i'),
+                        $scheduledFormatted,
                         'مشرف العمليات',
                     ],
                     orderId: $order->id,

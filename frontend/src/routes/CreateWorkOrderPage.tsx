@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import { useForm, Controller, useFieldArray, useWatch } from 'react-hook-form';
 import {
   Card,
   CardBody,
@@ -30,7 +30,7 @@ import {
   ArrowPathIcon,
   MagnifyingGlassIcon,
 } from '@/components/icons';
-import { FormInput, FormSelect, FormTextarea, FormDatePicker } from '@/components/form';
+import { FormInput, FormSelect, FormTextarea } from '@/components/form';
 import {
   EGYPT_GOVERNORATES,
   getCitiesForGovernorate,
@@ -88,6 +88,8 @@ interface FormValues {
   to_location: string;
 
   scheduled_at: string;
+  scheduled_dispatch_at?: string;
+  offer_expires_in_minutes?: string | number;
   cargo_type?: string;
   pay_amount: string;
   notes: string;
@@ -130,6 +132,8 @@ const DEFAULT_FORM_VALUES: FormValues = {
   to_details: '',
   to_location: '',
   scheduled_at: '',
+  scheduled_dispatch_at: '',
+  offer_expires_in_minutes: '',
   cargo_type: '',
   pay_amount: '',
   notes: '',
@@ -183,8 +187,8 @@ export const CreateWorkOrderPage: React.FC = () => {
     watch,
     trigger,
     setValue,
+    getValues,
     reset,
-    formState: { errors },
   } = useForm<FormValues>({
     defaultValues: DEFAULT_FORM_VALUES,
     mode: 'onBlur',
@@ -195,15 +199,13 @@ export const CreateWorkOrderPage: React.FC = () => {
     name: 'filters',
   });
 
-  // Watch location fields
+  // Watch location dropdowns and synced values
   const watchedFromGov = watch('from_governorate');
   const watchedFromCity = watch('from_city');
-  const watchedFromDetails = watch('from_details');
   const watchedFromLocation = watch('from_location');
 
   const watchedToGov = watch('to_governorate');
   const watchedToCity = watch('to_city');
-  const watchedToDetails = watch('to_details');
   const watchedToLocation = watch('to_location');
 
   const fromCityOptions = useMemo(
@@ -215,7 +217,44 @@ export const CreateWorkOrderPage: React.FC = () => {
     [watchedToGov]
   );
 
-  // Clear city when governorate changes
+  // Synchronize formatted location strings smoothly
+  const syncFromLocation = () => {
+    const gov = getValues('from_governorate');
+    const city = getValues('from_city');
+    const details = getValues('from_details');
+    if (gov && city) {
+      const formatted = formatLocationString(gov, city, details);
+      if (formatted !== getValues('from_location')) {
+        setValue('from_location', formatted);
+      }
+    } else if (details) {
+      if (details !== getValues('from_location')) {
+        setValue('from_location', details);
+      }
+    } else if (getValues('from_location')) {
+      setValue('from_location', '');
+    }
+  };
+
+  const syncToLocation = () => {
+    const gov = getValues('to_governorate');
+    const city = getValues('to_city');
+    const details = getValues('to_details');
+    if (gov && city) {
+      const formatted = formatLocationString(gov, city, details);
+      if (formatted !== getValues('to_location')) {
+        setValue('to_location', formatted);
+      }
+    } else if (details) {
+      if (details !== getValues('to_location')) {
+        setValue('to_location', details);
+      }
+    } else if (getValues('to_location')) {
+      setValue('to_location', '');
+    }
+  };
+
+  // Clear city and update formatted string when governorate changes
   const prevFromGovRef = useRef(watchedFromGov);
   useEffect(() => {
     if (prevFromGovRef.current !== watchedFromGov) {
@@ -223,8 +262,13 @@ export const CreateWorkOrderPage: React.FC = () => {
         setValue('from_city', '');
       }
       prevFromGovRef.current = watchedFromGov;
+      syncFromLocation();
     }
   }, [watchedFromGov, setValue]);
+
+  useEffect(() => {
+    syncFromLocation();
+  }, [watchedFromCity]);
 
   const prevToGovRef = useRef(watchedToGov);
   useEffect(() => {
@@ -233,35 +277,13 @@ export const CreateWorkOrderPage: React.FC = () => {
         setValue('to_city', '');
       }
       prevToGovRef.current = watchedToGov;
+      syncToLocation();
     }
   }, [watchedToGov, setValue]);
 
-  // Synchronize formatted location string
   useEffect(() => {
-    if (watchedFromGov && watchedFromCity) {
-      const formatted = formatLocationString(watchedFromGov, watchedFromCity, watchedFromDetails);
-      if (formatted !== watchedFromLocation) {
-        setValue('from_location', formatted, { shouldValidate: true });
-      }
-    } else if (!watchedFromLocation || watchedFromLocation.includes(' - ')) {
-      if (watchedFromLocation !== '') {
-        setValue('from_location', '', { shouldValidate: true });
-      }
-    }
-  }, [watchedFromGov, watchedFromCity, watchedFromDetails, watchedFromLocation, setValue]);
-
-  useEffect(() => {
-    if (watchedToGov && watchedToCity) {
-      const formatted = formatLocationString(watchedToGov, watchedToCity, watchedToDetails);
-      if (formatted !== watchedToLocation) {
-        setValue('to_location', formatted, { shouldValidate: true });
-      }
-    } else if (!watchedToLocation || watchedToLocation.includes(' - ')) {
-      if (watchedToLocation !== '') {
-        setValue('to_location', '', { shouldValidate: true });
-      }
-    }
-  }, [watchedToGov, watchedToCity, watchedToDetails, watchedToLocation, setValue]);
+    syncToLocation();
+  }, [watchedToCity]);
 
   // If from_location or to_location is populated externally (duplication, tests, or deep links)
   useEffect(() => {
@@ -294,23 +316,25 @@ export const CreateWorkOrderPage: React.FC = () => {
     }
   }, [watchedToLocation, watchedToGov, setValue]);
 
-  // Watch fields needed for live match preview
-  const watchedFilters = watch('filters');
-  const watchedExcludeSameDay = watch('exclude_same_day_confirmed');
-  const watchedScheduledAt = watch('scheduled_at');
-  const watchedMinAvgRating = watch('min_avg_rating');
-  const watchedMaxNoShows = watch('max_no_shows');
-  const watchedLastTripWithinDays = watch('last_trip_within_days');
-  const watchedIncludeUnrated = watch('include_unrated');
-  const watchedTargetGroupId = watch('target_group_id');
-  const watchedDriverExperience = watch('driver_experience');
-  const watchedPhoneFilter = watch('driver_phone_filter');
+  // Watch fields needed for live match preview with useWatch for deep reactivity
+  const watchedFilters = useWatch({ control, name: 'filters' });
+  const watchedExcludeSameDay = useWatch({ control, name: 'exclude_same_day_confirmed' });
+  const watchedScheduledAt = useWatch({ control, name: 'scheduled_at' });
+  const watchedMinAvgRating = useWatch({ control, name: 'min_avg_rating' });
+  const watchedMaxNoShows = useWatch({ control, name: 'max_no_shows' });
+  const watchedLastTripWithinDays = useWatch({ control, name: 'last_trip_within_days' });
+  const watchedIncludeUnrated = useWatch({ control, name: 'include_unrated' });
+  const watchedTargetGroupId = useWatch({ control, name: 'target_group_id' });
+  const watchedDriverExperience = useWatch({ control, name: 'driver_experience' });
+  const watchedPhoneFilter = useWatch({ control, name: 'driver_phone_filter' });
+
   const watchedStrategy = watch('send_strategy');
   const watchedCustomMessage = watch('custom_message');
   const watchedPayAmount = watch('pay_amount');
   const watchedCargoType = watch('cargo_type');
   const watchedNotes = watch('notes');
-  const allWatchedValues = watch();
+
+  const serializedFilters = useMemo(() => JSON.stringify(watchedFilters ?? []), [watchedFilters]);
 
   const messageTextareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -494,7 +518,7 @@ export const CreateWorkOrderPage: React.FC = () => {
 
     return () => clearTimeout(timer);
   }, [
-    watchedFilters,
+    serializedFilters,
     watchedExcludeSameDay,
     watchedScheduledAt,
     watchedMinAvgRating,
@@ -559,45 +583,39 @@ export const CreateWorkOrderPage: React.FC = () => {
     }
   }, [reset, addToast]);
 
-  // Auto-save draft on changes (debounced)
+  // Auto-save draft on changes (subscription without re-rendering)
   useEffect(() => {
-    if (!hasRestoredRef.current) return;
+    const subscription = watch((currentVals) => {
+      if (!hasRestoredRef.current) return;
+      const hasContent = Boolean(
+        currentVals.from_governorate ||
+        currentVals.to_governorate ||
+        currentVals.scheduled_at ||
+        currentVals.cargo_type ||
+        currentVals.pay_amount ||
+        currentVals.notes ||
+        (Array.isArray(currentVals.filters) && currentVals.filters.length > 0) ||
+        (currentVals.custom_message && currentVals.custom_message !== DEFAULT_OFFER_MESSAGE)
+      );
 
-    const timer = setTimeout(() => {
-      try {
-        const currentVals = watch();
-        const hasContent = Boolean(
-          currentVals.from_governorate ||
-          currentVals.to_governorate ||
-          currentVals.scheduled_at ||
-          currentVals.cargo_type ||
-          currentVals.pay_amount ||
-          currentVals.notes ||
-          (Array.isArray(currentVals.filters) && currentVals.filters.length > 0) ||
-          (currentVals.custom_message && currentVals.custom_message !== DEFAULT_OFFER_MESSAGE)
+      if (hasContent) {
+        const now = new Date();
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            ...currentVals,
+            _currentStep: currentStep,
+            _savedAt: now.toISOString(),
+          })
         );
-
-        if (hasContent) {
-          const now = new Date();
-          localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify({
-              ...currentVals,
-              _currentStep: currentStep,
-              _savedAt: now.toISOString(),
-            })
-          );
-          setDraftSavedTime(
-            now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
-          );
-        }
-      } catch (e) {
-        console.error('Failed to auto-save draft', e);
+        setDraftSavedTime(
+          now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+        );
       }
-    }, 600);
+    });
 
-    return () => clearTimeout(timer);
-  }, [allWatchedValues, currentStep, watch]);
+    return () => subscription.unsubscribe();
+  }, [watch, currentStep]);
 
   const handleDiscardDraft = () => {
     try {
@@ -619,9 +637,9 @@ export const CreateWorkOrderPage: React.FC = () => {
   const validateStep = async (step: number): Promise<boolean> => {
     switch (step) {
       case 1: {
-        const isLocValid = await trigger(['from_location', 'to_location', 'scheduled_at']);
-        await trigger(['from_governorate', 'from_city', 'to_governorate', 'to_city']);
-        return isLocValid;
+        syncFromLocation();
+        syncToLocation();
+        return true;
       }
       case 2:
         return await trigger(['trips_needed', 'backup_needed']);
@@ -665,10 +683,17 @@ export const CreateWorkOrderPage: React.FC = () => {
           value: f.operator === 'gte' || f.operator === 'lte' ? Number(f.value) : f.value,
         }));
 
+      syncFromLocation();
+      syncToLocation();
+      const currentFrom = getValues('from_location');
+      const currentTo = getValues('to_location');
+
       const payload: CreateWorkOrderPayload = {
-        from_location: data.from_location,
-        to_location: data.to_location,
-        scheduled_at: new Date(data.scheduled_at).toISOString(),
+        from_location: currentFrom?.trim() || undefined,
+        to_location: currentTo?.trim() || undefined,
+        scheduled_at: data.scheduled_at ? new Date(data.scheduled_at).toISOString() : undefined,
+        scheduled_dispatch_at: data.scheduled_dispatch_at ? new Date(data.scheduled_dispatch_at).toISOString() : undefined,
+        offer_expires_in_minutes: data.offer_expires_in_minutes ? Number(data.offer_expires_in_minutes) : undefined,
         cargo_type: data.cargo_type?.trim() || undefined,
         pay_amount: data.pay_amount ? Number(data.pay_amount) : undefined,
         notes: data.notes || undefined,
@@ -843,7 +868,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                         <MapPinIcon className="w-4 h-4" />
                       </div>
                       <span>{ar.workOrders.fields.fromLocation}</span>
-                      <span className="text-danger font-bold text-xs">*</span>
+                      <span className="text-default-400 text-xs font-normal ms-1">(اختياري)</span>
                     </div>
                     {watchedFromLocation && (
                       <span
@@ -859,17 +884,14 @@ export const CreateWorkOrderPage: React.FC = () => {
                     <FormSelect
                       name="from_governorate"
                       control={control}
-                      rules={{ required: ar.workOrders.validation.fromGovernorateRequired }}
                       label={ar.workOrders.fields.fromGovernorate}
                       placeholder={ar.workOrders.fields.fromGovernoratePlaceholder}
                       options={EGYPT_GOVERNORATES}
-                      isRequired
                     />
 
                     <FormSelect
                       name="from_city"
                       control={control}
-                      rules={{ required: ar.workOrders.validation.fromCityRequired }}
                       label={ar.workOrders.fields.fromCity}
                       placeholder={
                         watchedFromGov
@@ -878,7 +900,6 @@ export const CreateWorkOrderPage: React.FC = () => {
                       }
                       options={fromCityOptions}
                       isDisabled={!watchedFromGov}
-                      isRequired
                     />
                   </div>
 
@@ -887,23 +908,8 @@ export const CreateWorkOrderPage: React.FC = () => {
                     control={control}
                     label={ar.workOrders.fields.fromDetails}
                     placeholder={ar.workOrders.fields.fromDetailsPlaceholder}
+                    onBlur={syncFromLocation}
                   />
-
-                  {/* Hidden synchronization input for form validation & testing */}
-                  <input
-                    type="text"
-                    className="sr-only"
-                    tabIndex={-1}
-                    aria-label={ar.workOrders.fields.fromLocation}
-                    {...control.register('from_location', {
-                      required: ar.workOrders.validation.fromLocationRequired,
-                    })}
-                  />
-                  {errors.from_location && (
-                    <p className="text-xs text-danger font-medium mt-1">
-                      {errors.from_location.message}
-                    </p>
-                  )}
                 </div>
 
                 {/* وجهة الوصول */}
@@ -914,7 +920,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                         <MapPinIcon className="w-4 h-4" />
                       </div>
                       <span>{ar.workOrders.fields.toLocation}</span>
-                      <span className="text-danger font-bold text-xs">*</span>
+                      <span className="text-default-400 text-xs font-normal ms-1">(اختياري)</span>
                     </div>
                     {watchedToLocation && (
                       <span
@@ -930,17 +936,14 @@ export const CreateWorkOrderPage: React.FC = () => {
                     <FormSelect
                       name="to_governorate"
                       control={control}
-                      rules={{ required: ar.workOrders.validation.toGovernorateRequired }}
                       label={ar.workOrders.fields.toGovernorate}
                       placeholder={ar.workOrders.fields.toGovernoratePlaceholder}
                       options={EGYPT_GOVERNORATES}
-                      isRequired
                     />
 
                     <FormSelect
                       name="to_city"
                       control={control}
-                      rules={{ required: ar.workOrders.validation.toCityRequired }}
                       label={ar.workOrders.fields.toCity}
                       placeholder={
                         watchedToGov
@@ -949,7 +952,6 @@ export const CreateWorkOrderPage: React.FC = () => {
                       }
                       options={toCityOptions}
                       isDisabled={!watchedToGov}
-                      isRequired
                     />
                   </div>
 
@@ -958,34 +960,36 @@ export const CreateWorkOrderPage: React.FC = () => {
                     control={control}
                     label={ar.workOrders.fields.toDetails}
                     placeholder={ar.workOrders.fields.toDetailsPlaceholder}
+                    onBlur={syncToLocation}
                   />
-
-                  {/* Hidden synchronization input for form validation & testing */}
-                  <input
-                    type="text"
-                    className="sr-only"
-                    tabIndex={-1}
-                    aria-label={ar.workOrders.fields.toLocation}
-                    {...control.register('to_location', {
-                      required: ar.workOrders.validation.toLocationRequired,
-                    })}
-                  />
-                  {errors.to_location && (
-                    <p className="text-xs text-danger font-medium mt-1">
-                      {errors.to_location.message}
-                    </p>
-                  )}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormDatePicker
-                  name="scheduled_at"
-                  control={control}
-                  rules={{ required: ar.workOrders.validation.scheduledAtRequired }}
-                  label={ar.workOrders.fields.scheduledAt}
-                  isRequired
-                />
+                <div className="flex flex-col gap-1.5 text-start">
+                  <label className="text-sm font-semibold text-foreground-700 flex items-center gap-1 select-none">
+                    <span>{ar.workOrders.fields.scheduledAt}</span>
+                    <span className="text-default-400 text-xs font-normal ms-1">(اختياري)</span>
+                  </label>
+                  <Controller
+                    name="scheduled_at"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        type="datetime-local"
+                        value={field.value || ''}
+                        onChange={field.onChange}
+                        variant="bordered"
+                        placeholder={ar.workOrders.fields.scheduledAt}
+                        aria-label={ar.workOrders.fields.scheduledAt}
+                        classNames={{
+                          inputWrapper:
+                            'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 focus-within:border-primary',
+                        }}
+                      />
+                    )}
+                  />
+                </div>
 
                 <FormInput
                   name="cargo_type"
@@ -1122,7 +1126,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                 ) : (
                   <div className="space-y-3.5">
                     {fields.map((fieldItem, index) => {
-                      const currentQId = watch(`filters.${index}.question_id`);
+                      const currentQId = watchedFilters?.[index]?.question_id ?? fieldItem.question_id;
                       const selectedQuestion = filterQuestions.find(
                         (q) => q.id === Number(currentQId)
                       );
@@ -1194,7 +1198,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                                         const newQId = Number(val);
                                         field.onChange(newQId);
                                         const nextQ = filterQuestions.find((q) => q.id === newQId);
-                                        const currentOp = watch(`filters.${index}.operator`) || 'eq';
+                                        const currentOp = watchedFilters?.[index]?.operator || 'eq';
                                         let defaultVal: any = '';
                                         if (nextQ?.key === 'whatsapp_group') {
                                           const gId = whatsappGroups[0]?.id ? String(whatsappGroups[0].id) : '';
@@ -1202,13 +1206,13 @@ export const CreateWorkOrderPage: React.FC = () => {
                                         } else if (nextQ?.key === 'driver_experience') {
                                           defaultVal = currentOp === 'in' ? ['experienced_only'] : 'experienced_only';
                                         } else if (nextQ?.type === 'yes_no') {
-                                          setValue(`filters.${index}.operator`, 'eq');
+                                          setValue(`filters.${index}.operator`, 'eq', { shouldDirty: true, shouldTouch: true });
                                           defaultVal = 'yes';
                                         } else {
                                           const firstVal = nextQ?.options?.[0]?.value || '';
                                           defaultVal = currentOp === 'in' ? (firstVal ? [firstVal] : []) : firstVal;
                                         }
-                                        setValue(`filters.${index}.value`, defaultVal);
+                                        setValue(`filters.${index}.value`, defaultVal, { shouldDirty: true, shouldTouch: true });
                                       }
                                     }}
                                     classNames={{
@@ -1244,16 +1248,16 @@ export const CreateWorkOrderPage: React.FC = () => {
                                     onSelectionChange={(keys) => {
                                       const newOp = (Array.from(keys)[0] as string) || 'eq';
                                       field.onChange(newOp);
-                                      const currentVal = watch(`filters.${index}.value`);
+                                      const currentVal = watchedFilters?.[index]?.value;
                                       if (newOp === 'in') {
                                         if (typeof currentVal === 'string' && currentVal !== '') {
-                                          setValue(`filters.${index}.value`, [currentVal]);
+                                          setValue(`filters.${index}.value`, [currentVal], { shouldDirty: true, shouldTouch: true });
                                         } else if (!Array.isArray(currentVal)) {
-                                          setValue(`filters.${index}.value`, []);
+                                          setValue(`filters.${index}.value`, [], { shouldDirty: true, shouldTouch: true });
                                         }
                                       } else if (newOp === 'eq') {
                                         if (Array.isArray(currentVal)) {
-                                          setValue(`filters.${index}.value`, currentVal[0] || '');
+                                          setValue(`filters.${index}.value`, currentVal[0] || '', { shouldDirty: true, shouldTouch: true });
                                         }
                                       }
                                     }}
@@ -1358,7 +1362,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                                     : selectedQuestion?.options || [];
 
                                   if (isChoice && choiceOptions.length > 0) {
-                                    const currentOp = watch(`filters.${index}.operator`) || 'eq';
+                                    const currentOp = watchedFilters?.[index]?.operator || 'eq';
                                     const isIn = currentOp === 'in';
 
                                     if (isIn) {
@@ -1637,6 +1641,58 @@ export const CreateWorkOrderPage: React.FC = () => {
               </CardBody>
             </Card>
 
+            {/* Scheduled Dispatch & Offer Expiration */}
+            <Card className="shadow-sm">
+              <CardHeader className="font-semibold text-lg pb-0 flex items-center justify-between">
+                <span>الجدولة التلقائية وتحديد مهلة الرد (اختياري)</span>
+              </CardHeader>
+              <CardBody className="space-y-4 pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1.5 text-start">
+                    <label className="text-sm font-semibold text-foreground-700 flex items-center gap-1 select-none">
+                      <span>{ar.workOrders.fields.scheduledDispatchAt}</span>
+                      <span className="text-default-400 text-xs font-normal ms-1">(اختياري)</span>
+                    </label>
+                    <Controller
+                      name="scheduled_dispatch_at"
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          type="datetime-local"
+                          value={field.value || ''}
+                          onChange={field.onChange}
+                          variant="bordered"
+                          placeholder={ar.workOrders.fields.scheduledDispatchAtPlaceholder}
+                          aria-label={ar.workOrders.fields.scheduledDispatchAt}
+                          classNames={{
+                            inputWrapper:
+                              'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 focus-within:border-primary',
+                          }}
+                        />
+                      )}
+                    />
+                    <span className="text-[11px] text-default-400">
+                      {ar.workOrders.fields.scheduledDispatchAtPlaceholder}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5 text-start">
+                    <FormInput
+                      name="offer_expires_in_minutes"
+                      control={control}
+                      type="number"
+                      min="1"
+                      label={ar.workOrders.fields.offerExpiresInMinutes}
+                      placeholder={ar.workOrders.fields.offerExpiresInMinutesPlaceholder}
+                    />
+                    <span className="text-[11px] text-default-400">
+                      {ar.workOrders.fields.offerExpiresNotice}
+                    </span>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+
             {/* Custom WhatsApp Message Card */}
             <Card className="shadow-sm">
               <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 pb-0">
@@ -1741,151 +1797,170 @@ export const CreateWorkOrderPage: React.FC = () => {
         )}
 
         {/* STEP 5: Review */}
-        {currentStep === 5 && (
-          <Card className="shadow-sm">
-            <CardHeader className="font-semibold text-lg pb-0">
-              {ar.workOrders.steps.review}
-            </CardHeader>
-            <CardBody className="space-y-4 pt-4">
-              {/* Summary of details */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-default-50 p-4 rounded-lg">
-                <div>
-                  <span className="text-default-500 block">{ar.workOrders.fields.fromLocation}:</span>
-                  <span className="font-semibold">{allWatchedValues.from_location}</span>
-                </div>
-                <div>
-                  <span className="text-default-500 block">{ar.workOrders.fields.toLocation}:</span>
-                  <span className="font-semibold">{allWatchedValues.to_location}</span>
-                </div>
-                <div>
-                  <span className="text-default-500 block">{ar.workOrders.fields.scheduledAt}:</span>
-                  <span className="font-semibold">{allWatchedValues.scheduled_at}</span>
-                </div>
-                <div>
-                  <span className="text-default-500 block">{ar.workOrders.fields.payAmount}:</span>
-                  <span className="font-semibold">
-                    {allWatchedValues.pay_amount ? `${allWatchedValues.pay_amount} ج.م` : '—'}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-default-500 block">المطلوب (أساسي + احتياطي):</span>
-                  <span className="font-semibold text-primary">
-                    {allWatchedValues.trips_needed} أساسي + {allWatchedValues.backup_needed || 0} احتياطي
-                  </span>
-                </div>
-                <div>
-                  <span className="text-default-500 block">{ar.workOrders.fields.sendStrategy}:</span>
-                  <span className="font-semibold">
-                    {allWatchedValues.send_strategy === 'all'
-                      ? ar.workOrders.fields.strategyAll
-                      : `${ar.workOrders.fields.strategyStaged} (${allWatchedValues.batch_size} كل ${allWatchedValues.batch_interval_minutes} دقيقة)`}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-default-500 block">{ar.workOrders.matching.countLabel}</span>
-                  <span className="font-bold text-success">
-                    {matchPreview?.count ?? 0} {ar.workOrders.matching.matchedDrivers}
-                  </span>
-                </div>
-
-                {(allWatchedValues.min_avg_rating ||
-                  allWatchedValues.max_no_shows !== '' ||
-                  allWatchedValues.last_trip_within_days) && (
-                  <div className="md:col-span-2 border-t border-default-200 pt-2">
-                    <span className="text-default-500 block font-semibold mb-1">
-                      {ar.workOrders.systemFilters.title}:
+        {currentStep === 5 && (() => {
+          const reviewValues = getValues();
+          return (
+            <Card className="shadow-sm">
+              <CardHeader className="font-semibold text-lg pb-0">
+                {ar.workOrders.steps.review}
+              </CardHeader>
+              <CardBody className="space-y-4 pt-4">
+                {/* Summary of details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-default-50 p-4 rounded-lg">
+                  <div>
+                    <span className="text-default-500 block">{ar.workOrders.fields.fromLocation}:</span>
+                    <span className="font-semibold">{reviewValues.from_location || '—'}</span>
+                  </div>
+                  <div>
+                    <span className="text-default-500 block">{ar.workOrders.fields.toLocation}:</span>
+                    <span className="font-semibold">{reviewValues.to_location || '—'}</span>
+                  </div>
+                  <div>
+                    <span className="text-default-500 block">{ar.workOrders.fields.scheduledAt}:</span>
+                    <span className="font-semibold">{reviewValues.scheduled_at || '—'}</span>
+                  </div>
+                  <div>
+                    <span className="text-default-500 block">{ar.workOrders.fields.payAmount}:</span>
+                    <span className="font-semibold">
+                      {reviewValues.pay_amount ? `${reviewValues.pay_amount} ج.م` : '—'}
                     </span>
-                    <div className="flex flex-wrap gap-2 text-xs">
-                      {allWatchedValues.min_avg_rating && (
-                        <span className="bg-default-100 px-2.5 py-1 rounded">
-                          {ar.workOrders.systemFilters.minRating}: {allWatchedValues.min_avg_rating} ⭐
-                        </span>
-                      )}
-                      {allWatchedValues.max_no_shows !== '' &&
-                        allWatchedValues.max_no_shows !== undefined && (
+                  </div>
+                  <div>
+                    <span className="text-default-500 block">المطلوب (أساسي + احتياطي):</span>
+                    <span className="font-semibold text-primary">
+                      {reviewValues.trips_needed} أساسي + {reviewValues.backup_needed || 0} احتياطي
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-default-500 block">{ar.workOrders.fields.sendStrategy}:</span>
+                    <span className="font-semibold">
+                      {reviewValues.send_strategy === 'all'
+                        ? ar.workOrders.fields.strategyAll
+                        : `${ar.workOrders.fields.strategyStaged} (${reviewValues.batch_size} كل ${reviewValues.batch_interval_minutes} دقيقة)`}
+                    </span>
+                  </div>
+                  {reviewValues.scheduled_dispatch_at && (
+                    <div>
+                      <span className="text-default-500 block">{ar.workOrders.fields.scheduledDispatchAt}:</span>
+                      <span className="font-semibold text-primary">
+                        {reviewValues.scheduled_dispatch_at}
+                      </span>
+                    </div>
+                  )}
+                  {reviewValues.offer_expires_in_minutes && (
+                    <div>
+                      <span className="text-default-500 block">{ar.workOrders.fields.offerExpiresInMinutes}:</span>
+                      <span className="font-semibold text-warning-700">
+                        {reviewValues.offer_expires_in_minutes} دقيقة
+                      </span>
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-default-500 block">{ar.workOrders.matching.countLabel}</span>
+                    <span className="font-bold text-success">
+                      {matchPreview?.count ?? 0} {ar.workOrders.matching.matchedDrivers}
+                    </span>
+                  </div>
+
+                  {(reviewValues.min_avg_rating ||
+                    reviewValues.max_no_shows !== '' ||
+                    reviewValues.last_trip_within_days) && (
+                    <div className="md:col-span-2 border-t border-default-200 pt-2">
+                      <span className="text-default-500 block font-semibold mb-1">
+                        {ar.workOrders.systemFilters.title}:
+                      </span>
+                      <div className="flex flex-wrap gap-2 text-xs">
+                        {reviewValues.min_avg_rating && (
                           <span className="bg-default-100 px-2.5 py-1 rounded">
-                            {ar.workOrders.systemFilters.maxNoShows}: {allWatchedValues.max_no_shows}
+                            {ar.workOrders.systemFilters.minRating}: {reviewValues.min_avg_rating} ⭐
                           </span>
                         )}
-                      {allWatchedValues.last_trip_within_days && (
-                        <span className="bg-default-100 px-2.5 py-1 rounded">
-                          {ar.workOrders.systemFilters.lastTripDays}: {allWatchedValues.last_trip_within_days} يوم
-                        </span>
-                      )}
-                      {allWatchedValues.include_unrated && (
-                        <span className="bg-default-100 px-2.5 py-1 rounded">
-                          {ar.workOrders.systemFilters.includeUnrated}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {allWatchedValues.filters && allWatchedValues.filters.length > 0 && (
-                  <div className="md:col-span-2 border-t border-default-200 pt-2">
-                    <span className="text-default-500 block font-semibold mb-1">
-                      {ar.workOrders.steps.filters}:
-                    </span>
-                    <div className="flex flex-wrap gap-2 text-xs">
-                      {allWatchedValues.filters.map((f, i) => {
-                        const q = filterQuestions.find((item) => item.id === Number(f.question_id));
-                        if (!q) return null;
-                        let valDisplay = '';
-                        if (q.key === 'whatsapp_group') {
-                          const ids = Array.isArray(f.value) ? f.value : [f.value];
-                          valDisplay = ids
-                            .map((id) => whatsappGroups.find((g) => String(g.id) === String(id))?.name || id)
-                            .join('، ');
-                        } else if (q.key === 'driver_experience') {
-                          const vals = Array.isArray(f.value) ? f.value : [f.value];
-                          valDisplay = vals
-                            .map((v) =>
-                              v === 'new_only'
-                                ? ar.workOrders.driverProfileFilters.experienceNew
-                                : ar.workOrders.driverProfileFilters.experienceExperienced
-                            )
-                            .join('، ');
-                        } else if (q.type === 'yes_no') {
-                          valDisplay = f.value === 'yes' ? 'نعم' : 'لا';
-                        } else {
-                          const vals = Array.isArray(f.value) ? f.value : [f.value];
-                          valDisplay = vals
-                            .map((v) => q.options?.find((opt) => opt.value === v)?.label_ar || v)
-                            .join('، ');
-                        }
-                        return (
-                          <span key={i} className="bg-default-100 text-default-800 px-2.5 py-1 rounded">
-                            <strong>{q.text_ar}:</strong> {valDisplay} ({f.operator === 'in' ? 'ضمن الخيارات' : 'يساوي'})
+                        {reviewValues.max_no_shows !== '' &&
+                          reviewValues.max_no_shows !== undefined && (
+                            <span className="bg-default-100 px-2.5 py-1 rounded">
+                              {ar.workOrders.systemFilters.maxNoShows}: {reviewValues.max_no_shows}
+                            </span>
+                          )}
+                        {reviewValues.last_trip_within_days && (
+                          <span className="bg-default-100 px-2.5 py-1 rounded">
+                            {ar.workOrders.systemFilters.lastTripDays}: {reviewValues.last_trip_within_days} يوم
                           </span>
-                        );
-                      })}
+                        )}
+                        {reviewValues.include_unrated && (
+                          <span className="bg-default-100 px-2.5 py-1 rounded">
+                            {ar.workOrders.systemFilters.includeUnrated}
+                          </span>
+                        )}
+                      </div>
                     </div>
+                  )}
+
+                  {reviewValues.filters && reviewValues.filters.length > 0 && (
+                    <div className="md:col-span-2 border-t border-default-200 pt-2">
+                      <span className="text-default-500 block font-semibold mb-1">
+                        {ar.workOrders.steps.filters}:
+                      </span>
+                      <div className="flex flex-wrap gap-2 text-xs">
+                        {(reviewValues.filters as any[]).map((f: any, i: number) => {
+                          const q = filterQuestions.find((item) => item.id === Number(f.question_id));
+                          if (!q) return null;
+                          let valDisplay = '';
+                          if (q.key === 'whatsapp_group') {
+                            const ids = Array.isArray(f.value) ? f.value : [f.value];
+                            valDisplay = ids
+                              .map((id: any) => whatsappGroups.find((g) => String(g.id) === String(id))?.name || id)
+                              .join('، ');
+                          } else if (q.key === 'driver_experience') {
+                            const vals = Array.isArray(f.value) ? f.value : [f.value];
+                            valDisplay = vals
+                              .map((v: any) =>
+                                v === 'new_only'
+                                  ? ar.workOrders.driverProfileFilters.experienceNew
+                                  : ar.workOrders.driverProfileFilters.experienceExperienced
+                              )
+                              .join('، ');
+                          } else if (q.type === 'yes_no') {
+                            valDisplay = f.value === 'yes' ? 'نعم' : 'لا';
+                          } else {
+                            const vals = Array.isArray(f.value) ? f.value : [f.value];
+                            valDisplay = vals
+                              .map((v: any) => q.options?.find((opt) => opt.value === v)?.label_ar || v)
+                              .join('، ');
+                          }
+                          return (
+                            <span key={i} className="bg-default-100 text-default-800 px-2.5 py-1 rounded">
+                              <strong>{q.text_ar}:</strong> {valDisplay} ({f.operator === 'in' ? 'ضمن الخيارات' : 'يساوي'})
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {reviewValues.notes && (
+                  <div className="text-sm bg-default-50 p-3 rounded-lg">
+                    <span className="text-default-500 block">{ar.workOrders.fields.notes}:</span>
+                    <span>{reviewValues.notes}</span>
                   </div>
                 )}
-              </div>
 
-              {allWatchedValues.notes && (
-                <div className="text-sm bg-default-50 p-3 rounded-lg">
-                  <span className="text-default-500 block">{ar.workOrders.fields.notes}:</span>
-                  <span>{allWatchedValues.notes}</span>
+                {/* WhatsApp Message Preview in Step 5 */}
+                <div className="border-t border-default-200 pt-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <ChatBubbleLeftRightIcon className="w-5 h-5 text-emerald-600" />
+                    <span className="font-semibold text-base text-foreground-900">
+                      {ar.workOrders.messageTemplate.previewTitle}
+                    </span>
+                  </div>
+                  <div className="flex justify-center p-2">
+                    {renderWhatsAppPreview(watchedCustomMessage || DEFAULT_OFFER_MESSAGE)}
+                  </div>
                 </div>
-              )}
-
-              {/* WhatsApp Message Preview in Step 5 */}
-              <div className="border-t border-default-200 pt-4 space-y-3">
-                <div className="flex items-center gap-2">
-                  <ChatBubbleLeftRightIcon className="w-5 h-5 text-emerald-600" />
-                  <span className="font-semibold text-base text-foreground-900">
-                    {ar.workOrders.messageTemplate.previewTitle}
-                  </span>
-                </div>
-                <div className="flex justify-center p-2">
-                  {renderWhatsAppPreview(watchedCustomMessage || DEFAULT_OFFER_MESSAGE)}
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-        )}
+              </CardBody>
+            </Card>
+          );
+        })()}
 
         {/* Action Buttons Footer */}
         <div className="sticky bottom-0 z-30 -mx-3.5 sm:-mx-6 lg:-mx-8 -mb-4 sm:-mb-6 lg:-mb-8 mt-6 border-t border-default-200 bg-background/95 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-3.5 safe-pb-sticky shadow-lg shadow-black/5 flex items-center justify-between gap-3">

@@ -15,6 +15,7 @@ import {
   PaperAirplaneIcon,
   CheckCircleIcon,
   InformationCircleIcon,
+  TrashIcon,
 } from '@/components/icons';
 import PageContainer from '@/components/layout/PageContainer';
 import { SearchInput } from '@/components/form';
@@ -31,6 +32,8 @@ import DriverDetailDrawer from '@/features/drivers/components/DriverDetailDrawer
 import BulkInviteModal from '@/features/whatsapp/components/BulkInviteModal';
 import DriverChatModal from '@/features/whatsapp/components/DriverChatModal';
 import { useUiStore } from '@/lib/stores/useUiStore';
+import { useDriverUpdates } from '@/hooks/useDriverUpdates';
+import type { DriverStatusValue } from '@/types/driver';
 
 export const NewDriversPage: React.FC = () => {
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -65,7 +68,36 @@ export const NewDriversPage: React.FC = () => {
   // Sending question loading per driver ID
   const [actionLoadingDriverId, setActionLoadingDriverId] = useState<number | null>(null);
 
+  // Driver deletion state
+  const [driverToDelete, setDriverToDelete] = useState<Driver | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const addToast = useUiStore((state) => state.addToast);
+
+  const handleDeleteDriver = async () => {
+    if (!driverToDelete) return;
+    setIsDeleting(true);
+    try {
+      await driverService.deleteDriver(driverToDelete.id);
+      addToast({
+        title: ar.drivers.deleteDriver,
+        message: ar.drivers.driverDeleted,
+        type: 'success',
+      });
+      const deletedId = driverToDelete.id;
+      setDriverToDelete(null);
+      setDrivers((prev) => prev.filter((d) => d.id !== deletedId));
+      setTotal((prev) => Math.max(0, prev - 1));
+    } catch {
+      addToast({
+        title: ar.errors.generalError,
+        message: ar.errors.generalError,
+        type: 'error',
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   // Debounce search input
   useEffect(() => {
@@ -88,6 +120,26 @@ export const NewDriversPage: React.FC = () => {
     };
     loadGroups();
   }, []);
+
+  // Real-time Pusher updates for new drivers
+  useDriverUpdates({
+    onStatusUpdated: (payload) => {
+      setDrivers((prev) =>
+        prev.map((d) =>
+          d.id === payload.driver_id
+            ? {
+                ...d,
+                status: {
+                  value: payload.new_status as DriverStatusValue,
+                  label: (ar.statuses as Record<string, string>)[payload.new_status] || payload.new_status,
+                },
+                name: payload.driver_name || d.name,
+              }
+            : d
+        )
+      );
+    },
+  });
 
   const statusOptions = useMemo(
     () => [
@@ -400,6 +452,19 @@ export const NewDriversPage: React.FC = () => {
             >
               <EyeIcon className="h-4 w-4" />
             </Button>
+
+            <Button
+              isIconOnly
+              size="sm"
+              variant="light"
+              color="danger"
+              className="text-default-500 hover:text-danger hover:bg-danger-50 min-w-8 w-8 h-8 rounded-lg shrink-0"
+              onPress={() => setDriverToDelete(driver)}
+              aria-label={ar.drivers.deleteDriver}
+              title={ar.drivers.deleteDriver}
+            >
+              <TrashIcon className="h-4 w-4" />
+            </Button>
           </div>
         );
       },
@@ -582,6 +647,12 @@ export const NewDriversPage: React.FC = () => {
           setSelectedDriverId(null);
         }}
         onDriverUpdated={handleDriverUpdated}
+        onDriverDeleted={(deletedId) => {
+          setIsDetailDrawerOpen(false);
+          setSelectedDriverId(null);
+          setDrivers((prev) => prev.filter((d) => d.id !== deletedId));
+          setTotal((prev) => Math.max(0, prev - 1));
+        }}
       />
 
       {/* WhatsApp Bulk Invite Modal */}
@@ -602,6 +673,21 @@ export const NewDriversPage: React.FC = () => {
           onStatusChanged={fetchDrivers}
         />
       )}
+
+      {/* Delete Driver Confirmation Modal */}
+      <ConfirmDialog
+        isOpen={Boolean(driverToDelete)}
+        onClose={() => !isDeleting && setDriverToDelete(null)}
+        onConfirm={handleDeleteDriver}
+        title={ar.drivers.deleteConfirmTitle}
+        message={ar.drivers.deleteConfirmMessage(
+          driverToDelete?.name || driverToDelete?.phone || ar.drivers.unnamed
+        )}
+        confirmText={ar.common.delete}
+        cancelText={ar.common.cancel}
+        variant="danger"
+        isLoading={isDeleting}
+      />
     </PageContainer>
   );
 };

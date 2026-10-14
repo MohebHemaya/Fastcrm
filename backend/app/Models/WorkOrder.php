@@ -58,6 +58,8 @@ class WorkOrder extends Model
         'sent_count',
         'filled_at',
         'send_strategy',
+        'scheduled_dispatch_at',
+        'offer_expires_in_minutes',
         'batch_size',
         'batch_interval_minutes',
         'exclude_same_day_confirmed',
@@ -75,6 +77,8 @@ class WorkOrder extends Model
     {
         return [
             'scheduled_at' => 'datetime',
+            'scheduled_dispatch_at' => 'datetime',
+            'offer_expires_in_minutes' => 'integer',
             'filled_at' => 'datetime',
             'pay_amount' => 'decimal:2',
             'status' => WorkOrderStatus::class,
@@ -214,7 +218,9 @@ class WorkOrder extends Model
 
         $driverName = ($driver && $driver->name) ? $driver->name : 'كابتن';
         $payFormatted = $this->pay_amount ? number_format((float) $this->pay_amount, 2).' ج.م' : 'حسب الاتفاق';
-        $scheduledFormatted = $this->scheduled_at ? $this->scheduled_at->format('Y-m-d H:i') : '';
+        $scheduledFormatted = $this->scheduled_at ? $this->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
+        $fromFormatted = $this->from_location ?: 'حسب الاتفاق';
+        $toFormatted = $this->to_location ?: 'حسب الاتفاق';
         $cargoFormatted = $this->cargo_type ?: 'عامة';
         $notesFormatted = ! empty(trim((string) $this->notes)) ? ("- ملاحظات: ".$this->notes) : '';
 
@@ -226,11 +232,11 @@ class WorkOrder extends Model
             '{{code}}' => $this->code,
             '{{رقم_الطلب}}' => $this->code,
 
-            '{{from_location}}' => $this->from_location,
-            '{{مكان_الانطلاق}}' => $this->from_location,
+            '{{from_location}}' => $fromFormatted,
+            '{{مكان_الانطلاق}}' => $fromFormatted,
 
-            '{{to_location}}' => $this->to_location,
-            '{{وجهة_الوصول}}' => $this->to_location,
+            '{{to_location}}' => $toFormatted,
+            '{{وجهة_الوصول}}' => $toFormatted,
 
             '{{scheduled_at}}' => $scheduledFormatted,
             '{{موعد_الرحلة}}' => $scheduledFormatted,

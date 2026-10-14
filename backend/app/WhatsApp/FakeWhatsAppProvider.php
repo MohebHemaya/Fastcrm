@@ -130,4 +130,14 @@ class FakeWhatsAppProvider implements WhatsAppProvider
         };
         $msg->save();
     }
+
+    public function syncRecentStatuses(int $limit = 30): int
+    {
+        return 0;
+    }
+
+    public function syncChatInbound(string $phone): int
+    {
+        return 0;
+    }
 }

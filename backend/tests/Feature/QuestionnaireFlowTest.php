@@ -274,3 +274,37 @@ test('Audio or image replies send polite guidance asking to reply with buttons o
         'body' => 'عفواً، لا يمكننا قبول الرسائل الصوتية أو الصور في هذه المرحلة. برجاء الإجابة على السؤال بالأزرار أو كتابة نص:',
     ]);
 });
+
+test('Answering driver_name question automatically updates driver name in drivers table', function () {
+    $qName = Question::create([
+        'key' => 'driver_name',
+        'sort_order' => 0,
+        'type' => QuestionType::TEXT,
+        'is_active' => true,
+        'is_required' => true,
+    ]);
+    $qName->recordVersion('ما هو اسمك بالكامل يا كابتن؟', QuestionType::TEXT);
+
+    $driver = Driver::factory()->create([
+        'phone' => '+201088776655',
+        'name' => null,
+        'status' => DriverStatus::QUESTIONNAIRE_IN_PROGRESS,
+    ]);
+
+    $this->router->handle(new InboundMessage(
+        from: '+201088776655',
+        type: 'text',
+        text: 'محمود عبد الرحيم',
+        payloadId: null,
+        providerMessageId: 'in_name_ans',
+        timestamp: now()->timestamp,
+    ));
+
+    $driver->refresh();
+    expect($driver->name)->toBe('محمود عبد الرحيم');
+
+    $answer = DriverAnswer::where('driver_id', $driver->id)->where('question_id', $qName->id)->first();
+    expect($answer)->not->toBeNull()
+        ->and($answer->value_text)->toBe('محمود عبد الرحيم');
+});
+

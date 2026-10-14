@@ -171,9 +171,11 @@ SANCTUM_STATEFUL_DOMAINS=erp.zimpact-eg.com
 CORS_ALLOWED_ORIGINS=https://erp.zimpact-eg.com
 FRONTEND_URL=https://erp.zimpact-eg.com
 
-WHATSAPP_PROVIDER=fake
-WHATSAPP_VERIFY_TOKEN=fake_verify_token
-WHATSAPP_GRAPH_VERSION=v25.0
+WHATSAPP_PROVIDER=ultramsg
+WHATSAPP_VERIFY_TOKEN=fastcrm_zimpact_2026
+ULTRAMSG_BASE_URL=https://api.ultramsg.com
+ULTRAMSG_INSTANCE_ID=instance194026
+ULTRAMSG_TOKEN=962ei4qk35vt83ir
 
 # Initial Admin Seeding (Credentials)
 ADMIN_EMAIL=admin@erp.zimpact-eg.com

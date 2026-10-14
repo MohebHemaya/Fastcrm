@@ -15,10 +15,12 @@ class SecurityHeadersMiddleware
     {
         $response = $next($request);
 
-        // Security headers
+        // Security headers (OWASP Recommended)
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
+        $response->headers->set('X-Permitted-Cross-Domain-Policies', 'none');
+        $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
 
         // CSP compatible with SPA production build without unsafe-eval or unsafe-inline scripts
         $csp = "default-src 'self'; "

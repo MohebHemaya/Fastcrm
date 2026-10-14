@@ -6,6 +6,7 @@ use App\Enums\DriverStatus;
 use App\Enums\WhatsAppMessageDirection;
 use App\Enums\WhatsAppMessageStatus;
 use App\Enums\WhatsAppMessageType;
+use App\Events\WhatsAppMessageSent;
 use App\Jobs\SendWhatsAppMessageJob;
 use App\Models\Driver;
 use App\Models\WhatsAppMessage;
@@ -50,18 +51,27 @@ class MessageSender
     ): WhatsAppMessage {
         $this->assertCanMessage($driver);
 
-        if ($body === null && $templateName === 'driver_invitation') {
+        if ($body === null) {
             $name = $driver->name ?: 'كابتن';
-            $body = app(WhatsAppTemplateService::class)->render('driver_invitation', [
+            $replacements = [
                 'اسم_السائق' => $name,
                 'driver_name' => $name,
-            ]);
+                '0' => $name,
+                '1' => $name,
+            ];
+            foreach ($params as $k => $v) {
+                $replacements[(string) $k] = (string) $v;
+            }
+            $body = app(WhatsAppTemplateService::class)->render($templateName, $replacements);
         }
+
+        $payload = compact('templateName', 'lang', 'params', 'buttons');
+        $payload['body'] = $body;
 
         $msg = $this->createMessageRow($driver, WhatsAppMessageType::TEMPLATE, [
             'template_name' => $templateName,
             'body' => $body,
-            'payload' => compact('templateName', 'lang', 'params', 'buttons'),
+            'payload' => $payload,
             'order_id' => $orderId,
         ]);
 
@@ -186,7 +196,7 @@ class MessageSender
     }
 
     /**
-     * Create a queued whatsapp_messages row.
+     * Create a queued whatsapp_messages row and broadcast outbound event.
      *
      * @param  array<string, mixed>  $extra
      */
@@ -195,7 +205,7 @@ class MessageSender
         WhatsAppMessageType $type,
         array $extra
     ): WhatsAppMessage {
-        return WhatsAppMessage::create([
+        $msg = WhatsAppMessage::create([
             'driver_id' => $driver->id,
             'direction' => WhatsAppMessageDirection::OUT,
             'type' => $type,
@@ -203,5 +213,20 @@ class MessageSender
             'queued_at' => now(),
             ...$extra,
         ]);
+
+        // Broadcast outbound message via Pusher for real-time chat display (safely caught)
+        try {
+            broadcast(new WhatsAppMessageSent(
+                driverId: $driver->id,
+                messageId: $msg->id,
+                body: $extra['body'] ?? '',
+                direction: 'out',
+                createdAt: $msg->created_at?->toIso8601String() ?? now()->toIso8601String(),
+            ));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('WhatsAppMessageSent broadcast failed: ' . $e->getMessage());
+        }
+
+        return $msg;
     }
 }

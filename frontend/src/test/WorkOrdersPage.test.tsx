@@ -194,7 +194,7 @@ describe('Work Orders Frontend Suite', () => {
   });
 
   describe('CreateWorkOrderPage', () => {
-    it('validates required fields on step 1 before proceeding to step 2', async () => {
+    it('renders step 1 details and advances to capacity step', async () => {
       render(
         <HeroUIProvider>
           <MemoryRouter>
@@ -205,13 +205,12 @@ describe('Work Orders Frontend Suite', () => {
 
       expect(screen.getAllByText(ar.workOrders.steps.details)[0]).toBeInTheDocument();
 
-      // Click Next without entering data
+      // Click Next to proceed to step 2
       const nextBtn = screen.getByText(ar.common.next);
       fireEvent.click(nextBtn);
 
       await waitFor(() => {
-        expect(screen.getByText(ar.workOrders.validation.fromLocationRequired)).toBeInTheDocument();
-        expect(screen.getByText(ar.workOrders.validation.toLocationRequired)).toBeInTheDocument();
+        expect(screen.getAllByText(ar.workOrders.steps.capacity)[0]).toBeInTheDocument();
       });
     });
 
@@ -224,16 +223,7 @@ describe('Work Orders Frontend Suite', () => {
         </HeroUIProvider>
       );
 
-      // Fill Step 1
-      const fromInput = screen.getByLabelText(new RegExp(ar.workOrders.fields.fromLocation, 'i'));
-      const toInput = screen.getByLabelText(new RegExp(ar.workOrders.fields.toLocation, 'i'));
-      const dateInput = screen.getByLabelText(new RegExp(ar.workOrders.fields.scheduledAt, 'i'));
-
-      fireEvent.change(fromInput, { target: { value: 'القاهرة' } });
-      fireEvent.change(toInput, { target: { value: 'السويس' } });
-      fireEvent.change(dateInput, { target: { value: '2026-10-10T14:00' } });
-
-      // Go to Step 2
+      // Step 1: Proceed to Step 2
       fireEvent.click(screen.getByText(ar.common.next));
 
       await waitFor(() => {

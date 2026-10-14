@@ -11,7 +11,6 @@ vi.mock('@/services/whatsappService', () => ({
     getProviderStatus: vi.fn(),
     retryMessage: vi.fn(),
     getDriverMessages: vi.fn(),
-    simulateInbound: vi.fn(),
   },
 }));
 
@@ -54,8 +53,8 @@ describe('WhatsAppMessagesPage', () => {
 
     vi.mocked(whatsappService.getProviderStatus).mockResolvedValue({
       data: {
-        provider: 'fake',
-        is_fake: true,
+        provider: 'ultramsg',
+        is_fake: false,
         send_rate_per_minute: 30,
         invite_batch_size: 50,
         free_form_window: 24,
@@ -88,7 +87,14 @@ describe('WhatsAppMessagesPage', () => {
     expect(screen.getByText(ar.whatsapp.title)).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByText(ar.whatsapp.fakeProvider)).toBeInTheDocument();
+      expect(screen.getByText(ar.whatsapp.ultramsgProvider)).toBeInTheDocument();
+    });
+
+    // Switch to logs tab to view message records table
+    const logsTab = screen.getByText(/سجل وتفاصيل الرسائل/);
+    fireEvent.click(logsTab);
+
+    await waitFor(() => {
       expect(screen.getByText(mockMessages[0].driver_name)).toBeInTheDocument();
       expect(screen.getByText(mockMessages[1].driver_name)).toBeInTheDocument();
     });
@@ -110,6 +116,10 @@ describe('WhatsAppMessagesPage', () => {
         <WhatsAppMessagesPage />
       </HeroUIProvider>
     );
+
+    // Switch to logs tab to view message records table
+    const logsTab = screen.getByText(/سجل وتفاصيل الرسائل/);
+    fireEvent.click(logsTab);
 
     await waitFor(() => {
       expect(screen.getByText(ar.whatsapp.retry)).toBeInTheDocument();

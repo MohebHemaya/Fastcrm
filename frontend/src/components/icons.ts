@@ -73,6 +73,14 @@ export {
   CpuChipIcon,
   BoltIcon,
   UserGroupIcon,
+  BellIcon,
+  TagIcon,
+  BookmarkIcon,
+  PaperClipIcon,
+  MusicalNoteIcon,
+  SpeakerWaveIcon,
+  EllipsisVerticalIcon,
+  InboxStackIcon,
 } from '@heroicons/react/24/outline';
 
 // Solid icons (used for active navigation states and filled badges)

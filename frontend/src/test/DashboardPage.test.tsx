@@ -84,11 +84,11 @@ describe('HomePage / Dashboard', () => {
       expect(screen.getByText('18')).toBeInTheDocument();
     });
 
-    const last7DaysBtn = screen.getByRole('button', { name: ar.dashboard.last7Days });
-    await user.click(last7DaysBtn);
+    const weekBtn = screen.getByRole('button', { name: 'هذا الأسبوع' });
+    await user.click(weekBtn);
 
     await waitFor(() => {
-      expect(last7DaysBtn).toBeInTheDocument();
+      expect(weekBtn).toBeInTheDocument();
     });
   });
 

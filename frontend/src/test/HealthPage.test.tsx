@@ -57,7 +57,7 @@ describe('HealthPage Component', () => {
             queue: { backlog_size: 0, oldest_job_age_seconds: null, status: 'ok' },
             failed_jobs: { count: 0, recent: [] },
             webhook: { last_received_at: null, age_minutes: null },
-            whatsapp: { provider: 'fake', graph_version: 'v25.0', failed_messages_24h: 0 },
+            whatsapp: { provider: 'ultramsg', graph_version: 'v25.0', failed_messages_24h: 0 },
             backups: { count: 0, last_backup_at: null },
           },
           message: 'تقرير حالة النظام',

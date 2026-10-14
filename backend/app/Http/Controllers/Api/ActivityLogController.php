@@ -14,6 +14,14 @@ class ActivityLogController extends ApiController
      */
     public function index(Request $request): JsonResponse
     {
+        $request->validate([
+            'user_id' => ['nullable', 'integer'],
+            'action' => ['nullable', 'string', 'max:100'],
+            'date_from' => ['nullable', 'date'],
+            'date_to' => ['nullable', 'date'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
         $query = ActivityLog::with('user');
 
         if ($request->filled('user_id')) {

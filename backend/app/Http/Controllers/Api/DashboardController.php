@@ -18,8 +18,13 @@ class DashboardController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $startDate = $request->query('start_date');
-        $endDate = $request->query('end_date');
+        $validated = $request->validate([
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+        ]);
+
+        $startDate = $validated['start_date'] ?? null;
+        $endDate = $validated['end_date'] ?? null;
 
         $data = $this->dashboardService->getSummary(
             startDate: is_string($startDate) ? $startDate : null,
@@ -41,10 +46,17 @@ class DashboardController extends Controller
      */
     public function groupPerformance(Request $request): JsonResponse
     {
-        $startDate = $request->query('start_date');
-        $endDate = $request->query('end_date');
-        $sortBy = (string) $request->query('sort_by', 'imported');
-        $sortDir = strtolower((string) $request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+        $validated = $request->validate([
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+            'sort_by' => ['nullable', 'string', 'in:name,imported,invited,interested,active,declined,opted_out,conversion_rate'],
+            'sort_dir' => ['nullable', 'string', 'in:asc,desc,ASC,DESC'],
+        ]);
+
+        $startDate = $validated['start_date'] ?? null;
+        $endDate = $validated['end_date'] ?? null;
+        $sortBy = (string) ($validated['sort_by'] ?? 'imported');
+        $sortDir = strtolower((string) ($validated['sort_dir'] ?? 'desc')) === 'asc' ? 'asc' : 'desc';
 
         $groups = $this->dashboardService->getGroupPerformance(
             startDate: is_string($startDate) ? $startDate : null,

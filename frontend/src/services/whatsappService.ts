@@ -87,30 +87,6 @@ export const whatsappService = {
   },
 
   /**
-   * Simulate an incoming WhatsApp message (Local/Test mode)
-   */
-  async simulateInbound(phone: string, text?: string, payloadId?: string): Promise<ApiEnvelope<any>> {
-    const response = await api.post<ApiEnvelope<any>>('/whatsapp/simulate-inbound', {
-      phone,
-      text,
-      payload_id: payloadId,
-    });
-    return response.data;
-  },
-
-  /**
-   * Simulate a status update (Local/Test mode)
-   */
-  async simulateStatus(messageId: number | string, status: string, errorCode?: string): Promise<ApiEnvelope<WhatsAppMessage>> {
-    const response = await api.post<ApiEnvelope<WhatsAppMessage>>('/whatsapp/simulate-status', {
-      message_id: messageId,
-      status,
-      error_code: errorCode,
-    });
-    return response.data;
-  },
-
-  /**
    * Get recent conversations list for the split-pane WhatsApp inbox
    */
   async getConversations(params?: { search?: string; page?: number }): Promise<{
@@ -133,6 +109,55 @@ export const whatsappService = {
   },
 
   /**
+   * Mark all inbound messages from a driver as read ("seen")
+   * Called automatically when the operator opens a conversation
+   */
+  async markRead(driverId: number): Promise<ApiEnvelope<{ driver_id: number }>> {
+    const response = await api.post<ApiEnvelope<{ driver_id: number }>>(`/drivers/${driverId}/mark-read`);
+    return response.data;
+  },
+
+  /**
+   * Incremental fetch: only messages with id > after_id
+   * Used for smart polling — avoids re-fetching entire chat history.
+   * Also returns status updates for recent outgoing messages.
+   */
+  async getNewMessages(
+    driverId: number,
+    afterId: number,
+  ): Promise<{
+    data: WhatsAppMessage[];
+    meta: {
+      driver_id: number;
+      driver_name?: string | null;
+      driver_phone?: string | null;
+      driver_status?: string;
+      can_message?: boolean;
+      after_id: number;
+      statuses?: Array<{
+        id: number;
+        status: import('@/types/whatsapp').WhatsAppMessageStatus;
+        sent_at?: string | null;
+        delivered_at?: string | null;
+        read_at?: string | null;
+        error_message?: string | null;
+      }>;
+    };
+    message: string | null;
+  }> {
+    const response = await api.get(`/drivers/${driverId}/new-messages`, { params: { after_id: afterId } });
+    return response.data;
+  },
+
+  /**
+   * Connection / session health status for the WhatsApp provider
+   */
+  async getConnectionStatus(): Promise<ApiEnvelope<{ provider: string; is_fake: boolean; is_connected: boolean; stuck_queued: boolean }>> {
+    const response = await api.get('/whatsapp/connection-status', { skipAuthRedirect: true } as any);
+    return response.data;
+  },
+
+  /**
    * Get customizable message templates and quick replies
    */
   async getTemplates(): Promise<ApiEnvelope<import('@/types/whatsapp').WhatsAppTemplatesData>> {
@@ -148,6 +173,14 @@ export const whatsappService = {
     quick_replies?: import('@/types/whatsapp').QuickReplyItem[];
   }): Promise<ApiEnvelope<import('@/types/whatsapp').WhatsAppTemplatesData>> {
     const response = await api.put<ApiEnvelope<import('@/types/whatsapp').WhatsAppTemplatesData>>('/whatsapp/templates', payload);
+    return response.data;
+  },
+
+  /**
+   * Background sync: poll active chats and questionnaire drivers
+   */
+  async syncActiveInbound(): Promise<ApiEnvelope<{ synced_drivers: number; processed_messages: number }>> {
+    const response = await api.post('/whatsapp/sync-active-inbound', {}, { skipAuthRedirect: true } as any);
     return response.data;
   },
 };

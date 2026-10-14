@@ -22,6 +22,17 @@ class DriverController extends ApiController
      */
     public function index(Request $request): JsonResponse
     {
+        $request->validate([
+            'pool' => ['nullable', 'string', 'in:new,fleet'],
+            'search' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'string', 'max:255'],
+            'group_id' => ['nullable', 'integer'],
+            'import_id' => ['nullable', 'integer'],
+            'sort_by' => ['nullable', 'string', 'max:50'],
+            'sort_dir' => ['nullable', 'string', 'in:asc,desc,ASC,DESC'],
+            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+        ]);
+
         $query = Driver::with(['whatsappGroups', 'metrics'])->withCount('currentAnswers');
 
         // Pool filtering: new (leads/onboarding) vs fleet (active/regular drivers)
@@ -187,4 +198,24 @@ class DriverController extends ApiController
             return $this->error($e->getMessage(), 422);
         }
     }
+
+    /**
+     * Remove the specified driver from storage (Soft delete).
+     */
+    public function destroy(Request $request, Driver $driver): JsonResponse
+    {
+        $driver->delete();
+
+        Audit::log('driver_deleted', $driver, [
+            'user_id' => $request->user()?->id,
+            'driver_phone' => $driver->phone,
+            'driver_name' => $driver->name,
+        ]);
+
+        return $this->success(
+            null,
+            'تم حذف السائق بنجاح.'
+        );
+    }
 }
+

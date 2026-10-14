@@ -57,4 +57,14 @@ interface WhatsAppProvider
      * @return array<InboundMessage|StatusUpdate>
      */
     public function parseWebhook(Request $request): array;
+
+    /**
+     * Actively poll and sync recent message statuses (e.g. delivered, read) from provider if supported.
+     */
+    public function syncRecentStatuses(int $limit = 30): int;
+
+    /**
+     * Actively poll recent inbound messages for a specific phone/chat if supported.
+     */
+    public function syncChatInbound(string $phone): int;
 }

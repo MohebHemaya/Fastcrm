@@ -31,9 +31,11 @@ class WorkOrderService
 
             $order = WorkOrder::create([
                 'code' => $code,
-                'from_location' => $data['from_location'],
-                'to_location' => $data['to_location'],
-                'scheduled_at' => $data['scheduled_at'],
+                'from_location' => $data['from_location'] ?? null,
+                'to_location' => $data['to_location'] ?? null,
+                'scheduled_at' => $data['scheduled_at'] ?? null,
+                'scheduled_dispatch_at' => $data['scheduled_dispatch_at'] ?? null,
+                'offer_expires_in_minutes' => $data['offer_expires_in_minutes'] ?? null,
                 'cargo_type' => $data['cargo_type'] ?? null,
                 'pay_amount' => $data['pay_amount'] ?? null,
                 'notes' => $data['notes'] ?? null,
@@ -90,9 +92,11 @@ class WorkOrderService
 
         return DB::transaction(function () use ($order, $data) {
             $order->update([
-                'from_location' => $data['from_location'] ?? $order->from_location,
-                'to_location' => $data['to_location'] ?? $order->to_location,
-                'scheduled_at' => $data['scheduled_at'] ?? $order->scheduled_at,
+                'from_location' => array_key_exists('from_location', $data) ? $data['from_location'] : $order->from_location,
+                'to_location' => array_key_exists('to_location', $data) ? $data['to_location'] : $order->to_location,
+                'scheduled_at' => array_key_exists('scheduled_at', $data) ? $data['scheduled_at'] : $order->scheduled_at,
+                'scheduled_dispatch_at' => array_key_exists('scheduled_dispatch_at', $data) ? $data['scheduled_dispatch_at'] : $order->scheduled_dispatch_at,
+                'offer_expires_in_minutes' => array_key_exists('offer_expires_in_minutes', $data) ? $data['offer_expires_in_minutes'] : $order->offer_expires_in_minutes,
                 'cargo_type' => array_key_exists('cargo_type', $data) ? $data['cargo_type'] : $order->cargo_type,
                 'pay_amount' => array_key_exists('pay_amount', $data) ? $data['pay_amount'] : $order->pay_amount,
                 'notes' => array_key_exists('notes', $data) ? $data['notes'] : $order->notes,
@@ -212,9 +216,9 @@ class WorkOrderService
                         params: [
                             $driverName,
                             $order->code,
-                            $order->from_location,
-                            $order->to_location,
-                            $order->scheduled_at->format('Y-m-d H:i'),
+                            $order->from_location ?? 'غير محدد',
+                            $order->to_location ?? 'غير محدد',
+                            $order->scheduled_at?->format('Y-m-d H:i') ?? 'غير محدد',
                             $payFormatted,
                         ],
                         buttons: $buttons,
@@ -225,7 +229,9 @@ class WorkOrderService
                     $recipient->update([
                         'status' => WorkOrderRecipientStatus::SENT,
                         'sent_at' => now(),
+                        'expires_at' => $order->offer_expires_in_minutes ? now()->addMinutes($order->offer_expires_in_minutes) : null,
                     ]);
+                    $driver->touch();
                     $sentCount++;
                 } catch (\Throwable $e) {
                     Log::warning("[WorkOrderService] Failed to send offer to driver {$driver->id}: {$e->getMessage()}");
@@ -292,13 +298,15 @@ class WorkOrderService
 
                 try {
                     $driverName = $driver->name ?: 'كابتن';
+                    $scheduledFormatted = $order->scheduled_at ? $order->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
+
                     $body = app(\App\Services\WhatsAppTemplateService::class)->render('trip_cancellation', [
                         'اسم_السائق' => $driverName,
                         'driver_name' => $driverName,
                         'رقم_الطلب' => $order->code,
                         'order_code' => $order->code,
-                        'موعد_الرحلة' => $order->scheduled_at->format('Y-m-d H:i'),
-                        'scheduled_at' => $order->scheduled_at->format('Y-m-d H:i'),
+                        'موعد_الرحلة' => $scheduledFormatted,
+                        'scheduled_at' => $scheduledFormatted,
                         'سبب_الإلغاء' => $cancelReason,
                         'cancel_reason' => $cancelReason,
                     ]);
@@ -310,7 +318,7 @@ class WorkOrderService
                         params: [
                             $driverName,
                             $order->code,
-                            $order->scheduled_at->format('Y-m-d H:i'),
+                            $scheduledFormatted,
                             $cancelReason,
                         ],
                         orderId: $order->id,

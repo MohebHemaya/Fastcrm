@@ -115,6 +115,10 @@ class DriverAnswerController extends ApiController
 
         $newValue = $answer->fresh()->display_value;
 
+        if ($answer->question?->key === 'driver_name' && ! empty($validated['value_text']) && empty($validated['is_skipped'])) {
+            $driver->update(['name' => trim($validated['value_text'])]);
+        }
+
         ActivityLog::record(
             action: 'update_driver_answer',
             description: "تم تعديل إجابة السائق {$driver->name} ({$driver->phone}) لسؤال {$answer->question->key} من '{$oldValue}' إلى '{$newValue}'",
