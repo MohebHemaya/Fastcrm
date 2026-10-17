@@ -1,7 +1,7 @@
 export type WhatsAppDirection = 'out' | 'in';
 export type WhatsAppStatus = 'queued' | 'sent' | 'delivered' | 'read' | 'failed';
 export type WhatsAppMessageStatus = WhatsAppStatus;
-export type WhatsAppMessageType = 'template' | 'text' | 'button' | 'list';
+export type WhatsAppMessageType = 'template' | 'text' | 'button' | 'list' | 'image' | 'audio' | 'document' | 'other';
 
 export interface WhatsAppMessage {
   id: number;
@@ -51,12 +51,31 @@ export interface WhatsAppProviderStatus {
   invite_batch_size: number;
   free_form_window: number;
   no_response_days: number;
+  anti_ban?: {
+    enabled: boolean;
+    min_delay_seconds: number;
+    max_delay_seconds: number;
+    batch_size: number;
+    batch_pause_seconds: number;
+  };
 }
 
 export interface InviteEstimate {
   count: number;
   send_rate_per_min: number;
   estimated_minutes: number;
+  anti_ban_enabled?: boolean;
+  anti_ban_min_delay?: number;
+  anti_ban_max_delay?: number;
+}
+
+export interface MessageStatusUpdatedPayload {
+  driver_id: number;
+  message_id: number;
+  status: WhatsAppStatus;
+  delivered_at?: string | null;
+  read_at?: string | null;
+  error_message?: string | null;
 }
 
 export interface DriverChatMeta {

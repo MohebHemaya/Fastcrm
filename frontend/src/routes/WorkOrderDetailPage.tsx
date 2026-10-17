@@ -20,7 +20,6 @@ import {
   ArrowUpCircleIcon,
   UserMinusIcon,
   ArrowsUpDownIcon,
-  SparklesIcon,
   ClockIcon,
   DocumentTextIcon,
   DocumentArrowDownIcon,
@@ -52,7 +51,7 @@ import OrderTimelineTab from '@/features/workOrders/components/OrderTimelineTab'
 import ExportModal from '@/components/exports/ExportModal';
 import OrderStatusStepper from '@/features/workOrders/components/OrderStatusStepper';
 import ShareTripSummaryModal from '@/features/workOrders/components/ShareTripSummaryModal';
-import { useWorkOrderUpdates, playSuccessChime } from '@/hooks/useWorkOrderUpdates';
+import { useWorkOrderUpdates } from '@/hooks/useWorkOrderUpdates';
 import { useUiStore } from '@/lib/stores/useUiStore';
 
 export const WorkOrderDetailPage: React.FC = () => {
@@ -248,9 +247,8 @@ export const WorkOrderDetailPage: React.FC = () => {
   useWorkOrderUpdates({
     workOrderId: orderId,
     onOrderUpdated: (payload) => {
-      // Audio chime and celebration toast if order is filled
+      // Celebration toast if order is filled
       if (payload.is_filled || payload.status === 'filled') {
-        playSuccessChime();
         addToast({
           message: ar.workOrders.orderFilledAlert,
           type: 'success',
@@ -539,7 +537,7 @@ export const WorkOrderDetailPage: React.FC = () => {
         row.sequence_number ? (
           <span className="font-mono font-bold text-primary">#{row.sequence_number}</span>
         ) : (
-          <span className="text-default-300">—</span>
+          <span className="text-default-300">-</span>
         ),
     },
     {
@@ -571,7 +569,7 @@ export const WorkOrderDetailPage: React.FC = () => {
             })}
           </span>
         ) : (
-          <span className="text-default-300">—</span>
+          <span className="text-default-300">-</span>
         ),
     },
     {
@@ -586,7 +584,7 @@ export const WorkOrderDetailPage: React.FC = () => {
             })}
           </span>
         ) : (
-          <span className="text-default-300">—</span>
+          <span className="text-default-300">-</span>
         ),
     },
     {
@@ -689,7 +687,7 @@ export const WorkOrderDetailPage: React.FC = () => {
     <PageContainer className="space-y-6">
       {/* Page Header */}
       <PageHeader
-        title={`${order.code} — ${order.from_location || 'غير محدد'} ← ${order.to_location || 'غير محدد'}`}
+        title={`${order.code}، ${order.from_location || 'غير محدد'} ← ${order.to_location || 'غير محدد'}`}
         description={`تاريخ الموعد: ${order.scheduled_at ? new Date(order.scheduled_at).toLocaleString('ar-EG') : 'غير محدد'}`}
         breadcrumbs={[
           { label: ar.nav.dashboard, href: '/' },
@@ -742,7 +740,7 @@ export const WorkOrderDetailPage: React.FC = () => {
                 color="success"
                 variant="flat"
                 className="min-h-[44px]"
-                startContent={<SparklesIcon className="w-4 h-4" />}
+                startContent={<CheckCircleIcon className="w-4 h-4" />}
                 onPress={() => setIsOutcomesModalOpen(true)}
                 onClick={() => setIsOutcomesModalOpen(true)}
               >
@@ -825,7 +823,7 @@ export const WorkOrderDetailPage: React.FC = () => {
       {/* Stats Cards Overview */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         {/* Trips Needed Card */}
-        <Card className="shadow-sm">
+        <Card className="border border-default-200 shadow-none">
           <CardBody className="p-4 flex items-center justify-between">
             <div>
               <span className="text-xs text-default-500 font-medium">
@@ -840,7 +838,7 @@ export const WorkOrderDetailPage: React.FC = () => {
         </Card>
 
         {/* Confirmed Count Card */}
-        <Card className="shadow-sm border-t-2 border-t-success">
+        <Card className="border border-default-200 shadow-none border-t-2 border-t-success">
           <CardBody className="p-4 flex items-center justify-between">
             <div>
               <span className="text-xs text-default-500 font-medium">
@@ -855,7 +853,7 @@ export const WorkOrderDetailPage: React.FC = () => {
         </Card>
 
         {/* Backup Count Card */}
-        <Card className="shadow-sm border-t-2 border-t-warning">
+        <Card className="border border-default-200 shadow-none border-t-2 border-t-warning">
           <CardBody className="p-4 flex items-center justify-between">
             <div>
               <span className="text-xs text-default-500 font-medium">
@@ -870,7 +868,7 @@ export const WorkOrderDetailPage: React.FC = () => {
         </Card>
 
         {/* Sent Offers Card */}
-        <Card className="shadow-sm">
+        <Card className="border border-default-200 shadow-none">
           <CardBody className="p-4 flex items-center justify-between">
             <div>
               <span className="text-xs text-default-500 font-medium">
@@ -885,7 +883,7 @@ export const WorkOrderDetailPage: React.FC = () => {
         </Card>
 
         {/* Status Card */}
-        <Card className="shadow-sm">
+        <Card className="border border-default-200 shadow-none">
           <CardBody className="p-4 flex flex-col justify-center">
             <span className="text-xs text-default-500 font-medium mb-1.5">
               {ar.common.status}
@@ -898,7 +896,7 @@ export const WorkOrderDetailPage: React.FC = () => {
       </div>
 
       {/* Tabs for Recipients & Timeline */}
-      <Card className="shadow-sm">
+      <Card className="border border-default-200 shadow-none">
         <CardBody className="p-4 space-y-4">
           <div className="overflow-x-auto max-w-full pb-1">
             <Tabs

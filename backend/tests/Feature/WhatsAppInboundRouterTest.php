@@ -6,6 +6,7 @@ use App\Enums\DriverStatus;
 use App\Enums\WhatsAppMessageDirection;
 use App\Enums\WhatsAppMessageStatus;
 use App\Models\Driver;
+use App\Models\Question;
 use App\Models\WhatsAppMessage;
 use App\Services\InboundMessageRouter;
 use App\WhatsApp\FakeWhatsAppProvider;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Cache;
 
 beforeEach(function () {
     app()->instance(WhatsAppProvider::class, new FakeWhatsAppProvider);
-    \App\Models\Question::query()->delete();
+    Question::query()->delete();
     Cache::flush();
 });
 

@@ -201,8 +201,8 @@ export const UsersPage: React.FC = () => {
         header: ar.users.status,
         render: (u) =>
           u.is_active ? (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold badge-status-active !bg-emerald-50 !text-emerald-700 dark:!bg-emerald-950/40 dark:!text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-success-50 text-success-700 border border-success-200">
+              <span className="w-1.5 h-1.5 rounded-full bg-success" />
               {ar.users.active}
             </span>
           ) : (
@@ -356,14 +356,12 @@ export const UsersPage: React.FC = () => {
       {/* KPI Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Total Users */}
-        <Card className="border border-default-200 shadow-sm bg-content1">
+        <Card className="border border-default-200 shadow-none bg-content1">
           <CardBody className="p-4 flex items-center gap-3.5">
-            <div className="p-2.5 rounded-xl bg-primary-50 text-primary dark:bg-primary-950/40">
-              <UserGroupIcon className="w-5 h-5" />
-            </div>
+            <UserGroupIcon className="w-5 h-5 text-default-400 shrink-0" />
             <div>
               <p className="text-xs text-default-500 font-medium">{ar.users.totalUsers}</p>
-              <p className="text-2xl font-black text-default-900" dir="ltr">
+              <p className="text-2xl font-bold text-default-900" dir="ltr">
                 {total}
               </p>
             </div>
@@ -371,14 +369,12 @@ export const UsersPage: React.FC = () => {
         </Card>
 
         {/* Active Users */}
-        <Card className="border border-default-200 shadow-sm bg-content1">
+        <Card className="border border-default-200 shadow-none bg-content1">
           <CardBody className="p-4 flex items-center gap-3.5">
-            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-              <CheckCircleIcon className="w-5 h-5" />
-            </div>
+            <CheckCircleIcon className="w-5 h-5 text-default-400 shrink-0" />
             <div>
               <p className="text-xs text-default-500 font-medium">{ar.users.activeUsers}</p>
-              <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400" dir="ltr">
+              <p className="text-2xl font-bold text-default-900" dir="ltr">
                 {activeCount || users.filter((u) => u.is_active).length}
               </p>
             </div>
@@ -386,14 +382,12 @@ export const UsersPage: React.FC = () => {
         </Card>
 
         {/* Inactive Users */}
-        <Card className="border border-default-200 shadow-sm bg-content1">
+        <Card className="border border-default-200 shadow-none bg-content1">
           <CardBody className="p-4 flex items-center gap-3.5">
-            <div className="p-2.5 rounded-xl bg-default-100 text-default-500">
-              <XCircleIcon className="w-5 h-5" />
-            </div>
+            <XCircleIcon className="w-5 h-5 text-default-400 shrink-0" />
             <div>
               <p className="text-xs text-default-500 font-medium">{ar.users.inactiveUsers}</p>
-              <p className="text-2xl font-black text-default-700" dir="ltr">
+              <p className="text-2xl font-bold text-default-700" dir="ltr">
                 {inactiveCount || users.filter((u) => !u.is_active).length}
               </p>
             </div>
@@ -402,7 +396,7 @@ export const UsersPage: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-2xl border border-default-200 bg-content1 shadow-sm">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4 rounded-xl border border-default-200 bg-content1 shadow-none">
         <div className="flex-1 max-w-md">
           <SearchInput
             placeholder={ar.users.searchPlaceholder}

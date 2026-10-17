@@ -488,7 +488,7 @@ export const NewDriversPage: React.FC = () => {
               variant="solid"
               startContent={<PaperAirplaneIcon className="h-4 w-4 rtl:-rotate-90" />}
               onPress={() => setIsBulkInviteOpen(true)}
-              className="font-bold shadow-sm shadow-primary/20 min-h-[44px]"
+              className="font-semibold shadow-none min-h-[44px]"
             >
               {ar.newDrivers.bulkInviteButton}
             </Button>
@@ -508,21 +508,19 @@ export const NewDriversPage: React.FC = () => {
       {/* Guide Banner */}
       <Card className="bg-primary-50/50 border border-primary-100 shadow-none">
         <CardBody className="p-3.5 sm:p-4 flex flex-row items-center gap-3">
-          <div className="p-2 bg-primary-100 rounded-xl text-primary shrink-0">
-            <InformationCircleIcon className="h-5 w-5" />
-          </div>
+          <InformationCircleIcon className="h-5 w-5 text-primary shrink-0" />
           <div className="text-xs text-primary-950 flex-1 leading-relaxed">
             <span className="font-bold">دورة حياة السائق الجديد: </span>
             يتم إرسال أسئلة الاستبيان للسائق عبر واتساب، وعندما يكمل الإجابة على جميع الأسئلة ينتقل تلقائياً إلى قائمة{' '}
             <span className="font-bold text-success-700">السائقين اللي معانا</span> مع علامة{' '}
-            <span className="font-bold text-success-800 bg-success-100 px-1 py-0.5 rounded">جديد ✨</span>{' '}
+            <span className="font-bold text-success-800 bg-success-100 px-1 py-0.5 rounded">جديد</span>{' '}
             حتى ينفذ أول أمر شغل. كما يمكنك اعتماده ونقله فوراً في أي وقت بالضغط على «اعتماد للأسطول».
           </div>
         </CardBody>
       </Card>
 
       {/* Filters Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 rounded-2xl border border-default-200 bg-content1 p-4 shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 rounded-xl border border-default-200 bg-content1 p-4 shadow-none">
         <div className="w-full md:w-80">
           <SearchInput
             placeholder={ar.drivers.searchPlaceholder}

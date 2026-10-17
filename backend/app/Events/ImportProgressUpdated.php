@@ -18,9 +18,9 @@ class ImportProgressUpdated implements ShouldBroadcast
 
     public function __construct(
         public readonly string $jobId,
-        public readonly int    $processed,
-        public readonly int    $total,
-        public readonly bool   $completed,
+        public readonly int $processed,
+        public readonly int $total,
+        public readonly bool $completed,
         public readonly string $status,    // 'processing' | 'completed' | 'failed'
         public readonly ?string $error = null,
     ) {}
@@ -40,13 +40,13 @@ class ImportProgressUpdated implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'job_id'    => $this->jobId,
+            'job_id' => $this->jobId,
             'processed' => $this->processed,
-            'total'     => $this->total,
-            'percent'   => $this->total > 0 ? round(($this->processed / $this->total) * 100) : 0,
+            'total' => $this->total,
+            'percent' => $this->total > 0 ? round(($this->processed / $this->total) * 100) : 0,
             'completed' => $this->completed,
-            'status'    => $this->status,
-            'error'     => $this->error,
+            'status' => $this->status,
+            'error' => $this->error,
         ];
     }
 }

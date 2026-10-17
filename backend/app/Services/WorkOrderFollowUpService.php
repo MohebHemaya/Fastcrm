@@ -284,7 +284,7 @@ class WorkOrderFollowUpService
 
                     $scheduledFormatted = $lockedOrder->scheduled_at ? $lockedOrder->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
 
-                    $body = app(\App\Services\WhatsAppTemplateService::class)->render('backup_promoted', [
+                    $body = app(WhatsAppTemplateService::class)->render('backup_promoted', [
                         'اسم_السائق' => $driverName,
                         'driver_name' => $driverName,
                         'رقم_الطلب' => $lockedOrder->code,

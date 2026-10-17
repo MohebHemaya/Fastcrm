@@ -307,4 +307,3 @@ test('Answering driver_name question automatically updates driver name in driver
     expect($answer)->not->toBeNull()
         ->and($answer->value_text)->toBe('محمود عبد الرحيم');
 });
-

@@ -6,10 +6,12 @@ use App\Enums\WorkOrderRecipientStatus;
 use App\Enums\WorkOrderStatus;
 use App\Models\Driver;
 use App\Models\DriverAnswer;
+use App\Models\DriverMetric;
 use App\Models\Question;
 use App\Models\QuestionOption;
 use App\Models\QuestionVersion;
 use App\Models\User;
+use App\Models\WhatsAppGroup;
 use App\Models\WorkOrder;
 use App\Models\WorkOrderRecipient;
 use App\Services\DriverMatcher;
@@ -442,9 +444,9 @@ test('POST /work-orders/match-preview rejects non-filter question with 422', fun
 });
 
 test('DriverMatcher matches drivers using whatsapp_group filter with eq and in', function () {
-    $group1 = \App\Models\WhatsAppGroup::factory()->create(['name' => 'جروب القاهرة']);
-    $group2 = \App\Models\WhatsAppGroup::factory()->create(['name' => 'جروب الإسكندرية']);
-    $group3 = \App\Models\WhatsAppGroup::factory()->create(['name' => 'جروب الدلتا']);
+    $group1 = WhatsAppGroup::factory()->create(['name' => 'جروب القاهرة']);
+    $group2 = WhatsAppGroup::factory()->create(['name' => 'جروب الإسكندرية']);
+    $group3 = WhatsAppGroup::factory()->create(['name' => 'جروب الدلتا']);
 
     $qGroup = Question::where('key', 'whatsapp_group')->firstOrFail();
 
@@ -489,14 +491,14 @@ test('DriverMatcher matches drivers using driver_experience filter with new_only
 
     // New driver (0 trips)
     $newDriver = Driver::factory()->create(['status' => DriverStatus::ACTIVE]);
-    \App\Models\DriverMetric::create([
+    DriverMetric::create([
         'driver_id' => $newDriver->id,
         'trips_completed' => 0,
     ]);
 
     // Experienced driver (5 trips)
     $expDriver = Driver::factory()->create(['status' => DriverStatus::ACTIVE]);
-    \App\Models\DriverMetric::create([
+    DriverMetric::create([
         'driver_id' => $expDriver->id,
         'trips_completed' => 5,
     ]);
@@ -525,4 +527,3 @@ test('DriverMatcher matches drivers using driver_experience filter with new_only
     expect($matchedExp)->toContain($expDriver->id)
         ->and($matchedExp)->not->toContain($newDriver->id);
 });
-

@@ -56,13 +56,14 @@ class CommitImportJob implements ShouldQueue
                 completed: false,
                 status: 'processing'
             ));
-        } catch (Throwable) {}
+        } catch (Throwable) {
+        }
 
         try {
-            DB::transaction(function () use ($totalRows, &$processed) {
+            DB::transaction(function () use (&$processed) {
                 ImportRow::where('import_id', $this->import->id)
                     ->where('classification', '!=', ImportRowClassification::INVALID->value)
-                    ->chunkById(500, function ($rows) use ($totalRows, &$processed) {
+                    ->chunkById(500, function ($rows) use (&$processed) {
                         // 1. Resolve WhatsApp groups in chunk
                         $groupNames = $rows->pluck('group_name')->filter()->unique()->values()->all();
                         $groupMap = [];
@@ -138,7 +139,8 @@ class CommitImportJob implements ShouldQueue
                     completed: true,
                     status: 'completed'
                 ));
-            } catch (Throwable) {}
+            } catch (Throwable) {
+            }
         } catch (Throwable $e) {
             $this->import->update([
                 'status' => ImportStatus::FAILED,
@@ -154,7 +156,8 @@ class CommitImportJob implements ShouldQueue
                     status: 'failed',
                     error: $e->getMessage()
                 ));
-            } catch (Throwable) {}
+            } catch (Throwable) {
+            }
         }
     }
 }

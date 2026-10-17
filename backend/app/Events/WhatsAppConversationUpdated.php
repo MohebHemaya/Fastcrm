@@ -18,10 +18,10 @@ class WhatsAppConversationUpdated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public function __construct(
-        public readonly int    $driverId,
+        public readonly int $driverId,
         public readonly string $driverName,
         public readonly string $lastMessage,
-        public readonly int    $unreadCount,
+        public readonly int $unreadCount,
         public readonly string $updatedAt,
     ) {}
 
@@ -40,11 +40,11 @@ class WhatsAppConversationUpdated implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'driver_id'    => $this->driverId,
-            'driver_name'  => $this->driverName,
+            'driver_id' => $this->driverId,
+            'driver_name' => $this->driverName,
             'last_message' => $this->lastMessage,
             'unread_count' => $this->unreadCount,
-            'updated_at'   => $this->updatedAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 }

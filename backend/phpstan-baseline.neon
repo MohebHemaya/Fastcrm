@@ -19,18 +19,6 @@ parameters:
 			path: app/Console/Commands/BenchmarkPhase8Command.php
 
 		-
-			message: '#^Parameter \$timestamp of class App\\DTOs\\WhatsApp\\InboundMessage constructor expects int, float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/SimulateInboundWhatsAppMessageCommand.php
-
-		-
-			message: '#^Parameter \$providerMessageId of class App\\DTOs\\WhatsApp\\StatusUpdate constructor expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Console/Commands/SimulateWhatsAppStatusCommand.php
-
-		-
 			message: '#^Parameter \#1 \$string of method Illuminate\\Console\\Command\:\:line\(\) expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 1
@@ -47,6 +35,42 @@ parameters:
 			identifier: argument.type
 			count: 4
 			path: app/Console/Commands/TestFollowUpCommand.php
+
+		-
+			message: '#^Method App\\Events\\DriverStatusUpdated\:\:broadcastWith\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Events/DriverStatusUpdated.php
+
+		-
+			message: '#^Method App\\Events\\ImportProgressUpdated\:\:broadcastWith\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Events/ImportProgressUpdated.php
+
+		-
+			message: '#^Method App\\Events\\QuestionnaireProgressUpdated\:\:broadcastWith\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Events/QuestionnaireProgressUpdated.php
+
+		-
+			message: '#^Method App\\Events\\WhatsAppConversationUpdated\:\:broadcastWith\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Events/WhatsAppConversationUpdated.php
+
+		-
+			message: '#^Method App\\Events\\WhatsAppMessageReceived\:\:broadcastWith\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Events/WhatsAppMessageReceived.php
+
+		-
+			message: '#^Method App\\Events\\WhatsAppMessageSent\:\:broadcastWith\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Events/WhatsAppMessageSent.php
 
 		-
 			message: '#^Method App\\Http\\Controllers\\Api\\ApiController\:\:error\(\) has parameter \$meta with no value type specified in iterable type array\.$#'
@@ -143,18 +167,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: app/Http/Controllers/Api/QuestionController.php
-
-		-
-			message: '#^Parameter \$providerMessageId of class App\\DTOs\\WhatsApp\\StatusUpdate constructor expects string, string\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/WhatsAppController.php
-
-		-
-			message: '#^Parameter \$timestamp of class App\\DTOs\\WhatsApp\\InboundMessage constructor expects int, float\|int\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Http/Controllers/Api/WhatsAppController.php
 
 		-
 			message: '#^Parameter \#2 \$userId of method App\\Services\\WorkOrderService\:\:createDraft\(\) expects int\|null, int\|string\|null given\.$#'
@@ -521,6 +533,144 @@ parameters:
 			identifier: missingType.parameter
 			count: 1
 			path: app/Services/QuestionnaireService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:applyDateFilter\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:applyDateFilter\(\) has parameter \$query with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getDispatchedOffersData\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getDispatchedOffersData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getDriversData\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getDriversData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getFulfillmentReport\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getFunnelReport\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getGroupPerformanceData\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getGroupPerformanceData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getNeedsReviewData\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getNeedsReviewData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getOverviewReport\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getQuestionnaireAnswersData\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getQuestionnaireAnswersData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getWhatsAppMessagesData\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getWhatsAppMessagesData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getWhatsAppReport\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getWorkOrdersData\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Method App\\Services\\ReportService\:\:getWorkOrdersData\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Parameter \#1 \$cellValues of static method OpenSpout\\Common\\Entity\\Row\:\:fromValues\(\) expects list\<bool\|DateInterval\|DateTimeInterface\|float\|int\|string\|null\>, array\<mixed\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>text_ar" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/ReportService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>trips_completed" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/ReportService.php
 
 		-
 			message: '#^Method App\\Services\\WorkOrderFollowUpService\:\:resendOffers\(\) has parameter \$recipientIds with no value type specified in iterable type array\.$#'

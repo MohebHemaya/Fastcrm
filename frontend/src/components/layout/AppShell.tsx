@@ -275,14 +275,14 @@ export const AppShell: React.FC = () => {
             key={item.path}
             to={item.path}
             onClick={onItemClick}
-            className={`group relative flex items-center gap-3 rounded-xl transition-all min-h-[44px] ${
+            className={`group relative flex items-center gap-3 rounded-lg transition-colors min-h-[44px] ${
               isCollapsed
                 ? 'justify-center p-2.5 mx-auto w-11 h-11'
                 : 'px-3.5 py-2.5 text-sm font-medium'
             } ${
               isActive
-                ? 'bg-primary text-primary-foreground shadow-sm shadow-primary/25 font-bold'
-                : 'text-default-600 hover:bg-default-100 hover:text-default-900'
+                ? 'bg-primary text-primary-foreground shadow-none font-semibold'
+                : 'text-default-600 hover:bg-default-100 text-default-900'
             }`}
           >
             <div className="relative flex items-center justify-center shrink-0">
@@ -320,7 +320,7 @@ export const AppShell: React.FC = () => {
                   </Chip>
                 )}
                 {showWarningDot && (
-                  <span className="h-2 w-2 rounded-full bg-danger ring-2 ring-danger-200 animate-pulse" />
+                  <span className="h-2 w-2 rounded-full bg-danger" />
                 )}
               </>
             )}
@@ -364,21 +364,18 @@ export const AppShell: React.FC = () => {
         data-testid="app-sidebar"
       >
         {/* Brand header */}
-        <div className={`flex h-16 items-center border-b border-default-200 px-4 ${
+        <div className={`flex h-16 items-center border-b border-default-200 px-3.5 ${
           isSidebarCollapsed ? 'justify-center' : 'justify-between'
         }`}>
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/30">
-              <ClipboardDocumentListIcon className="h-5 w-5" />
-            </div>
-            {!isSidebarCollapsed && (
-              <div className="flex flex-col min-w-0 text-start">
-                <span className="font-bold text-sm tracking-tight text-default-900 truncate">
-                  {ar.app.title}
-                </span>
-                <span className="text-[10px] text-default-400">لوحة الإدارة</span>
-              </div>
-            )}
+          <div className="flex items-center min-w-0">
+            <img
+              src="/logo.png"
+              alt={ar.app.title}
+              className={`w-auto object-contain transition-all ${
+                isSidebarCollapsed ? 'h-7 max-w-[48px]' : 'h-9 max-w-[170px]'
+              }`}
+            />
+            <span className="sr-only">{ar.app.title}</span>
           </div>
 
           <Button
@@ -408,7 +405,7 @@ export const AppShell: React.FC = () => {
                 color="primary"
                 variant="solid"
                 aria-label="أمر شغل جديد"
-                className="shadow-sm shadow-primary/30"
+                className="shadow-none"
               >
                 <PlusIcon className="h-5 w-5" />
               </Button>
@@ -419,7 +416,7 @@ export const AppShell: React.FC = () => {
               to="/work-orders/new"
               color="primary"
               variant="solid"
-              className="w-full font-bold shadow-sm shadow-primary/30"
+              className="w-full font-semibold shadow-none"
               startContent={<PlusIcon className="h-5 w-5" />}
             >
               أمر شغل جديد
@@ -532,14 +529,13 @@ export const AppShell: React.FC = () => {
           {(onClose) => (
             <>
               <DrawerHeader className="flex items-center justify-between border-b border-default-200 px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-                    <ClipboardDocumentListIcon className="h-5 w-5" />
-                  </div>
-                  <div className="flex flex-col text-start">
-                    <span className="font-bold text-sm text-default-900">{ar.app.title}</span>
-                    <span className="text-[10px] text-default-400">لوحة الإدارة</span>
-                  </div>
+                <div className="flex items-center">
+                  <img
+                    src="/logo.png"
+                    alt={ar.app.title}
+                    className="h-9 w-auto max-w-[180px] object-contain shrink-0"
+                  />
+                  <span className="sr-only">{ar.app.title}</span>
                 </div>
               </DrawerHeader>
 
@@ -550,7 +546,7 @@ export const AppShell: React.FC = () => {
                     to="/work-orders/new"
                     color="primary"
                     variant="solid"
-                    className="w-full font-bold shadow-sm shadow-primary/30 min-h-[44px]"
+                    className="w-full font-semibold shadow-none min-h-[44px]"
                     startContent={<PlusIcon className="h-5 w-5" />}
                     onPress={onClose}
                   >

@@ -5,35 +5,11 @@ import { useUiStore } from '@/lib/stores/useUiStore';
 import { ar } from '@/i18n/ar';
 
 /**
- * Audio chime for inbound WhatsApp messages (Web Audio API)
- */
-function playMessageChime() {
-  try {
-    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const ctx = new AudioContextClass();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(780, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(520, ctx.currentTime + 0.25);
-    gain.gain.setValueAtTime(0.12, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.35);
-  } catch {
-    // Ignore audio errors
-  }
-}
-
-/**
  * RealtimeNotifications
  *
  * Global listener mounted in AppShell.
  * Listens to driver status changes and incoming WhatsApp messages,
- * providing instant visual toasts and audio feedback.
+ * providing instant visual toasts.
  */
 export const RealtimeNotifications: React.FC = () => {
   const addToast = useUiStore((state) => state.addToast);
@@ -54,7 +30,7 @@ export const RealtimeNotifications: React.FC = () => {
     onQuestionnaireProgress: (payload) => {
       addToast({
         title: 'إجابة جديدة على الاستبيان',
-        message: `سؤال: ${payload.question_text} — الإجابة: ${payload.answer}`,
+        message: `سؤال: ${payload.question_text}, الإجابة: ${payload.answer}`,
         type: 'info',
         duration: 3500,
       });
@@ -64,7 +40,6 @@ export const RealtimeNotifications: React.FC = () => {
   // 2. Incoming WhatsApp messages
   useWhatsAppInbox({
     onMessageReceived: (payload) => {
-      playMessageChime();
       const snippet = payload.body
         ? payload.body.length > 60
           ? payload.body.substring(0, 60) + '...'
@@ -72,7 +47,7 @@ export const RealtimeNotifications: React.FC = () => {
         : 'رسالة جديدة';
 
       addToast({
-        title: '💬 رسالة واتساب واردة',
+        title: 'رسالة واتساب واردة',
         message: snippet,
         type: 'info',
         duration: 5000,

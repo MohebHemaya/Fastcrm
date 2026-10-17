@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Contracts\WhatsAppProvider;
-use App\DTOs\WhatsApp\InboundMessage;
-use App\DTOs\WhatsApp\StatusUpdate;
 use App\Enums\DriverStatus;
 use App\Enums\WhatsAppMessageDirection;
 use App\Enums\WhatsAppMessageStatus;
@@ -13,13 +11,13 @@ use App\Http\Resources\WhatsAppMessageResource;
 use App\Jobs\SendWhatsAppMessageJob;
 use App\Models\Driver;
 use App\Models\WhatsAppMessage;
-use App\Services\InboundMessageRouter;
 use App\Services\InviteDriversService;
 use App\Services\MessageSender;
-use App\Services\WebhookStatusUpdater;
+use App\Services\PhoneNormalizer;
 use App\Services\WhatsAppTemplateService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class WhatsAppController extends Controller
 {
@@ -231,6 +229,7 @@ class WhatsAppController extends Controller
                 'invite_batch_size' => (int) config('whatsapp.invite_batch_size', 50),
                 'free_form_window' => (int) config('whatsapp.free_form_window_hours', 24),
                 'no_response_days' => (int) config('whatsapp.no_response_days', 3),
+                'anti_ban' => config('whatsapp.anti_ban'),
             ],
             'meta' => null,
             'message' => null,
@@ -287,7 +286,7 @@ class WhatsAppController extends Controller
                     'body' => $lastMsg->body,
                     'direction' => $lastMsg->direction->value,
                     'status' => $lastMsg->status->value,
-                    'created_at' => $lastMsg->created_at->toISOString(),
+                    'created_at' => $lastMsg->created_at?->toISOString(),
                 ] : null,
                 'unread_count' => $unreadCount,
             ];
@@ -315,13 +314,13 @@ class WhatsAppController extends Controller
             ->where('direction', WhatsAppMessageDirection::IN)
             ->where('status', '!=', WhatsAppMessageStatus::READ)
             ->update([
-                'status'  => WhatsAppMessageStatus::READ,
+                'status' => WhatsAppMessageStatus::READ,
                 'read_at' => now(),
             ]);
 
         return response()->json([
-            'data'    => ['driver_id' => $driver->id],
-            'meta'    => null,
+            'data' => ['driver_id' => $driver->id],
+            'meta' => null,
             'message' => 'تم تعيين الرسائل كمقروءة',
         ]);
     }
@@ -371,18 +370,18 @@ class WhatsAppController extends Controller
             ->limit(30)
             ->get(['id', 'status', 'sent_at', 'delivered_at', 'read_at', 'error_message']);
 
-        $freshDriver = $driver->fresh();
+        $freshDriver = $driver->fresh() ?? $driver;
 
         return response()->json([
-            'data'    => WhatsAppMessageResource::collection($messages),
-            'meta'    => [
-                'driver_id'     => $driver->id,
-                'driver_name'   => $driver->name,
-                'driver_phone'  => $driver->phone,
+            'data' => WhatsAppMessageResource::collection($messages),
+            'meta' => [
+                'driver_id' => $driver->id,
+                'driver_name' => $driver->name,
+                'driver_phone' => $driver->phone,
                 'driver_status' => $freshDriver->status->value,
-                'can_message'   => ! in_array($freshDriver->status, [DriverStatus::OPTED_OUT, DriverStatus::BLOCKED], true),
-                'after_id'      => $afterId,
-                'statuses'      => $recentStatuses,
+                'can_message' => ! in_array($freshDriver->status, [DriverStatus::OPTED_OUT, DriverStatus::BLOCKED], true),
+                'after_id' => $afterId,
+                'statuses' => $recentStatuses,
             ],
             'message' => null,
         ]);
@@ -394,8 +393,8 @@ class WhatsAppController extends Controller
      */
     public function connectionStatus(): JsonResponse
     {
-        $provider   = config('whatsapp.provider', 'fake');
-        $isFake     = ($provider === 'fake');
+        $provider = config('whatsapp.provider', 'fake');
+        $isFake = ($provider === 'fake');
 
         // For real providers: a simple proxy check — look for recent sent messages
         // within the last 10 minutes as a liveness signal.
@@ -414,12 +413,12 @@ class WhatsAppController extends Controller
 
         return response()->json([
             'data' => [
-                'provider'      => $provider,
-                'is_fake'       => $isFake,
-                'is_connected'  => $isConnected,
-                'stuck_queued'  => $stuckQueued,
+                'provider' => $provider,
+                'is_fake' => $isFake,
+                'is_connected' => $isConnected,
+                'stuck_queued' => $stuckQueued,
             ],
-            'meta'    => null,
+            'meta' => null,
             'message' => null,
         ]);
     }
@@ -451,6 +450,70 @@ class WhatsAppController extends Controller
             'meta' => null,
             'message' => 'تم إرسال الرسالة بنجاح',
         ]);
+    }
+
+    /**
+     * Send image media message from operator to driver.
+     */
+    public function sendMedia(Request $request, Driver $driver, MessageSender $sender): JsonResponse
+    {
+        $validated = $request->validate([
+            'type' => ['required', 'string', 'in:image'],
+            'file' => ['nullable', 'file', 'max:10240', 'mimes:jpg,jpeg,png,webp,gif'],
+            'media_url' => ['nullable', 'url', 'max:1000'],
+            'caption' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'type.required' => 'نوع الوسائط مطلوب',
+            'type.in' => 'نوع الوسائط يجب أن يكون صورة',
+            'file.max' => 'حجم الصورة يتجاوز الحد الأقصى (10 ميجابايت)',
+            'file.mimes' => 'صيغة الصورة غير مدعومة (فقط JPG, PNG, WEBP, GIF)',
+        ]);
+
+        if (empty($validated['file']) && empty($validated['media_url'])) {
+            return response()->json([
+                'data' => null,
+                'meta' => null,
+                'message' => 'يجب إرفاق ملف صورة أو رابط صورة صالح',
+            ], 422);
+        }
+
+        $mediaUrl = '';
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            if ($file) {
+                $path = $file->store('whatsapp_media', 'public');
+                if ($path !== false) {
+                    $mediaUrl = url(Storage::url($path));
+                }
+            }
+        } else {
+            $mediaUrl = (string) $validated['media_url'];
+        }
+
+        if ($mediaUrl === '') {
+            return response()->json([
+                'data' => null,
+                'meta' => null,
+                'message' => 'فشل حفظ أو قراءة الصورة المرفقة',
+            ], 422);
+        }
+
+        try {
+            $caption = (string) ($validated['caption'] ?? '');
+            $msg = $sender->sendImage($driver, $mediaUrl, $caption);
+        } catch (\RuntimeException $e) {
+            return response()->json([
+                'data' => null,
+                'meta' => null,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+
+        return response()->json([
+            'data' => new WhatsAppMessageResource($msg),
+            'meta' => null,
+            'message' => 'تم إرسال الصورة بنجاح',
+        ], 201);
     }
 
     /**
@@ -503,6 +566,72 @@ class WhatsAppController extends Controller
     }
 
     /**
+     * Send a test message with template interpolation to a given phone number.
+     */
+    public function testSendTemplate(
+        Request $request,
+        WhatsAppTemplateService $templateService,
+        WhatsAppProvider $provider
+    ): JsonResponse {
+        $validated = $request->validate([
+            'phone' => ['required', 'string'],
+            'template_key' => ['nullable', 'string'],
+            'custom_text' => ['nullable', 'string', 'max:3000'],
+            'sample_data' => ['nullable', 'array'],
+        ], [
+            'phone.required' => 'رقم الهاتف مطلوب لإرسال الرسالة التجريبية',
+        ]);
+
+        $normalized = PhoneNormalizer::normalize($validated['phone']);
+        if (! $normalized->isValid || empty($normalized->e164)) {
+            return response()->json([
+                'data' => null,
+                'meta' => null,
+                'message' => 'رقم الهاتف غير صالح للإرسال (يرجى التأكد من كتابة رقم هاتف صحيح بالرمز الدولي)',
+            ], 422);
+        }
+
+        $templateKey = (string) ($validated['template_key'] ?? 'driver_invitation');
+        $incomingSample = $request->input('sample_data');
+        if (is_array($incomingSample)) {
+            if (isset($incomingSample['اسم_السائق'])) {
+                $incomingSample['driver_name'] = $incomingSample['اسم_السائق'];
+            }
+            if (isset($incomingSample['رقم_الطلب'])) {
+                $incomingSample['order_code'] = $incomingSample['رقم_الطلب'];
+            }
+        }
+        $sampleData = array_merge(
+            $templateService->getSampleDataForTemplate($templateKey),
+            is_array($incomingSample) ? $incomingSample : []
+        );
+
+        $body = ! empty($validated['custom_text'])
+            ? $templateService->renderRaw((string) $validated['custom_text'], $sampleData)
+            : $templateService->render($templateKey, $sampleData);
+
+        try {
+            $msgId = $provider->sendText($normalized->e164, $body);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'data' => null,
+                'meta' => null,
+                'message' => 'تعذر إرسال الرسالة التجريبية عبر مزود واتساب: '.$e->getMessage(),
+            ], 500);
+        }
+
+        return response()->json([
+            'data' => [
+                'provider_message_id' => $msgId,
+                'phone' => $normalized->e164,
+                'rendered_body' => $body,
+            ],
+            'meta' => null,
+            'message' => 'تم إرسال الرسالة التجريبية بنجاح إلى الرقم '.$normalized->e164,
+        ]);
+    }
+
+    /**
      * Background sync: poll UltraMsg for any incoming messages across all active drivers.
      * Keeps questionnaire bots and incoming chats alive without needing any specific modal open.
      */
@@ -518,7 +647,7 @@ class WhatsAppController extends Controller
             })
             ->orWhereHas('whatsappMessages', function ($q) {
                 $q->where('direction', 'out')
-                  ->where('created_at', '>=', now()->subHours(2));
+                    ->where('created_at', '>=', now()->subHours(2));
             })
             ->orWhere('updated_at', '>=', now()->subMinutes(30))
             ->distinct()
@@ -532,10 +661,10 @@ class WhatsAppController extends Controller
 
         return response()->json([
             'data' => [
-                'synced_drivers'     => $activeDrivers->count(),
+                'synced_drivers' => $activeDrivers->count(),
                 'processed_messages' => $processed,
             ],
-            'meta'    => null,
+            'meta' => null,
             'message' => 'تمت مزامنة الرسائل الواردة بنجاح',
         ]);
     }

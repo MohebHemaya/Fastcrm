@@ -9,6 +9,7 @@ import {
   TrashIcon,
   ArrowRightIcon,
 } from '@/components/icons';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { ar } from '@/i18n/ar';
 import importService from '@/services/importService';
 import type { ImportItem } from '@/types/import';
@@ -30,6 +31,8 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
   // Pending imports state
   const [pendingImports, setPendingImports] = useState<ImportItem[]>([]);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [targetDeleteId, setTargetDeleteId] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -47,8 +50,6 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
   }, []);
 
   const handleDeletePending = async (id: number) => {
-    if (!window.confirm('هل أنت متأكد من حذف عملية الاستيراد هذه؟')) return;
-
     try {
       setDeletingId(id);
       await importService.deleteImport(id);
@@ -120,10 +121,10 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
     <div className="flex flex-col gap-6 max-w-3xl mx-auto w-full">
       {/* Pending Imports Section */}
       {pendingImports.length > 0 && (
-        <div className="rounded-2xl border border-warning-200 bg-warning-50/40 p-5 shadow-sm space-y-3">
+        <div className="rounded-xl border border-warning-200 bg-warning-50/40 p-5 shadow-none space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="flex h-2.5 w-2.5 rounded-full bg-warning-500 animate-pulse" />
+              <span className="flex h-2 w-2 rounded-full bg-warning-500" />
               <h4 className="text-sm font-bold text-default-900">
                 عمليات استيراد سابقة جاهزة للمراجعة والاعتماد ({pendingImports.length})
               </h4>
@@ -131,7 +132,7 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
             <span className="text-xs text-default-500">تم فحصها مسبقاً وبانتظار اعتمادك</span>
           </div>
 
-          <div className="divide-y divide-warning-100 rounded-xl bg-content1 border border-warning-200/60 overflow-hidden shadow-xs">
+          <div className="divide-y divide-warning-100 rounded-xl bg-content1 border border-warning-200/60 overflow-hidden shadow-none">
             {pendingImports.map((item) => {
               const counts = item.counts || { total: 0, new: 0, duplicate_in_file: 0, existing: 0, active: 0, invalid: 0 };
               const validCount = (counts.new || 0) + (counts.existing || 0);
@@ -142,9 +143,7 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
                   className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 gap-3 hover:bg-default-50/80 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-100 text-primary">
-                      <DocumentTextIcon className="h-5 w-5" />
-                    </div>
+                    <DocumentTextIcon className="h-5 w-5 text-default-600 shrink-0" />
                     <div>
                       <p className="text-sm font-bold text-default-800">{item.original_name}</p>
                       <div className="flex flex-wrap items-center gap-1.5 mt-1">
@@ -172,7 +171,10 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
                       color="danger"
                       variant="light"
                       isLoading={deletingId === item.id}
-                      onPress={() => handleDeletePending(item.id)}
+                      onPress={() => {
+                        setTargetDeleteId(item.id);
+                        setIsDeleteModalOpen(true);
+                      }}
                       startContent={<TrashIcon className="h-4 w-4" />}
                     >
                       حذف
@@ -198,11 +200,9 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
       )}
 
       {/* Download Template Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-primary-200 bg-primary-50/60 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-primary-200 bg-primary-50/60 p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-white">
-            <DocumentTextIcon className="h-5 w-5" />
-          </div>
+          <DocumentTextIcon className="h-6 w-6 text-primary shrink-0" />
           <div>
             <h4 className="text-sm font-bold text-primary-900">{ar.imports.downloadTemplate}</h4>
             <p className="text-xs text-primary-700">
@@ -225,7 +225,7 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
 
       {/* Drag & Drop Area */}
       <div
-        className={`relative flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 text-center transition-colors cursor-pointer ${
+        className={`relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition-colors cursor-pointer ${
           isDragging
             ? 'border-primary bg-primary-50/40'
             : selectedFile
@@ -246,12 +246,8 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
         />
 
         <div className="flex flex-col items-center gap-3">
-          <div
-            className={`flex h-16 w-16 items-center justify-center rounded-2xl ${
-              selectedFile ? 'bg-success-100 text-success' : 'bg-primary-100 text-primary'
-            }`}
-          >
-            {selectedFile ? <DocumentTextIcon className="h-8 w-8" /> : <ArrowUpTrayIcon className="h-8 w-8" />}
+          <div>
+            {selectedFile ? <DocumentTextIcon className="h-6 w-6 text-success" /> : <ArrowUpTrayIcon className="h-6 w-6 text-primary" />}
           </div>
 
           <div>
@@ -260,7 +256,7 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
             </p>
             <p className="text-xs text-default-500 mt-1">
               {selectedFile
-                ? `${(selectedFile.size / 1024).toFixed(1)} كيلوبايت — انقر لتغيير الملف`
+                ? `${(selectedFile.size / 1024).toFixed(1)} كيلوبايت، انقر لتغيير الملف`
                 : ar.imports.supportedFormats}
             </p>
           </div>
@@ -289,6 +285,28 @@ export const ImportUploadStep: React.FC<ImportUploadStepProps> = ({
           {ar.imports.uploadButton}
         </Button>
       </div>
+
+      {/* Delete Pending Import Confirm Modal */}
+      <ConfirmDialog
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setTargetDeleteId(null);
+        }}
+        onConfirm={async () => {
+          if (targetDeleteId) {
+            await handleDeletePending(targetDeleteId);
+          }
+          setIsDeleteModalOpen(false);
+          setTargetDeleteId(null);
+        }}
+        title="تأكيد حذف عملية الاستيراد"
+        message="هل أنت متأكد من حذف عملية الاستيراد هذه وسجلاتها المؤقتة؟ لا يمكن التراجع عن هذا الإجراء."
+        variant="danger"
+        confirmText="نعم، حذف الاستيراد"
+        cancelText={ar.common.cancel}
+        isLoading={deletingId !== null}
+      />
     </div>
   );
 };

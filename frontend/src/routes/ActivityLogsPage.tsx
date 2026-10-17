@@ -135,7 +135,7 @@ export const ActivityLogsPage: React.FC = () => {
   };
 
   const formatDateTime = (dateString?: string) => {
-    if (!dateString) return '—';
+    if (!dateString) return '-';
     try {
       const date = new Date(dateString);
       return new Intl.DateTimeFormat('ar-EG', {
@@ -148,7 +148,7 @@ export const ActivityLogsPage: React.FC = () => {
   };
 
   const formatProperties = (props: Record<string, any> | null) => {
-    if (!props || Object.keys(props).length === 0) return '—';
+    if (!props || Object.keys(props).length === 0) return '-';
     return (
       <div className="flex flex-wrap gap-1 max-w-xs">
         {Object.entries(props).map(([k, v]) => (
@@ -176,7 +176,7 @@ export const ActivityLogsPage: React.FC = () => {
       render: (row) => (
         <div className="flex flex-col text-start">
           <span className="font-semibold text-default-900">
-            {row.user?.name || '—'}
+            {row.user?.name || '-'}
           </span>
           {row.user?.email && (
             <span className="text-xs text-default-400">{row.user.email}</span>
@@ -194,7 +194,7 @@ export const ActivityLogsPage: React.FC = () => {
       header: ar.activity.ip,
       render: (row) => (
         <span className="font-mono text-xs text-default-600">
-          {row.ip || '—'}
+          {row.ip || '-'}
         </span>
       ),
     },
@@ -231,7 +231,7 @@ export const ActivityLogsPage: React.FC = () => {
         total={total}
         onPageChange={(page) => setCurrentPage(page)}
         topContent={
-          <div className="flex flex-col gap-3 rounded-2xl border border-default-200 bg-content1 p-4 shadow-sm">
+          <div className="flex flex-col gap-3 rounded-xl border border-default-200 bg-content1 p-4 shadow-none">
             <div className="flex items-center justify-between gap-2 md:hidden">
               <span className="font-semibold text-sm text-default-700">{ar.activity.filter}</span>
               <Button

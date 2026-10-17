@@ -243,6 +243,93 @@ describe('Work Orders Frontend Suite', () => {
         expect(screen.getByText(/24/)).toBeInTheDocument();
       });
     });
+
+    it('shows confirmation modals on step 5 for saving draft and broadcasting', async () => {
+      render(
+        <HeroUIProvider>
+          <MemoryRouter>
+            <CreateWorkOrderPage />
+          </MemoryRouter>
+        </HeroUIProvider>
+      );
+
+      // Advance Step 1 -> 2
+      fireEvent.click(screen.getByText(ar.common.next));
+      await waitFor(() => {
+        expect(screen.getAllByText(ar.workOrders.steps.capacity)[0]).toBeInTheDocument();
+      });
+
+      // Advance Step 2 -> 3
+      fireEvent.click(screen.getByText(ar.common.next));
+      await waitFor(() => {
+        expect(screen.getAllByText(ar.workOrders.steps.filters)[0]).toBeInTheDocument();
+      });
+
+      // Advance Step 3 -> 4
+      fireEvent.click(screen.getByText(ar.common.next));
+      await waitFor(() => {
+        expect(screen.getAllByText(ar.workOrders.steps.strategy)[0]).toBeInTheDocument();
+      });
+
+      // Advance Step 4 -> 5
+      fireEvent.click(screen.getByText(ar.common.next));
+      await waitFor(() => {
+        expect(screen.getAllByText(ar.workOrders.steps.review)[0]).toBeInTheDocument();
+      });
+
+      // On Step 5: Click Save Draft -> Confirm Dialog should open
+      const saveDraftBtn = screen.getByText(ar.workOrders.saveDraft);
+      fireEvent.click(saveDraftBtn);
+
+      await waitFor(() => {
+        expect(screen.getByText(ar.workOrders.confirmDraftTitle)).toBeInTheDocument();
+      });
+
+      // Close the modal by clicking cancel
+      const cancelDraftModalBtn = screen.getByRole('button', { name: ar.common.cancel });
+      fireEvent.click(cancelDraftModalBtn);
+
+      // Now click Send / Broadcast -> Confirm Broadcast Dialog should open
+      const sendOrderBtn = screen.getByText(ar.workOrders.sendOrder);
+      fireEvent.click(sendOrderBtn);
+
+      await waitFor(() => {
+        expect(screen.getByText(ar.workOrders.confirmBroadcastTitle)).toBeInTheDocument();
+        expect(screen.getByText(ar.workOrders.confirmBroadcastWarning)).toBeInTheDocument();
+      });
+    });
+
+    it('shows confirmation dialog when clicking discard draft in restored banner', async () => {
+      // Simulate draft in localStorage
+      localStorage.setItem(
+        'fast_crm_work_order_draft',
+        JSON.stringify({
+          from_governorate: 'القاهرة',
+          notes: 'ملاحظات مسودة تجريبية',
+        })
+      );
+
+      render(
+        <HeroUIProvider>
+          <MemoryRouter>
+            <CreateWorkOrderPage />
+          </MemoryRouter>
+        </HeroUIProvider>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByText('مسح المسودة والبدء من جديد')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByText('مسح المسودة والبدء من جديد'));
+
+      await waitFor(() => {
+        expect(screen.getByText(ar.workOrders.confirmDiscardTitle)).toBeInTheDocument();
+        expect(screen.getByText(ar.workOrders.confirmDiscardPrompt)).toBeInTheDocument();
+      });
+
+      localStorage.removeItem('fast_crm_work_order_draft');
+    });
   });
 
   describe('WorkOrderDetailPage', () => {

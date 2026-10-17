@@ -10,6 +10,7 @@ use App\Events\WhatsAppMessageSent;
 use App\Jobs\SendWhatsAppMessageJob;
 use App\Models\Driver;
 use App\Models\WhatsAppMessage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use RuntimeException;
 
@@ -47,12 +48,14 @@ class MessageSender
         array $params = [],
         ?array $buttons = null,
         ?int $orderId = null,
-        ?string $body = null
+        ?string $body = null,
+        int $delaySeconds = 0
     ): WhatsAppMessage {
         $this->assertCanMessage($driver);
 
         if ($body === null) {
             $name = $driver->name ?: 'كابتن';
+            /** @var array<string, mixed> $replacements */
             $replacements = [
                 'اسم_السائق' => $name,
                 'driver_name' => $name,
@@ -75,7 +78,7 @@ class MessageSender
             'order_id' => $orderId,
         ]);
 
-        SendWhatsAppMessageJob::dispatch($msg->id);
+        $this->dispatchJob($msg->id, $delaySeconds);
 
         return $msg;
     }
@@ -84,7 +87,7 @@ class MessageSender
      * Send a free-form text message.
      * Caller is responsible for checking the 24h window; this method does not enforce it.
      */
-    public function sendText(Driver $driver, string $body, ?int $orderId = null): WhatsAppMessage
+    public function sendText(Driver $driver, string $body, ?int $orderId = null, int $delaySeconds = 0): WhatsAppMessage
     {
         $this->assertCanMessage($driver);
 
@@ -94,7 +97,7 @@ class MessageSender
             'order_id' => $orderId,
         ]);
 
-        SendWhatsAppMessageJob::dispatch($msg->id);
+        $this->dispatchJob($msg->id, $delaySeconds);
 
         return $msg;
     }
@@ -146,6 +149,45 @@ class MessageSender
         SendWhatsAppMessageJob::dispatch($msg->id);
 
         return $msg;
+    }
+
+    /**
+     * Send an image with an optional caption.
+     */
+    public function sendImage(
+        Driver $driver,
+        string $imageUrl,
+        string $caption = '',
+        ?int $orderId = null,
+        int $delaySeconds = 0
+    ): WhatsAppMessage {
+        $this->assertCanMessage($driver);
+
+        $msg = $this->createMessageRow($driver, WhatsAppMessageType::IMAGE, [
+            'body' => $caption !== '' ? $caption : 'صورة 📷',
+            'payload' => [
+                'media_url' => $imageUrl,
+                'media_type' => 'image',
+                'caption' => $caption,
+            ],
+            'order_id' => $orderId,
+        ]);
+
+        $this->dispatchJob($msg->id, $delaySeconds);
+
+        return $msg;
+    }
+
+    /**
+     * Dispatch queue job with optional anti-ban delay.
+     */
+    protected function dispatchJob(int $messageId, int $delaySeconds = 0): void
+    {
+        if ($delaySeconds > 0) {
+            SendWhatsAppMessageJob::dispatch($messageId)->delay(now()->addSeconds($delaySeconds));
+        } else {
+            SendWhatsAppMessageJob::dispatch($messageId);
+        }
     }
 
     /**
@@ -224,7 +266,7 @@ class MessageSender
                 createdAt: $msg->created_at?->toIso8601String() ?? now()->toIso8601String(),
             ));
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('WhatsAppMessageSent broadcast failed: ' . $e->getMessage());
+            Log::warning('WhatsAppMessageSent broadcast failed: '.$e->getMessage());
         }
 
         return $msg;

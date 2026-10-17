@@ -8,6 +8,7 @@ use App\Exceptions\InvalidDriverStatusTransitionException;
 use App\Models\Driver;
 use App\Models\DriverStatusHistory;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class DriverStatusService
 {
@@ -159,7 +160,7 @@ class DriverStatusService
                 updatedAt: now()->toIso8601String(),
             ));
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('DriverStatusUpdated broadcast failed: ' . $e->getMessage());
+            Log::warning('DriverStatusUpdated broadcast failed: '.$e->getMessage());
         }
 
         return $driver;

@@ -12,7 +12,7 @@ export const AppLoader: React.FC<{ message?: string }> = ({
     >
       <div className="flex flex-col items-center gap-4 p-8 text-center">
         <Spinner size="lg" color="primary" />
-        <p className="text-sm font-medium text-default-600 animate-pulse">{message}</p>
+        <p className="text-sm font-medium text-default-600">{message}</p>
       </div>
     </div>
   );

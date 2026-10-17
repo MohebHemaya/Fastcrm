@@ -46,10 +46,8 @@ export const ImportReportStep: React.FC<ImportReportStepProps> = ({
       {/* Summary Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-start">
         {/* New Drivers Card */}
-        <div className="flex items-center gap-4 rounded-2xl border border-primary-200 bg-primary-50/50 p-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary text-white">
-            <UsersIcon className="h-6 w-6" />
-          </div>
+        <div className="flex items-center gap-4 rounded-xl border border-primary-200 bg-primary-50/50 p-4">
+          <UsersIcon className="h-6 w-6 text-primary shrink-0" />
           <div>
             <span className="block text-2xl font-black text-primary-900">{counts?.new || 0}</span>
             <span className="text-xs text-primary-700 font-medium">{ar.imports.newDriversAdded}</span>
@@ -57,10 +55,8 @@ export const ImportReportStep: React.FC<ImportReportStepProps> = ({
         </div>
 
         {/* Existing Updated Card */}
-        <div className="flex items-center gap-4 rounded-2xl border border-success-200 bg-success-50/50 p-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-success text-white">
-            <ShieldCheckIcon className="h-6 w-6" />
-          </div>
+        <div className="flex items-center gap-4 rounded-xl border border-success-200 bg-success-50/50 p-4">
+          <ShieldCheckIcon className="h-6 w-6 text-success shrink-0" />
           <div>
             <span className="block text-2xl font-black text-success-900">{existingUpdated}</span>
             <span className="text-xs text-success-700 font-medium">{ar.imports.existingUpdated}</span>
@@ -68,10 +64,8 @@ export const ImportReportStep: React.FC<ImportReportStepProps> = ({
         </div>
 
         {/* Duplicates Merged Card */}
-        <div className="flex items-center gap-4 rounded-2xl border border-warning-200 bg-warning-50/50 p-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-warning text-white">
-            <DocumentDuplicateIcon className="h-6 w-6" />
-          </div>
+        <div className="flex items-center gap-4 rounded-xl border border-warning-200 bg-warning-50/50 p-4">
+          <DocumentDuplicateIcon className="h-6 w-6 text-warning shrink-0" />
           <div>
             <span className="block text-2xl font-black text-warning-900">
               {counts?.duplicate_in_file || 0}
@@ -83,10 +77,8 @@ export const ImportReportStep: React.FC<ImportReportStepProps> = ({
         </div>
 
         {/* Invalid Excluded Card */}
-        <div className="flex items-center gap-4 rounded-2xl border border-danger-200 bg-danger-50/50 p-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-danger text-white">
-            <ExclamationTriangleIcon className="h-6 w-6" />
-          </div>
+        <div className="flex items-center gap-4 rounded-xl border border-danger-200 bg-danger-50/50 p-4">
+          <ExclamationTriangleIcon className="h-6 w-6 text-danger shrink-0" />
           <div>
             <span className="block text-2xl font-black text-danger-900">{counts?.invalid || 0}</span>
             <span className="text-xs text-danger-700 font-medium">{ar.imports.invalidExcluded}</span>

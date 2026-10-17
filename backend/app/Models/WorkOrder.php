@@ -16,7 +16,9 @@ use Illuminate\Support\Facades\DB;
  * @property string $code
  * @property string $from_location
  * @property string $to_location
- * @property Carbon $scheduled_at
+ * @property Carbon|null $scheduled_at
+ * @property Carbon|null $scheduled_dispatch_at
+ * @property int|null $offer_expires_in_minutes
  * @property string|null $cargo_type
  * @property float|null $pay_amount
  * @property string|null $notes
@@ -32,6 +34,11 @@ use Illuminate\Support\Facades\DB;
  * @property int|null $batch_size
  * @property int|null $batch_interval_minutes
  * @property bool $exclude_same_day_confirmed
+ * @property bool $include_unrated
+ * @property float|null $min_avg_rating
+ * @property int|null $max_no_shows
+ * @property int|null $last_trip_within_days
+ * @property int|null $target_group_id
  * @property int|null $created_by
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -213,7 +220,7 @@ class WorkOrder extends Model
     public function renderOfferMessageForDriver(?Driver $driver = null): string
     {
         $template = ! empty(trim((string) $this->custom_message))
-            ? $this->custom_message
+            ? (string) $this->custom_message
             : self::defaultOfferMessageTemplate();
 
         $driverName = ($driver && $driver->name) ? $driver->name : 'كابتن';
@@ -222,7 +229,7 @@ class WorkOrder extends Model
         $fromFormatted = $this->from_location ?: 'حسب الاتفاق';
         $toFormatted = $this->to_location ?: 'حسب الاتفاق';
         $cargoFormatted = $this->cargo_type ?: 'عامة';
-        $notesFormatted = ! empty(trim((string) $this->notes)) ? ("- ملاحظات: ".$this->notes) : '';
+        $notesFormatted = ! empty(trim((string) $this->notes)) ? ('- ملاحظات: '.$this->notes) : '';
 
         $replacements = [
             '{{driver_name}}' => $driverName,

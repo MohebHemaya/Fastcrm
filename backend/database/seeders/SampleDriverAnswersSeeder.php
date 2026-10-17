@@ -29,7 +29,7 @@ class SampleDriverAnswersSeeder extends Seeder
                     ['driver_id' => $driver->id, 'question_id' => $q->id],
                     [
                         'question_version_id' => $q->current_version_id,
-                        'value_text' => $driver->name ?: 'كابتن ' . ($idx + 1),
+                        'value_text' => $driver->name ?: 'كابتن '.($idx + 1),
                         'is_current' => true,
                         'is_skipped' => false,
                         'answered_at' => now(),

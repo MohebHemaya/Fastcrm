@@ -23,15 +23,11 @@ import {
   ArrowPathIcon,
   PhoneIcon,
   ArrowTopRightOnSquareIcon,
-  CheckIcon,
-  ClockIcon,
-  ExclamationCircleIcon,
   ChatBubbleLeftRightIcon,
-  SparklesIcon,
+  DocumentTextIcon,
   ChevronLeftIcon,
   TagIcon,
   PaperClipIcon,
-  MusicalNoteIcon,
   BellIcon,
   EllipsisVerticalIcon,
   InboxStackIcon,
@@ -52,33 +48,19 @@ import { useIsMobile } from '@/hooks/useMediaQuery';
 import { useSmartInboxPolling } from '@/hooks/useSmartInboxPolling';
 import { useWhatsAppInbox } from '@/hooks/useWhatsAppInbox';
 import { useDriverChat } from '@/hooks/useDriverChat';
+import { MessageStatusTick, ConversationListTick } from './MessageStatusTick';
+import { MediaBubble } from './MediaBubble';
+import { ChatMediaAttachmentModal } from './ChatMediaAttachmentModal';
 
 // ─── Conversation Tags ────────────────────────────────────────────────────────
 const CONVERSATION_TAGS = [
-  { id: 'important', label: '🔴 مهم',         color: 'danger'   as const },
-  { id: 'new_join',  label: '🟢 انضمام جديد',  color: 'success'  as const },
-  { id: 'complaint', label: '🟡 شكوى',         color: 'warning'  as const },
-  { id: 'financial', label: '🔵 مالي',          color: 'primary'  as const },
+  { id: 'important', label: 'مهم',         color: 'danger'   as const },
+  { id: 'new_join',  label: 'انضمام جديد',  color: 'success'  as const },
+  { id: 'complaint', label: 'شكوى',         color: 'warning'  as const },
+  { id: 'financial', label: 'مالي',          color: 'primary'  as const },
 ] as const;
 type TagId = (typeof CONVERSATION_TAGS)[number]['id'];
 
-// ─── Audio Chime (Web Audio API) ─────────────────────────────────────────────
-function playChime() {
-  try {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.3);
-    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.4);
-  } catch { /* Web Audio not available */ }
-}
 
 // ─── Variable substitution for Quick Replies ─────────────────────────────────
 function interpolateTemplate(text: string, vars: Record<string, string | number | null | undefined>): string {
@@ -88,89 +70,16 @@ function interpolateTemplate(text: string, vars: Record<string, string | number 
   });
 }
 
-// ─── Status Ticks ─────────────────────────────────────────────────────────────
-const MessageStatusTick: React.FC<{ msg: WhatsAppMessage; onRetry?: () => void }> = ({ msg, onRetry }) => {
-  if (msg.direction === 'in') return null;
-  switch (msg.status) {
-    case 'queued':
-      return <Tooltip content="في انتظار الإرسال"><ClockIcon className="w-3.5 h-3.5 text-warning-400 inline-block ms-1" /></Tooltip>;
-    case 'sent':
-      return <Tooltip content="وصلت لسيرفر واتساب"><CheckIcon className="w-3.5 h-3.5 text-default-400 inline-block ms-1" /></Tooltip>;
-    case 'delivered':
-      return (
-        <Tooltip content="وصلت لهاتف السائق">
-          <span className="inline-flex items-center -space-x-1.5 rtl:space-x-reverse ms-1">
-            <CheckIcon className="w-3.5 h-3.5 text-default-400" />
-            <CheckIcon className="w-3.5 h-3.5 text-default-400" />
-          </span>
-        </Tooltip>
-      );
-    case 'read':
-      return (
-        <Tooltip content="قرأها السائق ✓✓">
-          <span className="inline-flex items-center -space-x-1.5 rtl:space-x-reverse ms-1">
-            <CheckIcon className="w-3.5 h-3.5 text-blue-500" />
-            <CheckIcon className="w-3.5 h-3.5 text-blue-500" />
-          </span>
-        </Tooltip>
-      );
-    case 'failed':
-      return (
-        <span className="inline-flex items-center gap-1 ms-1">
-          <Tooltip content={msg.error_message || 'فشل الإرسال'}>
-            <ExclamationCircleIcon className="w-3.5 h-3.5 text-danger-500" />
-          </Tooltip>
-          {onRetry && (
-            <button type="button" onClick={onRetry} className="text-[10px] text-danger-500 underline hover:no-underline font-bold">
-              إعادة
-            </button>
-          )}
-        </span>
-      );
-    default:
-      return null;
-  }
-};
-
-// ─── Media Bubble ─────────────────────────────────────────────────────────────
-const MediaBubble: React.FC<{ msg: WhatsAppMessage }> = ({ msg }) => {
-  const payload = msg.payload ?? {};
-  const mediaUrl: string | undefined = payload.media_url ?? payload.url;
-  const mediaType: string = payload.media_type ?? payload.type ?? 'unknown';
-  const fileName: string = payload.file_name ?? payload.filename ?? 'مرفق';
-  if (!mediaUrl) return null;
-  if (mediaType.startsWith('image')) {
-    return (
-      <a href={mediaUrl} target="_blank" rel="noopener noreferrer">
-        <img src={mediaUrl} alt={fileName} className="max-w-[220px] rounded-lg border border-default-200 cursor-pointer hover:opacity-90 transition-opacity" loading="lazy" />
-      </a>
-    );
-  }
-  if (mediaType === 'audio' || mediaType.startsWith('audio')) {
-    return (
-      <div className="flex items-center gap-2 bg-default-100 dark:bg-default-800 rounded-xl px-3 py-2 max-w-[220px]">
-        <MusicalNoteIcon className="w-5 h-5 text-primary-500 shrink-0" />
-        <audio controls className="h-8 max-w-[160px]"><source src={mediaUrl} /></audio>
-      </div>
-    );
-  }
-  return (
-    <a href={mediaUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary-600 underline text-xs">
-      <PaperClipIcon className="w-4 h-4 shrink-0" />{fileName}
-    </a>
-  );
-};
-
 // ─── Connection Health Banner ─────────────────────────────────────────────────
 const ConnectionHealthBanner: React.FC<{ isConnected: boolean; provider: string; stuckQueued: boolean }> = ({ isConnected, provider, stuckQueued }) => {
   if (isConnected && !stuckQueued) return null;
   return (
     <div className="flex items-center gap-2 bg-danger-50 dark:bg-danger-950/40 border-b border-danger-200 dark:border-danger-800 px-4 py-2">
-      <SignalIcon className="w-4 h-4 text-danger-600 animate-pulse shrink-0" />
+      <SignalIcon className="w-4 h-4 text-danger-600 shrink-0" />
       <span className="text-xs font-bold text-danger-700 dark:text-danger-400">
         {stuckQueued
-          ? '⚠️ رسائل عالقة في الانتظار منذ أكثر من 30 دقيقة. تحقق من حالة الكيو.'
-          : `⚠️ انقطع الاتصال بمزود الواتساب (${provider}). قد تحتاج لإعادة مسح QR Code.`}
+          ? 'رسائل عالقة في الانتظار منذ أكثر من 30 دقيقة. تحقق من حالة قائمة الانتظار.'
+          : `انقطع الاتصال بمزود الواتساب (${provider}). قد تحتاج لإعادة مسح رمز الاستجابة السريعة.`}
       </span>
     </div>
   );
@@ -199,7 +108,7 @@ const DriverSideDrawer: React.FC<{
         <p className="text-xs text-default-500 font-mono">{driverMeta?.driver_phone || conversation?.phone}</p>
       </div>
       <Chip size="sm" variant="flat" color={driverMeta?.driver_status === 'active' ? 'success' : 'default'} className="text-[11px]">
-        {driverMeta?.driver_status || conversation?.status || '—'}
+        {driverMeta?.driver_status || conversation?.status || '-'}
       </Chip>
     </div>
 
@@ -232,6 +141,21 @@ const DriverSideDrawer: React.FC<{
   </div>
 );
 
+const formatMsgTime = (dateStr: string) => {
+  try { return new Date(dateStr).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }); }
+  catch { return ''; }
+};
+
+const formatConversationDate = (dateStr?: string) => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    const now = new Date();
+    if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' });
+  } catch { return ''; }
+};
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 interface WhatsAppLiveInboxProps {
   onOpenTemplates: () => void;
@@ -255,6 +179,7 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
   const [replyText, setReplyText]                   = useState('');
   const [isSending, setIsSending]                   = useState(false);
   const [retryingId, setRetryingId]                 = useState<number | null>(null);
+  const [isMediaModalOpen, setIsMediaModalOpen]     = useState(false);
   const lastMessageIdRef                            = useRef<number>(0);
 
   const [quickReplies, setQuickReplies]             = useState<QuickReplyItem[]>([]);
@@ -290,7 +215,7 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
       const list = res.data || [];
       setConversations(list);
       const totalUnread = list.reduce((s, c) => s + c.unread_count, 0);
-      document.title = totalUnread > 0 ? `(${totalUnread}) رسالة جديدة — ${originalTitleRef.current}` : originalTitleRef.current;
+      document.title = totalUnread > 0 ? `(${totalUnread}) رسالة جديدة, ${originalTitleRef.current}` : originalTitleRef.current;
       if (selectFirst && list.length > 0 && !selectedDriverId) setSelectedDriverId(list[0].id);
     } catch { /* non-critical */ } finally {
       setIsConversationsLoading(false);
@@ -361,9 +286,8 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
       if (newMsgs.length > 0) {
         const freshInbound = newMsgs.filter((m) => m.direction === 'in');
         if (freshInbound.length > 0 && document.hidden) {
-          playChime();
           const conv = conversations.find((c) => c.id === selectedDriverId);
-          document.title = `(${freshInbound.length}) رسالة جديدة من ${conv?.name || 'سائق'} — ${originalTitleRef.current}`;
+          document.title = `(${freshInbound.length}) رسالة جديدة من ${conv?.name || 'سائق'}, ${originalTitleRef.current}`;
         }
         lastMessageIdRef.current = newMsgs[newMsgs.length - 1].id;
         setTimeout(() => scrollToBottom(true), 50);
@@ -381,8 +305,7 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
       setConversations(list);
       const totalUnread = list.reduce((s, c) => s + c.unread_count, 0);
       if (totalUnread > 0 && document.hidden) {
-        document.title = `(${totalUnread}) رسالة جديدة — ${originalTitleRef.current}`;
-        playChime();
+        document.title = `(${totalUnread}) رسالة جديدة, ${originalTitleRef.current}`;
       } else if (totalUnread === 0) {
         document.title = originalTitleRef.current;
       }
@@ -413,7 +336,7 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
       });
     },
     onMessageReceived: () => {
-      playChime();
+      // Message received handler
     },
   });
 
@@ -429,6 +352,34 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
         lastMessageIdRef.current = msg.id;
       }
       setTimeout(() => scrollToBottom(true), 60);
+    },
+    onStatusUpdated: (update) => {
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === update.message_id
+            ? {
+                ...m,
+                status: update.status,
+                delivered_at: update.delivered_at ?? m.delivered_at,
+                read_at: update.read_at ?? m.read_at,
+                error_message: update.error_message ?? m.error_message,
+              }
+            : m
+        )
+      );
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === update.driver_id && c.last_message?.id === update.message_id
+            ? {
+                ...c,
+                last_message: {
+                  ...c.last_message,
+                  status: update.status,
+                },
+              }
+            : c
+        )
+      );
     },
   });
 
@@ -456,16 +407,16 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
     return () => clearInterval(t);
   }, []);
 
-  // Initial load
-  useEffect(() => { loadConversations(true); }, [loadConversations]);
-  useEffect(() => { loadQuickReplies(); }, []);
-
-  const loadQuickReplies = async () => {
+  const loadQuickReplies = useCallback(async () => {
     try {
       const res = await whatsappService.getTemplates();
       setQuickReplies(res.data.quick_replies || []);
     } catch { /* fallback */ }
-  };
+  }, []);
+
+  // Initial load
+  useEffect(() => { loadConversations(true); }, [loadConversations]);
+  useEffect(() => { loadQuickReplies(); }, [loadQuickReplies]);
 
   // Open conversation → full load + mark as seen
   useEffect(() => {
@@ -550,21 +501,8 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
       return true;
     }), [conversations, filterType]);
 
-  const formatMsgTime = (dateStr: string) => {
-    try { return new Date(dateStr).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }); }
-    catch { return ''; }
-  };
-  const formatConversationDate = (dateStr?: string) => {
-    if (!dateStr) return '';
-    try {
-      const d = new Date(dateStr); const now = new Date();
-      if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-      return d.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' });
-    } catch { return ''; }
-  };
-
   return (
-    <Card className="border border-default-200 shadow-md bg-content1 overflow-hidden">
+    <Card className="border border-default-200 shadow-none bg-content1 overflow-hidden">
       {connectionHealth && (
         <ConnectionHealthBanner isConnected={connectionHealth.isConnected} provider={connectionHealth.provider} stuckQueued={connectionHealth.stuckQueued} />
       )}
@@ -576,9 +514,7 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
           <div className="p-3.5 border-b border-default-200 space-y-3 bg-default-50/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                  <ChatBubbleLeftRightIcon className="w-4 h-4" />
-                </div>
+                <ChatBubbleLeftRightIcon className="w-5 h-5 text-default-500 shrink-0" />
                 <div>
                   <h3 className="text-sm font-bold text-default-900">محادثات السائقين</h3>
                   <span className="text-[11px] text-default-500">{conversations.length} سائق لديهم رسائل</span>
@@ -591,7 +527,7 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
                   </Button>
                 </Tooltip>
                 <Tooltip content="إدارة القوالب والردود الجاهزة">
-                  <Button size="sm" variant="flat" color="primary" startContent={<SparklesIcon className="w-3.5 h-3.5" />} onPress={onOpenTemplates} className="text-xs h-8 font-bold">
+                  <Button size="sm" variant="flat" color="primary" startContent={<DocumentTextIcon className="w-3.5 h-3.5" />} onPress={onOpenTemplates} className="text-xs h-8 font-bold">
                     القوالب
                   </Button>
                 </Tooltip>
@@ -641,9 +577,21 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
                         <span className="text-[10px] text-default-400 font-mono shrink-0">{formatConversationDate(item.last_message?.created_at)}</span>
                       </div>
                       <div className="flex items-center justify-between gap-1">
-                        <p className="text-[11px] text-default-500 truncate font-normal">
-                          {item.last_message ? (<>{item.last_message.direction === 'out' && <span className="text-primary-500 me-1">أنت:</span>}{item.last_message.body || '📎 مرفق'}</>) : (<span className="text-default-400 font-mono text-[10px]">{item.phone}</span>)}
-                        </p>
+                        <div className="text-[11px] text-default-500 truncate font-normal flex items-center min-w-0">
+                          {item.last_message ? (
+                            <>
+                              {item.last_message.direction === 'out' && (
+                                <span className="inline-flex items-center me-1 shrink-0 text-default-600">
+                                  <ConversationListTick status={item.last_message.status} />
+                                  <span className="text-primary-500 me-1">أنت:</span>
+                                </span>
+                              )}
+                              <span className="truncate">{item.last_message.body || 'مرفق وسائط'}</span>
+                            </>
+                          ) : (
+                            <span className="text-default-400 font-mono text-[10px]">{item.phone}</span>
+                          )}
+                        </div>
                         {item.unread_count > 0 && (
                           <span className="px-1.5 py-0.5 bg-emerald-500 text-white rounded-full text-[10px] font-bold shrink-0">{item.unread_count}</span>
                         )}
@@ -669,7 +617,7 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
           {selectedDriverId ? (
             <div className="flex flex-col flex-1 min-w-0 min-h-0 overflow-hidden bg-[#efeae2]/40 dark:bg-[#0b141a]/60">
               {/* Chat Header */}
-              <div className="p-3.5 border-b border-default-200 bg-content1 flex items-center justify-between gap-2 shadow-xs z-10">
+              <div className="p-3.5 border-b border-default-200 bg-content1 flex items-center justify-between gap-2 z-10">
                 <div className="flex items-center gap-3 min-w-0">
                   {isMobile && (
                     <Button isIconOnly size="sm" variant="light" onPress={() => setShowMobileChat(false)} aria-label="الرجوع للقائمة">
@@ -733,9 +681,7 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
                   </div>
                 ) : messages.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-2">
-                    <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mb-1">
-                      <ChatBubbleLeftRightIcon className="w-6 h-6" />
-                    </div>
+                    <ChatBubbleLeftRightIcon className="w-8 h-8 text-default-400 mb-1" />
                     <h5 className="text-sm font-bold text-default-800">لا توجد رسائل سابقة مع هذا السائق</h5>
                     <p className="text-xs text-default-500 max-w-sm">يمكنك بدء المحادثة مباشرة الآن بكتابة رسالة بالأسفل أو إرسال أحد الردود السريعة الجاهزة.</p>
                   </div>
@@ -745,11 +691,11 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
                     const hasMedia = msg.payload && (msg.payload.media_url || msg.payload.url || msg.payload.media_type);
                     return (
                       <div key={msg.id} className={`flex flex-col ${isOut ? 'items-start' : 'items-end'}`}>
-                        <div className={`max-w-[85%] sm:max-w-[70%] rounded-2xl p-3 shadow-xs text-xs leading-relaxed space-y-1 relative ${
+                        <div className={`max-w-[85%] sm:max-w-[70%] rounded-xl p-3 shadow-none text-xs leading-relaxed space-y-1 relative ${
                           isOut ? 'bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-tr-none' : 'bg-content1 text-default-900 border border-default-200 rounded-tl-none'
                         }`}>
                           {msg.template_name && (
-                            <div className="text-[10px] text-default-400 font-mono mb-1 pb-1 border-b border-default-200/50">📋 قالب آلي: {msg.template_name}</div>
+                            <div className="text-[10px] text-default-400 font-mono mb-1 pb-1 border-b border-default-200/50">قالب آلي: {msg.template_name}</div>
                           )}
                           {hasMedia && <MediaBubble msg={msg} />}
                           <div className="whitespace-pre-wrap">
@@ -787,11 +733,23 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
               {/* Composer */}
               <div className="p-3 bg-content1 border-t border-default-200 space-y-2">
                 <div className="flex items-end gap-2">
+                  <Tooltip content="إرفاق صورة للسائق">
+                    <Button
+                      isIconOnly
+                      variant="flat"
+                      color="default"
+                      className="h-10 w-10 min-w-10 rounded-xl"
+                      onPress={() => setIsMediaModalOpen(true)}
+                      aria-label="إرفاق صورة"
+                    >
+                      <PaperClipIcon className="w-5 h-5 text-default-600" />
+                    </Button>
+                  </Tooltip>
                   <Textarea ref={textareaRef} value={replyText} onValueChange={setReplyText} minRows={1} maxRows={4} size="sm" variant="bordered"
                     placeholder="اكتب ردك للسائق هنا... (اضغط Enter للإرسال، Shift+Enter لسطر جديد)"
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(); } }}
                     className="flex-1 text-xs" />
-                  <Button color="primary" isIconOnly className="h-10 w-10 min-w-10 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs"
+                  <Button color="primary" isIconOnly className="h-10 w-10 min-w-10 rounded-xl shadow-none"
                     onPress={handleSendMessage} isLoading={isSending} isDisabled={!replyText.trim() || isSending} aria-label="إرسال">
                     <PaperAirplaneIcon className="w-4 h-4 rtl:rotate-180" />
                   </Button>
@@ -800,16 +758,14 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
             </div>
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3 bg-[#efeae2]/40 dark:bg-[#0b141a]/60">
-              <div className="w-16 h-16 rounded-full bg-default-100 text-default-400 flex items-center justify-center">
-                <ChatBubbleLeftRightIcon className="w-8 h-8" />
-              </div>
+              <ChatBubbleLeftRightIcon className="w-6 h-6 text-default-400" />
               <h4 className="text-base font-bold text-default-800">مركز المحادثات المباشرة مع السائقين</h4>
               <p className="text-xs text-default-500 max-w-md leading-relaxed">
                 اختر أي سائق من القائمة على اليمين لفتح محادثته، الاطلاع على رسائله السابقة، والرد عليه فوراً عبر الواتساب دون الحاجة لفتح هاتفك المحمول.
               </p>
               <div className="flex items-center gap-2 text-[11px] text-default-400 bg-default-50 rounded-xl px-4 py-2">
                 <BellIcon className="w-3.5 h-3.5" />
-                <span>سيتم إشعارك صوتياً وبشكل مرئي عند وصول رسائل جديدة</span>
+                <span>سيتم إشعارك بشكل مرئي وفوري عند وصول رسائل جديدة</span>
               </div>
             </div>
           )}
@@ -821,6 +777,16 @@ export const WhatsAppLiveInbox: React.FC<WhatsAppLiveInboxProps> = ({ onOpenTemp
           )}
         </div>
       </div>
+
+      {selectedDriverId && (
+        <ChatMediaAttachmentModal
+          isOpen={isMediaModalOpen}
+          onClose={() => setIsMediaModalOpen(false)}
+          driverId={selectedDriverId}
+          driverName={selectedConversation?.name || driverMeta?.driver_name || undefined}
+          onSuccess={(newMsg) => setMessages((prev) => [...prev, newMsg])}
+        />
+      )}
     </Card>
   );
 };

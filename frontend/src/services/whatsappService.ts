@@ -109,6 +109,22 @@ export const whatsappService = {
   },
 
   /**
+   * Send media (image or audio) from operator to driver
+   */
+  async sendMedia(
+    driverId: number,
+    payload: FormData | { type: 'image' | 'audio'; media_url: string; caption?: string }
+  ): Promise<ApiEnvelope<WhatsAppMessage>> {
+    const headers = payload instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {};
+    const response = await api.post<ApiEnvelope<WhatsAppMessage>>(
+      `/drivers/${driverId}/send-media`,
+      payload,
+      { headers }
+    );
+    return response.data;
+  },
+
+  /**
    * Mark all inbound messages from a driver as read ("seen")
    * Called automatically when the operator opens a conversation
    */
@@ -119,7 +135,7 @@ export const whatsappService = {
 
   /**
    * Incremental fetch: only messages with id > after_id
-   * Used for smart polling — avoids re-fetching entire chat history.
+   * Used for smart polling - avoids re-fetching entire chat history.
    * Also returns status updates for recent outgoing messages.
    */
   async getNewMessages(
@@ -173,6 +189,22 @@ export const whatsappService = {
     quick_replies?: import('@/types/whatsapp').QuickReplyItem[];
   }): Promise<ApiEnvelope<import('@/types/whatsapp').WhatsAppTemplatesData>> {
     const response = await api.put<ApiEnvelope<import('@/types/whatsapp').WhatsAppTemplatesData>>('/whatsapp/templates', payload);
+    return response.data;
+  },
+
+  /**
+   * Test send a template message to a specific phone number
+   */
+  async testSendTemplate(payload: {
+    phone: string;
+    template_key?: string;
+    custom_text?: string;
+    sample_data?: Record<string, string>;
+  }): Promise<ApiEnvelope<{ provider_message_id: string; phone: string; rendered_body: string }>> {
+    const response = await api.post<ApiEnvelope<{ provider_message_id: string; phone: string; rendered_body: string }>>(
+      '/whatsapp/templates/test-send',
+      payload
+    );
     return response.data;
   },
 

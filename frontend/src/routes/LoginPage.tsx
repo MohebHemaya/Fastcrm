@@ -7,7 +7,6 @@ import {
   LockClosedIcon,
   EyeIcon,
   EyeSlashIcon,
-  ShieldCheckIcon,
   ExclamationCircleIcon,
 } from '@/components/icons';
 import { FormInput } from '@/components/form';
@@ -88,21 +87,16 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="relative flex min-h-[100dvh] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-default-100 via-background to-default-50 p-4 safe-top safe-bottom">
+    <div className="flex min-h-[100dvh] w-full items-center justify-center bg-default-50 p-4 safe-top safe-bottom">
       <ToastContainer />
 
-      {/* Decorative gradient glow */}
-      <div className="absolute top-1/4 start-1/2 -translate-x-1/2 -translate-y-1/2 h-72 w-72 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-
-      <Card className="relative z-10 w-full max-w-md border border-default-200/80 bg-content1/90 shadow-xl backdrop-blur-md">
-        <CardHeader className="flex flex-col items-center gap-2 pb-2 pt-8 text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/30">
-            <ShieldCheckIcon className="h-8 w-8" />
-          </div>
-          <h1 className="mt-3 text-2xl font-bold tracking-tight text-default-900">
+      <Card className="w-full max-w-md border border-default-200 bg-content1 shadow-none">
+        <CardHeader className="flex flex-col items-center gap-3 pb-2 pt-8 text-center">
+          <img src="/logo.png" alt={ar.app.title} className="h-16 sm:h-20 w-auto object-contain" />
+          <h1 className="sr-only">
             {ar.app.title}
           </h1>
-          <p className="text-sm text-default-500">
+          <p className="text-sm text-default-500 font-medium">
             {ar.auth.loginPrompt}
           </p>
         </CardHeader>
@@ -111,7 +105,7 @@ export const LoginPage: React.FC = () => {
           {generalError && (
             <div
               data-testid="login-general-error"
-              className="mb-5 flex items-center gap-3 rounded-xl border border-danger-200 bg-danger-50 p-3.5 text-sm text-danger-700"
+              className="mb-5 flex items-center gap-3 rounded-lg border border-danger-200 bg-danger-50 p-3.5 text-sm text-danger-700"
             >
               <ExclamationCircleIcon className="h-5 w-5 shrink-0 text-danger-600" />
               <p className="flex-1 text-start leading-tight">{generalError}</p>
@@ -171,7 +165,7 @@ export const LoginPage: React.FC = () => {
               type="submit"
               color="primary"
               size="lg"
-              className="mt-3 font-semibold shadow-md shadow-primary/20"
+              className="mt-3 font-semibold shadow-none"
               isLoading={isSubmitting}
             >
               {isSubmitting ? ar.auth.loggingIn : ar.auth.login}

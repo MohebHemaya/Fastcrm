@@ -491,7 +491,7 @@ export const DriversPage: React.FC = () => {
       />
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col gap-3 rounded-2xl border border-default-200 bg-content1 p-4 shadow-sm">
+      <div className="flex flex-col gap-3 rounded-xl border border-default-200 bg-content1 p-4 shadow-none">
         <div className="flex items-center gap-2">
           <div className="flex-1 min-w-0">
             <SearchInput

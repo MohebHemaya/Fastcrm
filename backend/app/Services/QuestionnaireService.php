@@ -442,11 +442,11 @@ class QuestionnaireService
 
                 broadcast(new QuestionnaireProgressUpdated(
                     driverId: $driver->id,
-                    questionText: $version?->text_ar ?? $question->key,
+                    questionText: $version->text_ar ?? $question->key,
                     answer: $valueText ?? (string) ($valueNumber ?? ''),
                     answeredCount: $answeredCount,
                     totalQuestions: $totalQuestions,
-                    updatedAt: now()->toISOString(),
+                    updatedAt: (string) now()->toISOString(),
                 ));
             } catch (\Throwable $e) {
                 Log::warning("[QuestionnaireService] Broadcast failed: {$e->getMessage()}");

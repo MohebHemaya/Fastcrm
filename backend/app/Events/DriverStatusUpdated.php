@@ -17,7 +17,7 @@ class DriverStatusUpdated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public function __construct(
-        public readonly int    $driverId,
+        public readonly int $driverId,
         public readonly string $driverName,
         public readonly string $oldStatus,
         public readonly string $newStatus,
@@ -39,11 +39,11 @@ class DriverStatusUpdated implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'driver_id'   => $this->driverId,
+            'driver_id' => $this->driverId,
             'driver_name' => $this->driverName,
-            'old_status'  => $this->oldStatus,
-            'new_status'  => $this->newStatus,
-            'updated_at'  => $this->updatedAt,
+            'old_status' => $this->oldStatus,
+            'new_status' => $this->newStatus,
+            'updated_at' => $this->updatedAt,
         ];
     }
 }

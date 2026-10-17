@@ -6,6 +6,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  Input,
   Textarea,
   Tabs,
   Tab,
@@ -16,12 +17,13 @@ import {
 } from '@heroui/react';
 import {
   DocumentTextIcon,
-  SparklesIcon,
   ArrowPathIcon,
   CheckIcon,
   ChatBubbleLeftRightIcon,
   PlusIcon,
   TrashIcon,
+  PaperAirplaneIcon,
+  PhoneIcon,
 } from '@/components/icons';
 import { ar } from '@/i18n/ar';
 import { useUiStore } from '@/lib/stores/useUiStore';
@@ -47,6 +49,9 @@ export const WhatsAppTemplatesModal: React.FC<WhatsAppTemplatesModalProps> = ({
   const [selectedTemplateKey, setSelectedTemplateKey] = useState<string>('order_confirmation');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [testPhone, setTestPhone] = useState<string>('');
+  const [isTestSending, setIsTestSending] = useState<boolean>(false);
+  const [testSendSuccess, setTestSendSuccess] = useState<string | null>(null);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -145,12 +150,60 @@ export const WhatsAppTemplatesModal: React.FC<WhatsAppTemplatesModalProps> = ({
     }
   };
 
+  const handleTestSend = async () => {
+    if (!testPhone.trim()) {
+      addToast({
+        title: 'رقم الهاتف مطلوب',
+        message: 'يرجى إدخال رقم هاتفك لإرسال الرسالة التجريبية',
+        type: 'warning',
+      });
+      return;
+    }
+
+    setIsTestSending(true);
+    setTestSendSuccess(null);
+    try {
+      const res = await whatsappService.testSendTemplate({
+        phone: testPhone.trim(),
+        template_key: selectedTemplateKey,
+        custom_text: editedTemplates[selectedTemplateKey] || '',
+      });
+
+      addToast({
+        title: 'تم الإرسال بنجاح 📱',
+        message: res.message || 'وصلت الرسالة التجريبية إلى هاتفك بنجاح',
+        type: 'success',
+      });
+      setTestSendSuccess(res.message || 'تم إرسال الرسالة بنجاح');
+    } catch (e: any) {
+      addToast({
+        title: ar.errors.generalError,
+        message: e?.response?.data?.message || 'فشل إرسال الرسالة التجريبية',
+        type: 'error',
+      });
+    } finally {
+      setIsTestSending(false);
+    }
+  };
+
   const activeTemplate = templates.find((t) => t.key === selectedTemplateKey);
 
-  // Generate live preview text with dummy variables
+  // Generate live preview text with dummy variables, conditional blocks, and fallbacks
   const renderLivePreview = (text: string) => {
     if (!text) return '';
-    return text
+    let rendered = text;
+
+    // Handle conditionals: {{#tag}} ... {{/tag}}
+    rendered = rendered.replace(/\{\{#\s*([^\}]+?)\s*\}\}(.*?)\{\{\/\s*\1\s*\}\}/gs, (_match, _tag, inner) => {
+      return inner;
+    });
+
+    // Handle fallbacks: {{ tag | fallback }}
+    rendered = rendered.replace(/\{\{\s*([a-zA-Z0-9_\u0600-\u06FF]+)\s*(?:\||\?\?)\s*([^}]+?)\s*\}\}/g, (_match, tag, fallback) => {
+      return tag === 'اسم_السائق' ? 'أحمد محمود' : fallback;
+    });
+
+    return rendered
       .replace(/{{اسم_السائق}}|{{driver_name}}/g, 'أحمد محمود')
       .replace(/{{رقم_الطلب}}|{{order_code}}/g, 'WO-0104')
       .replace(/{{مكان_الانطلاق}}|{{from_location}}/g, 'مستودعات العاشر من رمضان')
@@ -158,7 +211,7 @@ export const WhatsAppTemplatesModal: React.FC<WhatsAppTemplatesModalProps> = ({
       .replace(/{{موعد_الرحلة}}|{{scheduled_at}}/g, '2026-10-10 08:00 ص')
       .replace(/{{المقابل_المادي}}|{{pay_amount}}/g, '2,500 ج.م')
       .replace(/{{نوع_الحمولة}}|{{cargo_type}}/g, 'حاويات جافة')
-      .replace(/{{الملاحظات}}|{{notes}}/g, '- يرجى إحضار تصريح التحميل')
+      .replace(/{{الملاحظات}}|{{notes}}/g, 'يرجى إحضار تصريح التحميل')
       .replace(/{{رقم_الترتيب}}/g, '1')
       .replace(/{{سبب_الإلغاء}}|{{cancel_reason}}/g, 'تأجيل موعد الشحن من العميل')
       .replace(/{{عدد_الرحلات}}/g, '5');
@@ -177,9 +230,7 @@ export const WhatsAppTemplatesModal: React.FC<WhatsAppTemplatesModalProps> = ({
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1 border-b border-default-200 pb-3">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
-              <DocumentTextIcon className="w-5 h-5" />
-            </div>
+            <DocumentTextIcon className="w-5 h-5 text-default-500 shrink-0" />
             <div>
               <h3 className="text-lg font-bold text-default-900">
                 إدارة صيغ وقوالب رسائل الواتساب التلقائية
@@ -213,7 +264,7 @@ export const WhatsAppTemplatesModal: React.FC<WhatsAppTemplatesModalProps> = ({
                   key="templates"
                   title={
                     <div className="flex items-center gap-2 text-xs font-bold">
-                      <SparklesIcon className="w-4 h-4 text-emerald-600" />
+                      <DocumentTextIcon className="w-4 h-4 text-default-500" />
                       <span>قوالب الرسائل الآلية ({templates.length})</span>
                     </div>
                   }
@@ -222,7 +273,7 @@ export const WhatsAppTemplatesModal: React.FC<WhatsAppTemplatesModalProps> = ({
                   key="quick_replies"
                   title={
                     <div className="flex items-center gap-2 text-xs font-bold">
-                      <ChatBubbleLeftRightIcon className="w-4 h-4 text-primary" />
+                      <ChatBubbleLeftRightIcon className="w-4 h-4 text-default-500" />
                       <span>الردود السريعة الجاهزة في الشات ({editedReplies.length})</span>
                     </div>
                   }
@@ -244,7 +295,7 @@ export const WhatsAppTemplatesModal: React.FC<WhatsAppTemplatesModalProps> = ({
                             onClick={() => setSelectedTemplateKey(tpl.key)}
                             className={`w-full text-start p-3 rounded-xl border transition-all flex flex-col gap-1 ${
                               isSelected
-                                ? 'bg-primary-50/70 border-primary-500 shadow-xs ring-1 ring-primary-500'
+                                ? 'bg-primary-50/70 border-primary-500 shadow-none'
                                 : 'bg-content1 hover:bg-default-100 border-default-200'
                             }`}
                           >
@@ -327,14 +378,59 @@ export const WhatsAppTemplatesModal: React.FC<WhatsAppTemplatesModalProps> = ({
                         {/* Live WhatsApp Bubble Preview */}
                         <div className="space-y-1.5">
                           <label className="text-xs font-bold text-default-700">معاينة مباشرة في الواتساب (شاشة السائق):</label>
-                          <div className="p-4 rounded-2xl bg-[#efeae2] dark:bg-[#0b141a] border border-default-200">
-                            <div className="max-w-[85%] bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-2xl rounded-tr-none p-3 shadow-xs text-xs whitespace-pre-wrap leading-relaxed">
+                          <div className="p-4 rounded-xl bg-[#efeae2] dark:bg-[#0b141a] border border-default-200">
+                            <div className="max-w-[85%] bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-[#e9edef] rounded-xl rounded-tr-none p-3 shadow-none text-xs whitespace-pre-wrap leading-relaxed">
                               {renderLivePreview(editedTemplates[activeTemplate.key] || '')}
                               <div className="text-[10px] text-default-400 text-end mt-1 font-mono">
-                                {new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })} ✓✓
+                                {new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}
                               </div>
                             </div>
                           </div>
+                        </div>
+
+                        {/* Live Test Send to Admin Phone */}
+                        <div className="p-3.5 rounded-xl border border-default-200 bg-default-50/70 space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-default-800 flex items-center gap-1.5">
+                              <PaperAirplaneIcon className="w-3.5 h-3.5 text-primary rotate-180" />
+                              تجربة إرسال القالب مباشرة إلى هاتفك
+                            </span>
+                            <span className="text-[11px] text-default-400 font-normal">
+                              تصلك الرسالة الآن على الواتساب بالصيغة المكتوبة أعلاه
+                            </span>
+                          </div>
+                          <div className="flex flex-col sm:flex-row items-center gap-2">
+                            <Input
+                              size="sm"
+                              variant="bordered"
+                              dir="ltr"
+                              placeholder="01012345678 أو +2010..."
+                              value={testPhone}
+                              onValueChange={(val) => {
+                                setTestPhone(val);
+                                if (testSendSuccess) setTestSendSuccess(null);
+                              }}
+                              className="w-full sm:flex-1 text-xs"
+                              classNames={{ input: 'font-mono text-xs text-start' }}
+                              startContent={<PhoneIcon className="w-3.5 h-3.5 text-default-400" />}
+                            />
+                            <Button
+                              size="sm"
+                              color="primary"
+                              variant="solid"
+                              isLoading={isTestSending}
+                              onPress={handleTestSend}
+                              className="w-full sm:w-auto font-bold text-xs shrink-0"
+                            >
+                              إرسال تجربة الآن
+                            </Button>
+                          </div>
+                          {testSendSuccess && (
+                            <div className="text-[11px] text-success-600 font-medium flex items-center gap-1">
+                              <CheckIcon className="w-3.5 h-3.5 text-success-600" />
+                              {testSendSuccess}
+                            </div>
+                          )}
                         </div>
                       </>
                     )}
@@ -365,7 +461,7 @@ export const WhatsAppTemplatesModal: React.FC<WhatsAppTemplatesModalProps> = ({
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {editedReplies.map((reply, idx) => (
-                      <Card key={reply.id} className="border border-default-200 shadow-xs bg-content1">
+                      <Card key={reply.id} className="border border-default-200 shadow-none bg-content1">
                         <CardBody className="p-3.5 space-y-2.5">
                           <div className="flex items-center justify-between gap-2">
                             <input
@@ -377,7 +473,7 @@ export const WhatsAppTemplatesModal: React.FC<WhatsAppTemplatesModalProps> = ({
                                 setEditedReplies(copy);
                               }}
                               className="text-xs font-bold bg-transparent border-b border-default-300 focus:border-primary outline-hidden py-0.5 px-1 w-full"
-                              placeholder="عنوان الزر (مثلاً: 📍 اللوكيشن)"
+                              placeholder="عنوان الزر (مثلاً: موقع المخزن)"
                             />
                             <Button
                               isIconOnly

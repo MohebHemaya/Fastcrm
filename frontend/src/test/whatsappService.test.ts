@@ -115,4 +115,20 @@ describe('whatsappService', () => {
     expect(api.post).toHaveBeenCalledWith('/whatsapp/sync-active-inbound', {}, { skipAuthRedirect: true });
     expect(res.data.synced_drivers).toBe(2);
   });
+
+  it('sendMedia calls POST /drivers/:id/send-media with FormData', async () => {
+    vi.mocked(api.post).mockResolvedValueOnce({
+      data: { data: { id: 10, type: 'image' }, message: 'sent' },
+    } as any);
+
+    const formData = new FormData();
+    formData.append('type', 'image');
+
+    const res = await whatsappService.sendMedia(7, formData);
+
+    expect(api.post).toHaveBeenCalledWith('/drivers/7/send-media', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    expect(res.data.id).toBe(10);
+  });
 });

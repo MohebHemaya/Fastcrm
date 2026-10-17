@@ -141,6 +141,30 @@ class CloudApiProvider implements WhatsAppProvider
         return $response->json('messages.0.id') ?? '';
     }
 
+    /**
+     * Send an image with an optional caption.
+     */
+    public function sendImage(string $to, string $imageUrl, string $caption = ''): string
+    {
+        $cleanPhone = preg_replace('/[^0-9]/', '', $to);
+
+        $payload = [
+            'messaging_product' => 'whatsapp',
+            'recipient_type' => 'individual',
+            'to' => $cleanPhone,
+            'type' => 'image',
+            'image' => array_filter([
+                'link' => $imageUrl,
+                'caption' => $caption !== '' ? $caption : null,
+            ]),
+        ];
+
+        $response = $this->http->post("{$this->phoneNumberId}/messages", $payload);
+        $this->assertSuccess($response, 'sendImage');
+
+        return $response->json('messages.0.id') ?? '';
+    }
+
     public function verifyWebhook(Request $request): string
     {
         $mode = $request->query('hub_mode');

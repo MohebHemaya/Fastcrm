@@ -127,6 +127,11 @@ class SendWhatsAppMessageJob implements ShouldQueue
                 $payload['buttonLabel'] ?? 'اختر إجابة',
                 $payload['rows'] ?? [],
             ),
+            WhatsAppMessageType::IMAGE => $provider->sendImage(
+                $driver->phone,
+                $payload['media_url'] ?? '',
+                $payload['caption'] ?? ($msg->body ?? ''),
+            ),
             default => $provider->sendText($driver->phone, $msg->body ?? ''),
         };
     }

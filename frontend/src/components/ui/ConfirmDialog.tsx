@@ -11,6 +11,7 @@ import {
   ExclamationTriangleIcon,
   ExclamationCircleIcon,
   InformationCircleIcon,
+  CheckCircleIcon,
 } from '@/components/icons';
 import { ar } from '@/i18n/ar';
 
@@ -19,10 +20,13 @@ export interface ConfirmDialogProps {
   onClose: () => void;
   onConfirm: () => void | Promise<void>;
   title: string;
-  message: string;
+  message?: string;
+  children?: React.ReactNode;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'danger' | 'primary' | 'warning';
+  variant?: 'danger' | 'primary' | 'warning' | 'success';
+  confirmIcon?: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   isLoading?: boolean;
 }
 
@@ -32,19 +36,24 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onConfirm,
   title,
   message,
+  children,
   confirmText = ar.common.confirm,
   cancelText = ar.common.cancel,
   variant = 'primary',
+  confirmIcon,
+  size = 'md',
   isLoading = false,
 }) => {
   const getIcon = () => {
     switch (variant) {
       case 'danger':
-        return <ExclamationCircleIcon className="h-6 w-6 text-danger" />;
+        return <ExclamationCircleIcon className="h-6 w-6 text-danger shrink-0" />;
       case 'warning':
-        return <ExclamationTriangleIcon className="h-6 w-6 text-warning" />;
+        return <ExclamationTriangleIcon className="h-6 w-6 text-warning shrink-0" />;
+      case 'success':
+        return <CheckCircleIcon className="h-6 w-6 text-success shrink-0" />;
       default:
-        return <InformationCircleIcon className="h-6 w-6 text-primary" />;
+        return <InformationCircleIcon className="h-6 w-6 text-primary shrink-0" />;
     }
   };
 
@@ -54,6 +63,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         return 'danger';
       case 'warning':
         return 'warning';
+      case 'success':
+        return 'success';
       default:
         return 'primary';
     }
@@ -64,6 +75,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       placement="center"
+      size={size}
       classNames={{
         base: 'border border-default-200 bg-content1 text-foreground rtl',
         header: 'border-b border-default-100',
@@ -77,8 +89,9 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
               {getIcon()}
               <span className="text-lg font-bold">{title}</span>
             </ModalHeader>
-            <ModalBody className="py-4">
-              <p className="text-sm text-default-600 leading-relaxed">{message}</p>
+            <ModalBody className="py-4 space-y-3">
+              {message && <p className="text-sm text-default-600 leading-relaxed">{message}</p>}
+              {children}
             </ModalBody>
             <ModalFooter className="flex flex-col-reverse sm:flex-row gap-2 w-full safe-bottom border-t border-default-100">
               <Button
@@ -92,9 +105,10 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
               </Button>
               <Button
                 color={getConfirmButtonColor()}
-                className="w-full sm:w-auto min-h-[44px]"
+                className="w-full sm:w-auto min-h-[44px] font-bold"
                 onPress={onConfirm}
                 isLoading={isLoading}
+                startContent={confirmIcon}
               >
                 {confirmText}
               </Button>

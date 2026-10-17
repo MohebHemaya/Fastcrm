@@ -18,7 +18,7 @@ test('UltraMsgProvider sends direct text message via messages/chat API', functio
     ]);
 
     Http::fake([
-        'https://api.ultramsg.com/instance194026/messages/chat' => function (\Illuminate\Http\Client\Request $request) {
+        'https://api.ultramsg.com/instance194026/messages/chat' => function (Illuminate\Http\Client\Request $request) {
             expect($request['token'])->toBe('ultramsg_secret_token_123');
             expect($request['to'])->toBe('+201278842350');
             expect($request['body'])->toBe('مرحبًا يا كابتن من UltraMsg');
@@ -44,7 +44,7 @@ test('UltraMsgProvider formats buttons into clear numbered options', function ()
     ]);
 
     Http::fake([
-        'https://api.ultramsg.com/instance194026/messages/chat' => function (\Illuminate\Http\Client\Request $request) {
+        'https://api.ultramsg.com/instance194026/messages/chat' => function (Illuminate\Http\Client\Request $request) {
             expect($request['body'])->toContain('متاح رحلة جديدة')
                 ->and($request['body'])->toContain('1️⃣ قبول')
                 ->and($request['body'])->toContain('2️⃣ اعتذار');
@@ -69,7 +69,7 @@ test('UltraMsgProvider formats list into readable message', function () {
     ]);
 
     Http::fake([
-        'https://api.ultramsg.com/instance194026/messages/chat' => function (\Illuminate\Http\Client\Request $request) {
+        'https://api.ultramsg.com/instance194026/messages/chat' => function (Illuminate\Http\Client\Request $request) {
             expect($request['body'])->toContain('قائمة الشفتات')
                 ->and($request['body'])->toContain('1️⃣ صباحي')
                 ->and($request['body'])->toContain('2️⃣ مسائي');

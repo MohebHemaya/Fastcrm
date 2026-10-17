@@ -8,8 +8,15 @@
 @tailwind utilities;
 
 :root {
-  font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+  font-family: 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
   direction: rtl;
+  --fe-primary: #7D0E40;
+  --fe-primary-hover: #681035;
+  --fe-secondary: #5A5E60;
+  --fe-accent: #9a1a50;
+  --fe-bg: #F7F7F7;
+  --fe-surface: #FFFFFF;
+  --fe-border: #E8E8E8;
 }
 
 html,
@@ -48,11 +55,11 @@ body {
 /* HeroUI Input & Select design system polish */
 /* 1. Global input container & borders */
 [data-slot="input-wrapper"] {
-  border-width: 1.5px !important;
+  border-width: 1px !important;
   border-color: hsl(var(--heroui-default-300)) !important;
   background-color: hsl(var(--heroui-background)) !important;
-  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: none !important;
+  transition: border-color 0.14s ease-out;
 }
 
 [data-slot="input-wrapper"]:hover {
@@ -62,13 +69,13 @@ body {
 [data-slot="input-wrapper"][data-focus="true"],
 .group[data-focus="true"] [data-slot="input-wrapper"] {
   border-color: hsl(var(--heroui-primary)) !important;
-  box-shadow: 0 0 0 2px hsl(var(--heroui-primary) / 0.18) !important;
+  box-shadow: none !important;
 }
 
 [data-slot="input-wrapper"][data-invalid="true"],
 .group[data-invalid="true"] [data-slot="input-wrapper"] {
   border-color: hsl(var(--heroui-danger)) !important;
-  box-shadow: 0 0 0 2px hsl(var(--heroui-danger) / 0.18) !important;
+  box-shadow: none !important;
 }
 
 /* 2. Global fallback for any raw HeroUI input using internal label */
@@ -197,12 +204,12 @@ select:focus-visible,
 /* Ensure focus-visible rings are ONLY displayed on the styled outer wrapper */
 [data-slot="input-wrapper"]:focus-within {
   border-color: hsl(var(--heroui-primary)) !important;
-  box-shadow: 0 0 0 2px hsl(var(--heroui-primary) / 0.18) !important;
+  box-shadow: none !important;
 }
 
 [data-slot="input-wrapper"][data-invalid="true"]:focus-within {
   border-color: hsl(var(--heroui-danger)) !important;
-  box-shadow: 0 0 0 2px hsl(var(--heroui-danger) / 0.18) !important;
+  box-shadow: none !important;
 }
 
 /* 5. Global HeroUI Pagination Active & Cursor Polish */
@@ -211,7 +218,7 @@ select:focus-visible,
   background-color: hsl(var(--heroui-primary)) !important;
   color: hsl(var(--heroui-primary-foreground)) !important;
   font-weight: 700 !important;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;
+  box-shadow: none !important;
 }
 
 /* 6. Standardized Active Status Badge Styling */
@@ -229,14 +236,13 @@ select:focus-visible,
 }
 
 /* 7. Global HeroUI Tabs RTL & Active State Polish */
-/* Ensure active tab in solid/pill tab lists always has solid high-contrast primary background and readable text */
 [data-slot="tabList"].bg-default-100 [data-slot="tab"][data-selected="true"],
 [data-slot="tabList"]:not([class*="bg-transparent"]) [data-slot="tab"][data-selected="true"] {
   background-color: hsl(var(--heroui-primary)) !important;
   color: hsl(var(--heroui-primary-foreground)) !important;
   font-weight: 700 !important;
   border-radius: 0.5rem !important;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.12), 0 1px 2px -1px rgb(0 0 0 / 0.08) !important;
+  box-shadow: none !important;
   outline: none !important;
 }
 
@@ -258,4 +264,38 @@ select:focus-visible,
 [data-slot="tab"]:focus,
 [data-slot="tab"]:focus-visible {
   outline: none !important;
+}
+
+/* 8. Overlay Depth & Motion Constraints (Manifesto Rules 2 & 5) */
+/* Shadows permitted ONLY on genuinely floating overlay elements */
+[data-slot="popover"],
+[data-slot="dropdown"],
+[data-slot="dropdown-menu"],
+[data-slot="modal"],
+[data-slot="toast"],
+.heroui-modal,
+.heroui-popover,
+.heroui-dropdown-menu {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Non-floating static elements NEVER get drop shadow */
+.heroui-card,
+[data-slot="card"],
+[data-slot="button"],
+[data-slot="badge"],
+[data-slot="chip"] {
+  box-shadow: none !important;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

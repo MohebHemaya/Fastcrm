@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 class ProcessWorkOrderSchedulesCommand extends Command
 {
     protected $signature = 'work-orders:process-schedules';
+
     protected $description = 'Process scheduled work order dispatches and expired offer timeouts';
 
     public function handle(WorkOrderService $workOrderService): int

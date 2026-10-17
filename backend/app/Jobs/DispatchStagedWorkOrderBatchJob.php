@@ -53,10 +53,21 @@ class DispatchStagedWorkOrderBatchJob implements ShouldQueue
         }
 
         $sentInBatch = 0;
+        $accumulatedDelay = 0;
+        /** @var array{enabled?: bool, min_delay_seconds?: int, max_delay_seconds?: int} $antiBan */
+        $antiBan = (array) config('whatsapp.anti_ban', []);
+        $antiBanEnabled = (bool) ($antiBan['enabled'] ?? true);
+        $minDelay = (int) ($antiBan['min_delay_seconds'] ?? 2);
+        $maxDelay = (int) ($antiBan['max_delay_seconds'] ?? 4);
+
         foreach ($recipients as $recipient) {
             $driver = $recipient->driver;
             if (! $driver) {
                 continue;
+            }
+
+            if ($sentInBatch > 0 && $antiBanEnabled) {
+                $accumulatedDelay += random_int($minDelay, $maxDelay);
             }
 
             try {
@@ -80,7 +91,8 @@ class DispatchStagedWorkOrderBatchJob implements ShouldQueue
                     ],
                     buttons: $buttons,
                     orderId: $order->id,
-                    body: $order->renderOfferMessageForDriver($driver)
+                    body: $order->renderOfferMessageForDriver($driver),
+                    delaySeconds: $accumulatedDelay,
                 );
 
                 $recipient->update([

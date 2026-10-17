@@ -7,7 +7,7 @@ import {
   ShieldCheckIcon,
   ExclamationTriangleIcon,
   ArrowsUpDownIcon,
-  SparklesIcon,
+  CheckCircleIcon,
 } from '@/components/icons';
 import { workOrderService } from '@/services/workOrderService';
 import type { WorkOrderEvent } from '@/types/workOrder';
@@ -71,7 +71,7 @@ export const OrderTimelineTab: React.FC<OrderTimelineTabProps> = ({ orderId }) =
       case 'status_changed':
         return <ArrowsUpDownIcon className="w-4 h-4 text-secondary" />;
       case 'outcomes_recorded':
-        return <SparklesIcon className="w-4 h-4 text-warning" />;
+        return <CheckCircleIcon className="w-4 h-4 text-warning" />;
       default:
         return <ClockIcon className="w-4 h-4 text-default-500" />;
     }
@@ -104,7 +104,7 @@ export const OrderTimelineTab: React.FC<OrderTimelineTabProps> = ({ orderId }) =
 
       {events.length === 0 ? (
         <div className="text-center py-12 text-default-500 space-y-2">
-          <ClockIcon className="w-10 h-10 mx-auto text-default-300" />
+          <ClockIcon className="w-6 h-6 mx-auto text-default-400" />
           <p>{ar.workOrders.timeline.empty}</p>
         </div>
       ) : (

@@ -140,7 +140,7 @@ export const UserModal: React.FC<UserModalProps> = ({
       placement="center"
       size="md"
       classNames={{
-        base: 'bg-content1 border border-default-200 shadow-xl',
+        base: 'bg-content1 border border-default-200',
         header: 'border-b border-default-100',
         footer: 'border-t border-default-100',
       }}
@@ -149,9 +149,7 @@ export const UserModal: React.FC<UserModalProps> = ({
         {() => (
           <form onSubmit={handleSubmit}>
             <ModalHeader className="flex items-center gap-2">
-              <div className="p-2 rounded-xl bg-primary-50 text-primary dark:bg-primary-950/40">
-                <UserIcon className="w-5 h-5" />
-              </div>
+              <UserIcon className="w-5 h-5 text-default-500 shrink-0" />
               <div>
                 <h3 className="text-base font-bold text-default-900">
                   {isEditing ? ar.users.editUser : ar.users.addUser}

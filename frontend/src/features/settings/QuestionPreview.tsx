@@ -38,13 +38,13 @@ export const QuestionPreview: React.FC<QuestionPreviewProps> = ({
 
         {/* Date Divider */}
         <div className="flex justify-center mb-2.5">
-          <span className="bg-[#182229] text-[10px] text-slate-400 px-2.5 py-0.5 rounded-md shadow-sm">
+          <span className="bg-[#182229] text-[10px] text-slate-400 px-2.5 py-0.5 rounded-md">
             اليوم
           </span>
         </div>
 
         {/* Inbound Message Bubble */}
-        <div className="bg-[#202c33] rounded-2xl rounded-tr-none p-3 shadow-md max-w-[92%] ms-auto text-start relative mb-2">
+        <div className="bg-[#202c33] rounded-xl rounded-tr-none p-3 shadow-none max-w-[92%] ms-auto text-start relative mb-2">
           {/* Question Text */}
           <p className="text-xs text-white leading-relaxed whitespace-pre-wrap">
             {textAr.trim() || 'اكتب نص السؤال هنا لمعاينته مباشرة...'}
@@ -101,7 +101,7 @@ export const QuestionPreview: React.FC<QuestionPreviewProps> = ({
                 <div className="flex flex-col gap-1.5">
                   <button
                     type="button"
-                    className="w-full py-2 px-3 bg-[#00a884] hover:bg-[#008f6f] text-[#111b21] font-semibold text-xs rounded-lg flex items-center justify-center gap-1.5 shadow transition-colors"
+                    className="w-full py-2 px-3 bg-[#00a884] hover:bg-[#008f6f] text-[#111b21] font-semibold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors"
                   >
                     <QueueListIcon className="w-3.5 h-3.5" />
                     <span>اختر إجابة ({displayOptions.length} خيارات)</span>

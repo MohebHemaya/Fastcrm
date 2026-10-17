@@ -237,4 +237,3 @@ test('unauthenticated request to delete driver is rejected', function () {
 
     $response->assertStatus(401);
 });
-

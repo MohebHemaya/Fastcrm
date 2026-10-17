@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\DriverStatus;
 use App\Enums\WorkOrderRecipientStatus;
 use App\Enums\WorkOrderStatus;
+use App\Events\WorkOrderUpdated;
 use App\Jobs\NotifyOrderFilledJob;
 use App\Models\Driver;
 use App\Models\WorkOrder;
@@ -258,7 +259,7 @@ class AcceptOrderOffer
             }
 
             try {
-                broadcast(new \App\Events\WorkOrderUpdated(
+                broadcast(new WorkOrderUpdated(
                     workOrderId: $orderRecord->id,
                     orderCode: $orderRecord->code,
                     status: $orderRecord->status->value,
@@ -298,7 +299,7 @@ class AcceptOrderOffer
         $driverName = $driver->name ?: 'كابتن';
 
         try {
-            $tplService = app(\App\Services\WhatsAppTemplateService::class);
+            $tplService = app(WhatsAppTemplateService::class);
 
             if ($assignedStatus === 'confirmed') {
                 $scheduledFormatted = $order->scheduled_at ? $order->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';

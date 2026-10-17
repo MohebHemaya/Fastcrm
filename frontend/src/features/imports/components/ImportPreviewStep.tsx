@@ -205,28 +205,28 @@ export const ImportPreviewStep: React.FC<ImportPreviewStepProps> = ({
       {/* Overview Metric Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {/* New Drivers Card */}
-        <div className="flex flex-col gap-1 rounded-2xl border border-primary-200 bg-primary-50/50 p-4">
+        <div className="flex flex-col gap-1 rounded-xl border border-primary-200 bg-primary-50/50 p-4">
           <span className="text-xs text-primary-700 font-medium">{ar.imports.tabs.new}</span>
           <span className="text-2xl font-black text-primary-900">{counts?.new || 0}</span>
           <span className="text-[11px] text-primary-600">سيتم إضافتهم كسائقين جدد</span>
         </div>
 
         {/* Duplicate / Existing Card */}
-        <div className="flex flex-col gap-1 rounded-2xl border border-warning-200 bg-warning-50/50 p-4">
+        <div className="flex flex-col gap-1 rounded-xl border border-warning-200 bg-warning-50/50 p-4">
           <span className="text-xs text-warning-700 font-medium">{ar.imports.tabs.duplicate}</span>
           <span className="text-2xl font-black text-warning-900">{duplicateTotal}</span>
           <span className="text-[11px] text-warning-600">سيتم ربط المجموعات فقط</span>
         </div>
 
         {/* Active Card */}
-        <div className="flex flex-col gap-1 rounded-2xl border border-emerald-200 bg-emerald-50/50 dark:border-emerald-800/50 dark:bg-emerald-950/20 p-4">
-          <span className="text-xs text-emerald-700 dark:text-emerald-400 font-medium">{ar.imports.tabs.active}</span>
-          <span className="text-2xl font-black text-emerald-900 dark:text-emerald-300">{counts?.active || 0}</span>
-          <span className="text-[11px] text-emerald-600 dark:text-emerald-400">سائقون نشطون حالياً</span>
+        <div className="flex flex-col gap-1 rounded-xl border border-success-200 bg-success-50/50 p-4">
+          <span className="text-xs text-success-700 font-medium">{ar.imports.tabs.active}</span>
+          <span className="text-2xl font-black text-success-900">{counts?.active || 0}</span>
+          <span className="text-[11px] text-success-600">سائقون نشطون حالياً</span>
         </div>
 
         {/* Invalid Card */}
-        <div className="flex flex-col gap-1 rounded-2xl border border-danger-200 bg-danger-50/50 p-4">
+        <div className="flex flex-col gap-1 rounded-xl border border-danger-200 bg-danger-50/50 p-4">
           <span className="text-xs text-danger-700 font-medium">{ar.imports.tabs.invalid}</span>
           <span className="text-2xl font-black text-danger-900">{counts?.invalid || 0}</span>
           <span className="text-[11px] text-danger-600">سيتم استبعادهم تلقائياً</span>
@@ -234,7 +234,7 @@ export const ImportPreviewStep: React.FC<ImportPreviewStepProps> = ({
       </div>
 
       {/* Tabs & Table Container */}
-      <div className="flex flex-col gap-4 rounded-2xl border border-default-200 bg-content1 p-4 sm:p-6 shadow-sm">
+      <div className="flex flex-col gap-4 rounded-xl border border-default-200 bg-content1 p-4 sm:p-6 shadow-none">
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-default-100 pb-4">
           <div className="overflow-x-auto max-w-full pb-1">
             <Tabs
@@ -348,7 +348,7 @@ export const ImportPreviewStep: React.FC<ImportPreviewStepProps> = ({
       </div>
 
       {/* Bottom Action Footer */}
-      <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-4 rounded-2xl border border-default-200 bg-content1 p-4 shadow-sm">
+      <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-4 rounded-xl border border-default-200 bg-content1 p-4 shadow-none">
         <Button
           color="danger"
           variant="light"

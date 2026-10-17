@@ -49,6 +49,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Anti-Ban Protection (Jitter & Intelligent Pacing)
+    |--------------------------------------------------------------------------
+    | Staggers bulk dispatches with humanized randomized delays to prevent
+    | WhatsApp account bans and sudden traffic spikes.
+    */
+    'anti_ban' => [
+        'enabled' => (bool) env('WHATSAPP_ANTI_BAN_ENABLED', true),
+        'min_delay_seconds' => (int) env('WHATSAPP_ANTI_BAN_MIN_DELAY', 2),
+        'max_delay_seconds' => (int) env('WHATSAPP_ANTI_BAN_MAX_DELAY', 5),
+        'batch_size' => (int) env('WHATSAPP_ANTI_BAN_BATCH_SIZE', 20),
+        'batch_pause_seconds' => (int) env('WHATSAPP_ANTI_BAN_BATCH_PAUSE', 15),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Invite Batch Size
     |--------------------------------------------------------------------------
     */

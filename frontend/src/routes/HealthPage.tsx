@@ -24,6 +24,7 @@ import {
 import { healthService, type SystemHealthData, type FailedJobItem } from '@/services/healthService';
 import PageContainer from '@/components/layout/PageContainer';
 import DataTable, { type ColumnDef } from '@/components/ui/DataTable';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { useUiStore } from '@/lib/stores/useUiStore';
 import { ar } from '@/i18n/ar';
 
@@ -32,6 +33,7 @@ export const HealthPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [actionInProgress, setActionInProgress] = useState<number | string | null>(null);
+  const [isFlushModalOpen, setIsFlushModalOpen] = useState(false);
 
   const addToast = useUiStore((state) => state.addToast);
 
@@ -118,9 +120,6 @@ export const HealthPage: React.FC = () => {
   };
 
   const handleFlushAll = async () => {
-    if (!window.confirm('هل أنت متأكد من رغبتك في حذف جميع المهام الفاشلة نهائياً؟')) {
-      return;
-    }
     setActionInProgress('flush-all');
     try {
       const res = await healthService.flushFailedJobs();
@@ -293,7 +292,7 @@ export const HealthPage: React.FC = () => {
 
       {/* Critical Stale Heartbeat Banner */}
       {isSchedulerStale && (
-        <div className="rounded-xl border border-danger-200 bg-danger-50/70 p-4 text-danger-900 shadow-sm dark:bg-danger-950/40 dark:border-danger-800 dark:text-danger-200 flex items-start gap-3">
+        <div className="rounded-xl border border-danger-200 bg-danger-50/70 p-4 text-danger-900 shadow-none dark:bg-danger-950/40 dark:border-danger-800 dark:text-danger-200 flex items-start gap-3">
           <ExclamationCircleIcon className="h-6 w-6 text-danger-600 shrink-0 mt-0.5" />
           <div className="flex flex-col gap-1">
             <span className="font-bold text-base">
@@ -317,7 +316,7 @@ export const HealthPage: React.FC = () => {
       {/* Grid of System Component Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* 1. Scheduler Cron Heartbeat */}
-        <Card className="border border-default-200 shadow-sm">
+        <Card className="border border-default-200 shadow-none">
           <CardHeader className="flex justify-between items-center pb-2">
             <span className="text-sm font-medium text-default-500 flex items-center gap-1.5">
               <ClockIcon className="h-4 w-4 text-primary" />
@@ -345,7 +344,7 @@ export const HealthPage: React.FC = () => {
         </Card>
 
         {/* 2. Queue Backlog */}
-        <Card className="border border-default-200 shadow-sm">
+        <Card className="border border-default-200 shadow-none">
           <CardHeader className="flex justify-between items-center pb-2">
             <span className="text-sm font-medium text-default-500 flex items-center gap-1.5">
               <Square3Stack3DIcon className="h-4 w-4 text-primary" />
@@ -372,13 +371,13 @@ export const HealthPage: React.FC = () => {
         </Card>
 
         {/* 3. WhatsApp Gateway Status */}
-        <Card className="border border-default-200 shadow-sm">
+        <Card className="border border-default-200 shadow-none">
           <CardHeader className="flex justify-between items-center pb-2">
             <span className="text-sm font-medium text-default-500 flex items-center gap-1.5">
               <ChatBubbleLeftRightIcon className="h-4 w-4 text-primary" />
               {ar.health.whatsappSection}
             </span>
-            <Chip size="sm" variant="flat" color="secondary">
+            <Chip size="sm" variant="flat" color="default">
               {data?.whatsapp.provider}
             </Chip>
           </CardHeader>
@@ -403,7 +402,7 @@ export const HealthPage: React.FC = () => {
         </Card>
 
         {/* 4. Database & Backups */}
-        <Card className="border border-default-200 shadow-sm">
+        <Card className="border border-default-200 shadow-none">
           <CardHeader className="flex justify-between items-center pb-2">
             <span className="text-sm font-medium text-default-500 flex items-center gap-1.5">
               <CircleStackIcon className="h-4 w-4 text-primary" />
@@ -428,12 +427,10 @@ export const HealthPage: React.FC = () => {
       </div>
 
       {/* Failed Jobs Management Section */}
-      <Card className="border border-default-200 shadow-sm mt-2">
+      <Card className="border border-default-200 shadow-none mt-2">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-default-200 px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-danger-50 text-danger-600 dark:bg-danger-950/50">
-              <ServerIcon className="h-5 w-5" />
-            </div>
+            <ServerIcon className="h-5 w-5 text-danger-600 shrink-0" />
             <div>
               <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
                 {ar.health.failedJobs}
@@ -465,7 +462,7 @@ export const HealthPage: React.FC = () => {
                 color="danger"
                 startContent={<TrashIcon className="h-3.5 w-3.5" />}
                 isLoading={actionInProgress === 'flush-all'}
-                onPress={handleFlushAll}
+                onPress={() => setIsFlushModalOpen(true)}
               >
                 {ar.health.flushAll}
               </Button>
@@ -476,14 +473,12 @@ export const HealthPage: React.FC = () => {
         <CardBody className="p-0">
           {(data?.failed_jobs.recent.length ?? 0) === 0 ? (
             <div className="flex flex-col items-center justify-center p-12 text-center">
-              <div className="p-3 rounded-full bg-success-50 text-success-600 dark:bg-success-950/40 mb-3">
-                <CheckCircleIcon className="h-8 w-8" />
-              </div>
+              <CheckCircleIcon className="h-6 w-6 text-success mb-2" />
               <p className="text-base font-semibold text-foreground">
                 {ar.health.failedJobsEmpty}
               </p>
               <p className="text-sm text-default-400 mt-1 max-w-sm">
-                كافة المهام المنفذة في طوابير العمل تمت معالجتها بسلاسة دون أخطاء.
+                كافة المهام المنفذة في طوابير العمل تمت معالجتها دون أخطاء.
               </p>
             </div>
           ) : (
@@ -495,6 +490,22 @@ export const HealthPage: React.FC = () => {
           )}
         </CardBody>
       </Card>
+
+      {/* Flush Failed Jobs Confirmation Modal */}
+      <ConfirmDialog
+        isOpen={isFlushModalOpen}
+        onClose={() => setIsFlushModalOpen(false)}
+        onConfirm={async () => {
+          setIsFlushModalOpen(false);
+          await handleFlushAll();
+        }}
+        title="تأكيد حذف جميع المهام الفاشلة"
+        message="هل أنت متأكد من رغبتك في حذف جميع المهام الفاشلة نهائياً؟ لا يمكن استرجاع هذه المهام أو إعادة تشغيلها بعد الحذف."
+        variant="danger"
+        confirmText="نعم، حذف الكل"
+        cancelText={ar.common.cancel}
+        isLoading={actionInProgress === 'flush-all'}
+      />
     </PageContainer>
   );
 };

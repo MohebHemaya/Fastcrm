@@ -21,13 +21,13 @@ class ListenWhatsAppInboundCommand extends Command
         $interval = max(1, (int) $this->option('interval'));
         $once = (bool) $this->option('once');
 
-        $this->info("-------------------------------------------------------");
-        $this->info(" WhatsApp Background Daemon Listener Started");
-        $this->info("-------------------------------------------------------");
-        $this->line("Provider : <comment>" . config('whatsapp.provider') . "</comment>");
+        $this->info('-------------------------------------------------------');
+        $this->info(' WhatsApp Background Daemon Listener Started');
+        $this->info('-------------------------------------------------------');
+        $this->line('Provider : <comment>'.config('whatsapp.provider').'</comment>');
         $this->line("Interval : <comment>{$interval}s</comment>");
-        $this->line("Status   : <info>Listening for driver replies in background...</info>");
-        $this->info("-------------------------------------------------------");
+        $this->line('Status   : <info>Listening for driver replies in background...</info>');
+        $this->info('-------------------------------------------------------');
 
         do {
             try {
@@ -42,7 +42,7 @@ class ListenWhatsAppInboundCommand extends Command
                     })
                     ->orWhereHas('whatsappMessages', function ($q) {
                         $q->where('direction', 'out')
-                          ->where('created_at', '>=', now()->subHours(2));
+                            ->where('created_at', '>=', now()->subHours(2));
                     })
                     ->orWhere('updated_at', '>=', now()->subMinutes(30))
                     ->distinct()
@@ -52,11 +52,11 @@ class ListenWhatsAppInboundCommand extends Command
                 foreach ($activeDrivers as $driver) {
                     $count = $provider->syncChatInbound($driver->phone);
                     if ($count > 0) {
-                        $this->info("[" . now()->toTimeString() . "] Captured {$count} reply(s) from driver {$driver->phone} ({$driver->name})");
+                        $this->info('['.now()->toTimeString()."] Captured {$count} reply(s) from driver {$driver->phone} ({$driver->name})");
                     }
                 }
             } catch (Throwable $e) {
-                $this->error("[" . now()->toTimeString() . "] Error polling inbound: " . $e->getMessage());
+                $this->error('['.now()->toTimeString().'] Error polling inbound: '.$e->getMessage());
             }
 
             if ($once) {

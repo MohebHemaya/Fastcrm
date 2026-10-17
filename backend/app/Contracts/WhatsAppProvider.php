@@ -46,6 +46,11 @@ interface WhatsAppProvider
     public function sendList(string $to, string $body, string $buttonLabel, array $rows): string;
 
     /**
+     * Send an image with an optional caption.
+     */
+    public function sendImage(string $to, string $imageUrl, string $caption = ''): string;
+
+    /**
      * Verify the webhook challenge request.
      * Should return the challenge string on success or throw on failure.
      */

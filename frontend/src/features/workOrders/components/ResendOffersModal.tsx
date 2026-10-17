@@ -34,7 +34,7 @@ export const ResendOffersModal: React.FC<ResendOffersModalProps> = ({
               <p className="text-default-700 leading-relaxed">
                 {ar.workOrders.resendModal.description}
               </p>
-              <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-200">
+              <div className="p-3 rounded-xl bg-warning-50 border border-warning-200 text-xs text-warning-800">
                 ملاحظة: ستعود حالة أمر العمل إلى "جاري استقبال السائقين" ويتم قبول أول السائقين ردًا حتى اكتمال العدد.
               </div>
             </ModalBody>

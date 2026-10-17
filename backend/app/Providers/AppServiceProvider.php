@@ -9,6 +9,7 @@ use App\Models\Driver;
 use App\Models\WorkOrder;
 use App\Models\WorkOrderRecipient;
 use App\Services\DashboardService;
+use App\Services\WhatsAppTemplateService;
 use App\WhatsApp\CloudApiProvider;
 use App\WhatsApp\FakeWhatsAppProvider;
 use App\WhatsApp\UltraMsgProvider;
@@ -35,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
             };
         });
 
-        $this->app->singleton(\App\Services\WhatsAppTemplateService::class);
+        $this->app->singleton(WhatsAppTemplateService::class);
     }
 
     /**

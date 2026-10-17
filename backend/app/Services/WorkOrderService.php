@@ -300,7 +300,7 @@ class WorkOrderService
                     $driverName = $driver->name ?: 'كابتن';
                     $scheduledFormatted = $order->scheduled_at ? $order->scheduled_at->format('Y-m-d H:i') : 'حسب الاتفاق';
 
-                    $body = app(\App\Services\WhatsAppTemplateService::class)->render('trip_cancellation', [
+                    $body = app(WhatsAppTemplateService::class)->render('trip_cancellation', [
                         'اسم_السائق' => $driverName,
                         'driver_name' => $driverName,
                         'رقم_الطلب' => $order->code,

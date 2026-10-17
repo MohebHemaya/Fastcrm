@@ -5,12 +5,20 @@ namespace App\WhatsApp;
 use App\Contracts\WhatsAppProvider;
 use App\DTOs\WhatsApp\InboundMessage;
 use App\DTOs\WhatsApp\StatusUpdate;
+use App\Enums\WhatsAppMessageDirection;
+use App\Enums\WhatsAppMessageStatus;
+use App\Enums\WhatsAppMessageType;
 use App\Exceptions\WhatsAppPermanentException;
 use App\Exceptions\WhatsAppRetryableException;
+use App\Models\Driver;
+use App\Models\WhatsAppMessage;
+use App\Services\InboundMessageRouter;
+use App\Services\WebhookStatusUpdater;
 use App\Services\WhatsAppTemplateService;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -93,7 +101,7 @@ class UltraMsgProvider implements WhatsAppProvider
     {
         $formattedPhone = $this->normalizePhone($to);
         $endpoint = "{$this->instanceId}/messages/chat";
-        $refId = 'crm_' . bin2hex(random_bytes(8));
+        $refId = 'crm_'.bin2hex(random_bytes(8));
 
         $response = $this->http->post($endpoint, [
             'token' => $this->token,
@@ -124,7 +132,7 @@ class UltraMsgProvider implements WhatsAppProvider
             foreach ($buttons as $idx => $btn) {
                 $num = $idx + 1;
                 $title = $btn['title'] ?? ($btn['text'] ?? '');
-                $formatted .= "\n" . $num . "️⃣ " . $title;
+                $formatted .= "\n".$num.'️⃣ '.$title;
             }
             $formatted .= "\n\n_(يمكنك الرد برقم أو اسم الخيار)_";
         }
@@ -140,12 +148,12 @@ class UltraMsgProvider implements WhatsAppProvider
         $formatted = $body;
 
         if (! empty($rows)) {
-            $formatted .= "\n\n📋 *" . ($buttonLabel ?: 'الخيارات المتاحة') . ":*";
+            $formatted .= "\n\n📋 *".($buttonLabel ?: 'الخيارات المتاحة').':*';
             foreach ($rows as $idx => $r) {
                 $num = $idx + 1;
                 $title = $r['title'] ?? '';
-                $desc = ! empty($r['description']) ? " - " . $r['description'] : '';
-                $formatted .= "\n" . $num . "️⃣ " . $title . $desc;
+                $desc = ! empty($r['description']) ? ' - '.$r['description'] : '';
+                $formatted .= "\n".$num.'️⃣ '.$title.$desc;
             }
             $formatted .= "\n\n_(يمكنك الرد برقم أو اسم الخيار)_";
         }
@@ -154,14 +162,47 @@ class UltraMsgProvider implements WhatsAppProvider
     }
 
     /**
+     * Send an image with an optional caption.
+     */
+    public function sendImage(string $to, string $imageUrl, string $caption = ''): string
+    {
+        $to = $this->normalizePhone($to);
+        $refId = 'img_'.uniqid('', true);
+
+        $payload = [
+            'token' => $this->token,
+            'to' => $to,
+            'image' => $imageUrl,
+            'caption' => $caption,
+            'priority' => 10,
+            'referenceId' => $refId,
+        ];
+
+        $response = $this->http->post("{$this->instanceId}/messages/image", $payload);
+
+        $this->assertSuccess($response, 'sendImage');
+
+        $responseData = $response->json();
+
+        return (string) ($responseData['id']
+            ?? $responseData['message_id']
+            ?? $refId);
+    }
+
+    /**
      * Verify incoming webhook challenge or token.
      */
     public function verifyWebhook(Request $request): string
     {
         $expectedToken = (string) config('whatsapp.verify_token', '');
+        $headerToken = $request->header('X-Webhook-Token');
+        if (is_array($headerToken)) {
+            $headerToken = $headerToken[0] ?? null;
+        }
+
         $providedToken = $request->query('token')
             ?? $request->query('hub_verify_token')
-            ?? $request->header('X-Webhook-Token');
+            ?? $headerToken;
 
         if ($expectedToken !== '' && $providedToken !== null && ! hash_equals($expectedToken, (string) $providedToken)) {
             throw ValidationException::withMessages(['webhook' => 'Invalid verification token.']);
@@ -196,18 +237,41 @@ class UltraMsgProvider implements WhatsAppProvider
                 $cleanPhone = preg_replace('/[^0-9]/', '', str_replace(['@c.us', '@s.whatsapp.net', '@g.us'], '', $rawFrom));
 
                 if ($cleanPhone !== '') {
-                    $from = '+' . $cleanPhone;
+                    $from = '+'.$cleanPhone;
+                    $rawType = strtolower((string) ($msgData['type'] ?? 'text'));
                     $text = $msgData['body'] ?? $msgData['text'] ?? null;
-                    $id = (string) ($msgData['id'] ?? $data['id'] ?? ('ultramsg_' . uniqid('', true)));
+                    $id = (string) ($msgData['id'] ?? $data['id'] ?? ('ultramsg_'.uniqid('', true)));
                     $timestamp = (int) ($msgData['time'] ?? now()->timestamp);
+
+                    $mediaUrl = null;
+                    $mediaType = null;
+
+                    if (in_array($rawType, ['image', 'photo'], true)) {
+                        $mediaUrl = $msgData['media'] ?? (filter_var((string) $text, FILTER_VALIDATE_URL) ? $text : null);
+                        $mediaType = 'image';
+                        $text = $msgData['caption'] ?? (! empty($msgData['media']) ? $text : 'صورة 📷');
+                        $normalizedType = 'image';
+                    } elseif (in_array($rawType, ['audio', 'voice', 'ptt'], true)) {
+                        $text = 'رسالة صوتية (غير مدعومة)';
+                        $normalizedType = 'text';
+                    } elseif (in_array($rawType, ['document', 'file'], true)) {
+                        $mediaUrl = $msgData['media'] ?? (filter_var((string) $text, FILTER_VALIDATE_URL) ? $text : null);
+                        $mediaType = 'document';
+                        $text = $msgData['filename'] ?? ($msgData['caption'] ?? 'مستند مرفق');
+                        $normalizedType = 'document';
+                    } else {
+                        $normalizedType = 'text';
+                    }
 
                     $events[] = new InboundMessage(
                         from: $from,
-                        type: 'text',
+                        type: $normalizedType,
                         text: $text,
                         payloadId: $text,
                         providerMessageId: $id,
-                        timestamp: $timestamp
+                        timestamp: $timestamp,
+                        mediaUrl: $mediaUrl,
+                        mediaType: $mediaType
                     );
                 }
             }
@@ -250,13 +314,13 @@ class UltraMsgProvider implements WhatsAppProvider
      */
     private function normalizePhone(string $phone): string
     {
-        $digits = preg_replace('/[^0-9]/', '', $phone);
+        $digits = (string) preg_replace('/[^0-9]/', '', $phone);
 
         if (str_starts_with($digits, '01') && strlen($digits) === 11) {
-            $digits = '20' . substr($digits, 1);
+            $digits = '20'.substr($digits, 1);
         }
 
-        return '+' . $digits;
+        return '+'.$digits;
     }
 
     /**
@@ -326,7 +390,7 @@ class UltraMsgProvider implements WhatsAppProvider
 
             $data = $response->json();
             $messages = $data['messages'] ?? [];
-            $updater = app(\App\Services\WebhookStatusUpdater::class);
+            $updater = app(WebhookStatusUpdater::class);
             $updatedCount = 0;
 
             foreach ($messages as $msg) {
@@ -396,7 +460,7 @@ class UltraMsgProvider implements WhatsAppProvider
                 return 0;
             }
 
-            $router = app(\App\Services\InboundMessageRouter::class);
+            $router = app(InboundMessageRouter::class);
             $processedCount = 0;
 
             foreach ($messages as $msg) {
@@ -412,7 +476,7 @@ class UltraMsgProvider implements WhatsAppProvider
                 }
 
                 // Check idempotency: skip if already stored
-                $alreadyExists = \App\Models\WhatsAppMessage::where('provider_message_id', $msgId)->exists();
+                $alreadyExists = WhatsAppMessage::where('provider_message_id', $msgId)->exists();
                 if ($alreadyExists) {
                     continue;
                 }
@@ -422,24 +486,25 @@ class UltraMsgProvider implements WhatsAppProvider
 
                 // If message is older than 10 minutes, silently persist to chat history without triggering bot reactions
                 if ($timestamp < now()->subMinutes(10)->timestamp) {
-                    $driverId = \App\Models\Driver::where('phone', '+' . $formattedPhone)->value('id');
+                    $driverId = Driver::where('phone', '+'.$formattedPhone)->value('id');
                     if ($driverId) {
-                        \App\Models\WhatsAppMessage::create([
+                        WhatsAppMessage::create([
                             'driver_id' => $driverId,
                             'provider_message_id' => $msgId,
-                            'direction' => \App\Enums\WhatsAppMessageDirection::IN,
-                            'type' => \App\Enums\WhatsAppMessageType::TEXT,
-                            'status' => \App\Enums\WhatsAppMessageStatus::DELIVERED,
+                            'direction' => WhatsAppMessageDirection::IN,
+                            'type' => WhatsAppMessageType::TEXT,
+                            'status' => WhatsAppMessageStatus::DELIVERED,
                             'body' => $rawBody,
                             'payload' => ['raw_type' => 'text', 'timestamp' => $timestamp, 'historical' => true],
-                            'sent_at' => \Illuminate\Support\Carbon::createFromTimestamp($timestamp),
+                            'sent_at' => Carbon::createFromTimestamp($timestamp),
                         ]);
                     }
+
                     continue;
                 }
 
-                $inbound = new \App\DTOs\WhatsApp\InboundMessage(
-                    from: '+' . $formattedPhone,
+                $inbound = new InboundMessage(
+                    from: '+'.$formattedPhone,
                     type: 'text',
                     text: $rawBody,
                     payloadId: $rawBody,

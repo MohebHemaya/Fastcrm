@@ -4,14 +4,12 @@ namespace App\Services;
 
 use App\Enums\DriverStatus;
 use App\Enums\WhatsAppMessageDirection;
-use App\Enums\WhatsAppMessageStatus;
 use App\Enums\WorkOrderRecipientStatus;
 use App\Enums\WorkOrderStatus;
 use App\Models\Driver;
 use App\Models\DriverAnswer;
-use App\Models\Question;
-use App\Models\WhatsAppMessage;
 use App\Models\WhatsappGroup;
+use App\Models\WhatsAppMessage;
 use App\Models\WorkOrder;
 use App\Models\WorkOrderRecipient;
 use Carbon\Carbon;
@@ -114,19 +112,19 @@ class ReportService
      */
     public function streamReportDownload(string $type, array $filters = []): BinaryFileResponse
     {
-        $tempPath = tempnam(sys_get_temp_dir(), 'report_export_') . '.xlsx';
-        $options = new Options();
+        $tempPath = tempnam(sys_get_temp_dir(), 'report_export_').'.xlsx';
+        $options = new Options;
         $writer = new Writer($options);
         $writer->openToFile($tempPath);
 
         $sheet = $writer->getCurrentSheet();
         $sheet->setName('التقرير');
 
-        $sheetView = new SheetView();
+        $sheetView = new SheetView;
         $sheetView->setRightToLeft(true);
         $sheet->setSheetView($sheetView);
 
-        $headerStyle = (new Style())
+        $headerStyle = (new Style)
             ->setFontBold()
             ->setFontColor(Color::WHITE)
             ->setFontSize(11)
@@ -228,7 +226,7 @@ class ReportService
                 'active' => $activeCount,
                 'in_progress' => $inProgressCount,
                 'needs_review' => $needsReviewCount,
-                'activation_rate' => $total > 0 ? round(($activeCount / $total) * 100, 1) . '%' : '0%',
+                'activation_rate' => $total > 0 ? round(($activeCount / $total) * 100, 1).'%' : '0%',
             ],
             'meta' => [
                 'current_page' => $paginator->currentPage(),
@@ -261,7 +259,7 @@ class ReportService
         $totalOrders = (clone $query)->count();
         $tripsNeeded = (int) (clone $query)->sum('trips_needed');
         $confirmedCount = (int) (clone $query)->sum('confirmed_count');
-        $fulfillmentRate = $tripsNeeded > 0 ? round(($confirmedCount / $tripsNeeded) * 100, 1) . '%' : '0%';
+        $fulfillmentRate = $tripsNeeded > 0 ? round(($confirmedCount / $tripsNeeded) * 100, 1).'%' : '0%';
 
         $paginator = $query->orderBy('id', 'desc')->paginate($perPage, ['*'], 'page', $page);
 
@@ -379,7 +377,7 @@ class ReportService
                 'outbound' => $outbound,
                 'delivered' => $delivered,
                 'read' => $read,
-                'delivery_rate' => $outbound > 0 ? round(($delivered / $outbound) * 100, 1) . '%' : '0%',
+                'delivery_rate' => $outbound > 0 ? round(($delivered / $outbound) * 100, 1).'%' : '0%',
             ],
             'meta' => [
                 'current_page' => $paginator->currentPage(),
@@ -439,7 +437,7 @@ class ReportService
                 'id' => $ans->id,
                 'driver_name' => $ans->driver?->name ?: '—',
                 'phone' => $ans->driver?->phone ?: '—',
-                'question_text' => $ans->question?->currentVersion?->text_ar ?? $ans->question?->key ?? '—',
+                'question_text' => $ans->question?->currentVersion?->text_ar ?? ($ans->question ? $ans->question->key : '—'),
                 'answer_text' => $ans->display_value ?: '—',
                 'skipped_label' => $ans->is_skipped ? 'تم التخطي' : 'مكتملة ✓',
                 'answered_at' => $ans->answered_at?->format('Y-m-d H:i') ?? '—',
@@ -453,7 +451,7 @@ class ReportService
                 'total' => $total,
                 'answered' => $answered,
                 'skipped' => $skipped,
-                'completion_rate' => $total > 0 ? round(($answered / $total) * 100, 1) . '%' : '0%',
+                'completion_rate' => $total > 0 ? round(($answered / $total) * 100, 1).'%' : '0%',
             ],
             'meta' => [
                 'current_page' => $paginator->currentPage(),
@@ -536,7 +534,7 @@ class ReportService
                 'total_groups' => $totalGroups,
                 'total_drivers' => $totalSourced,
                 'total_active' => $totalActive,
-                'avg_conversion_rate' => $totalSourced > 0 ? round(($totalActive / $totalSourced) * 100, 1) . '%' : '0%',
+                'avg_conversion_rate' => $totalSourced > 0 ? round(($totalActive / $totalSourced) * 100, 1).'%' : '0%',
             ],
             'meta' => [
                 'current_page' => $page,
@@ -664,7 +662,7 @@ class ReportService
                 'confirmed' => $confirmed,
                 'declined' => $declined,
                 'pending' => $sent,
-                'acceptance_rate' => $total > 0 ? round(($confirmed / $total) * 100, 1) . '%' : '0%',
+                'acceptance_rate' => $total > 0 ? round(($confirmed / $total) * 100, 1).'%' : '0%',
             ],
             'meta' => [
                 'current_page' => $paginator->currentPage(),

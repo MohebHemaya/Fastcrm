@@ -27,7 +27,7 @@ import { ar } from '@/i18n/ar';
 import { workOrderService } from '@/services/workOrderService';
 import type { WorkOrder } from '@/types/workOrder';
 import WorkOrderStatusBadge from '@/features/workOrders/components/WorkOrderStatusBadge';
-import { useWorkOrderUpdates, playSuccessChime } from '@/hooks/useWorkOrderUpdates';
+import { useWorkOrderUpdates } from '@/hooks/useWorkOrderUpdates';
 import { useUiStore } from '@/lib/stores/useUiStore';
 
 export const WorkOrdersListPage: React.FC = () => {
@@ -40,9 +40,8 @@ export const WorkOrdersListPage: React.FC = () => {
   // Pusher real-time updates for work orders list
   useWorkOrderUpdates({
     onOrderUpdated: (payload) => {
-      // Audio chime and celebration toast if any order becomes filled
+      // Celebration toast if any order becomes filled
       if (payload.is_filled || payload.status === 'filled') {
-        playSuccessChime();
         addToast({
           message: ar.workOrders.orderFilledAlert,
           type: 'success',
@@ -243,7 +242,7 @@ export const WorkOrdersListPage: React.FC = () => {
       header: ar.workOrders.fields.payAmount,
       render: (row) => (
         <span className="text-xs font-semibold text-default-700">
-          {row.pay_amount ? `${Number(row.pay_amount).toLocaleString('ar-EG')} ج.م` : '—'}
+          {row.pay_amount ? `${Number(row.pay_amount).toLocaleString('ar-EG')} ج.م` : '-'}
         </span>
       ),
     },
@@ -310,7 +309,7 @@ export const WorkOrdersListPage: React.FC = () => {
       />
 
       {/* Filters Card */}
-      <Card className="shadow-sm">
+      <Card className="border border-default-200 shadow-none">
         <CardBody className="p-4 space-y-3">
           <div className="flex items-center gap-2">
             <div className="flex-1 min-w-0">

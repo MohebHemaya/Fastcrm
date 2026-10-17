@@ -7,6 +7,7 @@ use App\Models\ActivityLog;
 use App\Models\Question;
 use App\Models\QuestionOption;
 use App\Models\QuestionVersion;
+use App\Models\WhatsappGroup;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -307,7 +308,7 @@ class QuestionController extends ApiController
             'is_filter' => (bool) $q->is_filter,
             'is_system' => (bool) $q->is_system,
             'options' => $q->key === 'whatsapp_group'
-                ? \App\Models\WhatsAppGroup::orderBy('name')->get()->map(fn ($g) => [
+                ? WhatsappGroup::orderBy('name')->get()->map(fn ($g) => [
                     'id' => $g->id,
                     'value' => (string) $g->id,
                     'label_ar' => $g->name,
@@ -319,7 +320,7 @@ class QuestionController extends ApiController
                     'label_ar' => $opt->label_ar,
                     'sort_order' => $opt->sort_order,
                 ]),
-            'options_count' => $q->key === 'whatsapp_group' ? \App\Models\WhatsAppGroup::count() : $q->activeOptions->count(),
+            'options_count' => $q->key === 'whatsapp_group' ? WhatsappGroup::count() : $q->activeOptions->count(),
             'answers_count' => $q->answers_count ?? 0,
             'versions_count' => $q->versions->count(),
             'created_at' => $q->created_at?->toIso8601String(),

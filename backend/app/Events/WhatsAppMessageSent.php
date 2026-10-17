@@ -17,8 +17,8 @@ class WhatsAppMessageSent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public function __construct(
-        public readonly int    $driverId,
-        public readonly int    $messageId,
+        public readonly int $driverId,
+        public readonly int $messageId,
         public readonly string $body,
         public readonly string $direction,   // 'outbound'
         public readonly string $createdAt,
@@ -39,10 +39,10 @@ class WhatsAppMessageSent implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'driver_id'  => $this->driverId,
+            'driver_id' => $this->driverId,
             'message_id' => $this->messageId,
-            'body'       => $this->body,
-            'direction'  => $this->direction,
+            'body' => $this->body,
+            'direction' => $this->direction,
             'created_at' => $this->createdAt,
         ];
     }

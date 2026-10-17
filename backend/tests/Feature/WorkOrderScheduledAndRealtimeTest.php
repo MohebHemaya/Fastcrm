@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Console\Commands\ProcessWorkOrderSchedulesCommand;
 use App\Enums\WorkOrderRecipientStatus;
 use App\Enums\WorkOrderStatus;
 use App\Events\WorkOrderUpdated;

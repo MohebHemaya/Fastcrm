@@ -10,8 +10,10 @@ use App\Http\Controllers\Api\ExportController;
 use App\Http\Controllers\Api\HealthController;
 use App\Http\Controllers\Api\ImportController;
 use App\Http\Controllers\Api\QuestionController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\SidebarBadgeController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WhatsAppController;
 use App\Http\Controllers\Api\WhatsappGroupController;
 use App\Http\Controllers\Api\WorkOrderController;
@@ -40,8 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/sidebar-badges', SidebarBadgeController::class);
 
     // Users Management
-    Route::patch('/users/{user}/toggle-active', [\App\Http\Controllers\Api\UserController::class, 'toggleActive']);
-    Route::apiResource('/users', \App\Http\Controllers\Api\UserController::class);
+    Route::patch('/users/{user}/toggle-active', [UserController::class, 'toggleActive']);
+    Route::apiResource('/users', UserController::class);
 
     // Imports
     Route::get('/imports', [ImportController::class, 'index']);
@@ -76,10 +78,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/drivers/invite', [WhatsAppController::class, 'invite']);
     Route::get('/drivers/{driver}/messages', [WhatsAppController::class, 'driverMessages']);
     Route::post('/drivers/{driver}/send-message', [WhatsAppController::class, 'directMessage']);
+    Route::post('/drivers/{driver}/send-media', [WhatsAppController::class, 'sendMedia']);
 
     Route::get('/whatsapp/conversations', [WhatsAppController::class, 'conversations']);
     Route::get('/whatsapp/templates', [WhatsAppController::class, 'templates']);
     Route::put('/whatsapp/templates', [WhatsAppController::class, 'updateTemplates']);
+    Route::post('/whatsapp/templates/test-send', [WhatsAppController::class, 'testSendTemplate']);
     Route::get('/whatsapp/messages', [WhatsAppController::class, 'index']);
     Route::post('/whatsapp/messages/{message}/retry', [WhatsAppController::class, 'retry']);
     Route::get('/whatsapp/provider-status', [WhatsAppController::class, 'providerStatus']);
@@ -126,13 +130,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/dashboard/bust-cache', [DashboardController::class, 'bustCache']);
 
     // Advanced Reports & Analytics
-    Route::get('/reports/list', [\App\Http\Controllers\Api\ReportController::class, 'list']);
-    Route::get('/reports/data/{reportType}', [\App\Http\Controllers\Api\ReportController::class, 'show']);
-    Route::get('/reports/download/{reportType}', [\App\Http\Controllers\Api\ReportController::class, 'download']);
-    Route::get('/reports/overview', [\App\Http\Controllers\Api\ReportController::class, 'overview']);
-    Route::get('/reports/funnel', [\App\Http\Controllers\Api\ReportController::class, 'funnel']);
-    Route::get('/reports/whatsapp', [\App\Http\Controllers\Api\ReportController::class, 'whatsapp']);
-    Route::get('/reports/fulfillment', [\App\Http\Controllers\Api\ReportController::class, 'fulfillment']);
+    Route::get('/reports/list', [ReportController::class, 'list']);
+    Route::get('/reports/data/{reportType}', [ReportController::class, 'show']);
+    Route::get('/reports/download/{reportType}', [ReportController::class, 'download']);
+    Route::get('/reports/overview', [ReportController::class, 'overview']);
+    Route::get('/reports/funnel', [ReportController::class, 'funnel']);
+    Route::get('/reports/whatsapp', [ReportController::class, 'whatsapp']);
+    Route::get('/reports/fulfillment', [ReportController::class, 'fulfillment']);
 
     // Exports & PDF (Phase 7)
     Route::get('/exports', [ExportController::class, 'index']);

@@ -54,17 +54,16 @@ export const ShareTripSummaryModal: React.FC<ShareTripSummaryModalProps> = ({
           .join('\n')
       : 'لا يوجد سائقين مؤكدين بعد.';
 
-  const summaryText = `*📋 بيان رحلة عمل - Fast CRM*
+  const summaryText = `*بيان رحلة عمل - Fast CRM*
 ━━━━━━━━━━━━━━━━━━
-🔹 *كود الرحلة:* ${order.code}
-📍 *خط السير:* من ${order.from_location || 'غير محدد'} إلى ${order.to_location || 'غير محدد'}
-🕒 *الموعد:* ${formattedDate}
-💰 *المقابل المادي:* ${order.pay_amount ? `${order.pay_amount} ج.م` : 'حسب الاتفاق'}
-📦 *نوع الحمولة:* ${order.cargo_type || 'عامة'}
-🎯 *المطلوب:* ${order.trips_needed} سيارة (المؤكد حالياً: ${confirmedRecipients.length})
-${order.notes ? `📝 *ملاحظات:* ${order.notes}\n` : ''}
-━━━━━━━━━━━━━━━━━━
-*👥 السائقون المؤكدون للرحلة:*
+- *كود الرحلة:* ${order.code}
+- *خط السير:* من ${order.from_location || 'غير محدد'} إلى ${order.to_location || 'غير محدد'}
+- *الموعد:* ${formattedDate}
+- *المقابل المادي:* ${order.pay_amount ? `${order.pay_amount} ج.م` : 'حسب الاتفاق'}
+- *نوع الحمولة:* ${order.cargo_type || 'عامة'}
+- *المطلوب:* ${order.trips_needed} سيارة (المؤكد حالياً: ${confirmedRecipients.length})
+${order.notes ? `- *ملاحظات:* ${order.notes}\n` : ''}━━━━━━━━━━━━━━━━━━
+*السائقون المؤكدون للرحلة:*
 ${driversListText}
 ━━━━━━━━━━━━━━━━━━`;
 
@@ -94,9 +93,7 @@ ${driversListText}
     <Modal isOpen={isOpen} onClose={onClose} size="lg" placement="center">
       <ModalContent>
         <ModalHeader className="flex items-center gap-2.5 pb-2">
-          <div className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600">
-            <ChatBubbleLeftRightIcon className="w-5 h-5" />
-          </div>
+          <ChatBubbleLeftRightIcon className="w-5 h-5 text-primary shrink-0" />
           <div className="flex flex-col text-start">
             <span className="text-base font-bold text-foreground">
               {ar.workOrders.shareWhatsApp}
@@ -109,8 +106,8 @@ ${driversListText}
 
         <ModalBody className="space-y-3 pt-2">
           {/* WhatsApp Preview Bubble */}
-          <div className="rounded-2xl border border-default-200 bg-[#efeae2] dark:bg-[#0b141a] p-3 sm:p-4 shadow-inner">
-            <div className="bg-white dark:bg-[#1f2c34] text-default-900 dark:text-default-100 rounded-2xl rounded-tr-none p-3.5 shadow-sm border border-black/5 dark:border-white/5 text-start space-y-2">
+          <div className="rounded-xl border border-default-200 bg-[#efeae2] dark:bg-[#0b141a] p-3 sm:p-4">
+            <div className="bg-white dark:bg-[#1f2c34] text-default-900 dark:text-default-100 rounded-xl rounded-tr-none p-3.5 border border-default-200 dark:border-default-700 text-start space-y-2">
               <pre className="text-xs leading-relaxed font-sans whitespace-pre-wrap select-all">
                 {summaryText}
               </pre>
@@ -118,7 +115,6 @@ ${driversListText}
                 <Chip size="sm" variant="flat" color="success" className="h-5 text-[10px] font-bold">
                   {confirmedRecipients.length} سائق مؤكد
                 </Chip>
-                <span className="text-primary font-bold">✓✓</span>
               </div>
             </div>
           </div>
@@ -142,7 +138,7 @@ ${driversListText}
             startContent={<ChatBubbleLeftRightIcon className="w-4 h-4" />}
             onPress={handleOpenWhatsApp}
           >
-            مشاركة في واتساب 🚀
+            مشاركة في واتساب
           </Button>
 
           <Button variant="light" onPress={onClose} className="w-full sm:w-auto">

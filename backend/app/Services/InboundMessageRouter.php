@@ -37,10 +37,10 @@ class InboundMessageRouter
 
         if (! $driver) {
             $norm = $this->phoneNormalizer->normalize($inbound->from);
-            $cleanPhone = $norm->isValid && $norm->e164 ? $norm->e164 : (str_starts_with($inbound->from, '+') ? $inbound->from : '+' . preg_replace('/[^\d]/', '', $inbound->from));
+            $cleanPhone = $norm->isValid && $norm->e164 ? $norm->e164 : (str_starts_with($inbound->from, '+') ? $inbound->from : '+'.preg_replace('/[^\d]/', '', $inbound->from));
 
             $driver = Driver::create([
-                'name' => 'سائق جديد ' . substr($cleanPhone, -4),
+                'name' => 'سائق جديد '.substr($cleanPhone, -4),
                 'phone' => $cleanPhone,
                 'status' => DriverStatus::NEW,
             ]);
@@ -121,8 +121,30 @@ class InboundMessageRouter
         $type = match ($inbound->type) {
             'button', 'interactive' => WhatsAppMessageType::BUTTON,
             'list' => WhatsAppMessageType::LIST,
+            'image', 'photo' => WhatsAppMessageType::IMAGE,
+            'audio', 'voice', 'ptt' => WhatsAppMessageType::AUDIO,
             default => WhatsAppMessageType::TEXT,
         };
+
+        $payload = [
+            'payload_id' => $inbound->payloadId,
+            'raw_type' => $inbound->type,
+            'timestamp' => $inbound->timestamp,
+        ];
+
+        if ($inbound->mediaUrl) {
+            $payload['media_url'] = $inbound->mediaUrl;
+            $payload['media_type'] = $inbound->mediaType ?? $inbound->type;
+        }
+
+        $bodyText = $inbound->text;
+        if (! $bodyText) {
+            if ($type === WhatsAppMessageType::IMAGE) {
+                $bodyText = 'صورة 📷';
+            } elseif ($type === WhatsAppMessageType::AUDIO) {
+                $bodyText = 'رسالة صوتية 🎙️';
+            }
+        }
 
         $msg = WhatsAppMessage::create([
             'driver_id' => $driver->id,
@@ -130,12 +152,8 @@ class InboundMessageRouter
             'provider_message_id' => $inbound->providerMessageId,
             'type' => $type,
             'template_name' => null,
-            'payload' => [
-                'payload_id' => $inbound->payloadId,
-                'raw_type' => $inbound->type,
-                'timestamp' => $inbound->timestamp,
-            ],
-            'body' => $inbound->text,
+            'payload' => $payload,
+            'body' => $bodyText,
             'status' => WhatsAppMessageStatus::DELIVERED,
             'delivered_at' => now(),
         ]);
@@ -164,7 +182,7 @@ class InboundMessageRouter
                 updatedAt: $createdAt,
             ));
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Inbound WhatsApp broadcast failed: ' . $e->getMessage());
+            Log::warning('Inbound WhatsApp broadcast failed: '.$e->getMessage());
         }
 
         return $msg;

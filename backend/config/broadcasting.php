@@ -17,15 +17,15 @@ return [
 
         'pusher' => [
             'driver' => 'pusher',
-            'key'    => env('PUSHER_APP_KEY'),
+            'key' => env('PUSHER_APP_KEY'),
             'secret' => env('PUSHER_APP_SECRET'),
             'app_id' => env('PUSHER_APP_ID'),
             'options' => array_filter([
                 'cluster' => env('PUSHER_APP_CLUSTER', 'eu'),
-                'useTLS'  => true,
-                'host'    => env('PUSHER_HOST') ?: null,
-                'port'    => env('PUSHER_PORT') ?: null,
-                'scheme'  => env('PUSHER_SCHEME') ?: null,
+                'useTLS' => true,
+                'host' => env('PUSHER_HOST') ?: null,
+                'port' => env('PUSHER_PORT') ?: null,
+                'scheme' => env('PUSHER_SCHEME') ?: null,
             ], fn ($val) => $val !== null && $val !== ''),
             'client_options' => [
                 'verify' => env('APP_ENV') === 'production',
@@ -36,7 +36,7 @@ return [
 
         'ably' => [
             'driver' => 'ably',
-            'key'    => env('ABLY_KEY'),
+            'key' => env('ABLY_KEY'),
         ],
 
         'log' => [

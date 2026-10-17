@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTOs\WhatsApp\StatusUpdate;
 use App\Enums\WhatsAppMessageStatus;
+use App\Events\WhatsAppMessageStatusUpdated;
 use App\Models\WhatsAppMessage;
 use Illuminate\Support\Facades\Log;
 
@@ -42,6 +43,8 @@ class WebhookStatusUpdater
             $msg->error_message = $update->errorCode ? "Meta error code: {$update->errorCode}" : 'Delivery failed';
             $msg->save();
 
+            $this->broadcastStatus($msg);
+
             return $msg;
         }
 
@@ -71,6 +74,27 @@ class WebhookStatusUpdater
 
         $msg->save();
 
+        $this->broadcastStatus($msg);
+
         return $msg;
+    }
+
+    /**
+     * Safely broadcast status update via Pusher.
+     */
+    protected function broadcastStatus(WhatsAppMessage $msg): void
+    {
+        try {
+            broadcast(new WhatsAppMessageStatusUpdated(
+                driverId: $msg->driver_id,
+                messageId: $msg->id,
+                status: $msg->status->value,
+                deliveredAt: $msg->delivered_at?->toIso8601String(),
+                readAt: $msg->read_at?->toIso8601String(),
+                errorMessage: $msg->error_message,
+            ));
+        } catch (\Throwable $e) {
+            Log::debug("[WebhookStatusUpdater] Broadcast failed (offline/testing): {$e->getMessage()}");
+        }
     }
 }

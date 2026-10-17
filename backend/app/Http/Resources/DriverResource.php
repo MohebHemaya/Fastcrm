@@ -49,7 +49,7 @@ class DriverResource extends JsonResource
                 'last_trip_at' => $this->metrics->last_trip_at?->toIso8601String(),
             ] : null,
             'answers_count' => $this->relationLoaded('currentAnswers') ? $this->currentAnswers->count() : ($this->current_answers_count ?? 0),
-            'is_new_to_fleet' => $this->relationLoaded('metrics') ? (($this->metrics?->trips_completed ?? 0) === 0) : true,
+            'is_new_to_fleet' => $this->relationLoaded('metrics') ? (($this->metrics ? $this->metrics->trips_completed : 0) === 0) : true,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
         ];

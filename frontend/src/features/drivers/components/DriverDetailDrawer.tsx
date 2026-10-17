@@ -27,7 +27,8 @@ import {
   PaperAirplaneIcon,
   PencilSquareIcon,
   ExclamationCircleIcon,
-  SparklesIcon,
+  ChartBarIcon,
+  StarIcon,
   TrashIcon,
 } from '@/components/icons';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
@@ -251,9 +252,7 @@ export const DriverDetailDrawer: React.FC<DriverDetailDrawerProps> = ({
                 ) : (
                   <div className="flex flex-wrap items-center justify-between gap-3 w-full pe-6">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-100 text-primary">
-                        <UserCircleIcon className="h-6 w-6" />
-                      </div>
+                      <UserCircleIcon className="h-7 w-7 text-default-500 shrink-0" />
                       <div>
                         <h2 className="text-lg font-bold">{driver.name || ar.drivers.unnamed}</h2>
                         <p className="text-xs font-mono text-default-500" dir="ltr">
@@ -329,12 +328,13 @@ export const DriverDetailDrawer: React.FC<DriverDetailDrawerProps> = ({
                     <div className="flex flex-col gap-2 rounded-xl border border-default-200 bg-default-50/50 p-4">
                       <div className="flex items-center justify-between">
                         <h3 className="text-sm font-bold flex items-center gap-1.5 text-default-700">
-                          <SparklesIcon className="h-4 w-4 text-amber-500" />
+                          <ChartBarIcon className="h-4 w-4 text-default-500" />
                           <span>{ar.driverMetrics.title}</span>
                         </h3>
                         {driver.metrics?.avg_rating ? (
-                          <span className="text-xs font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                            ⭐ {driver.metrics.avg_rating} ({driver.metrics.ratings_count || 1} تقييم)
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-default-700 bg-default-100 px-2 py-0.5 rounded border border-default-200">
+                            <StarIcon className="w-3.5 h-3.5 text-default-500" />
+                            {driver.metrics.avg_rating} ({driver.metrics.ratings_count || 1} تقييم)
                           </span>
                         ) : (
                           <span className="text-xs text-default-400">{ar.driverMetrics.noMetrics}</span>

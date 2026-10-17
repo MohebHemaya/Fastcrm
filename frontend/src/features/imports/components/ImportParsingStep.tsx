@@ -61,9 +61,7 @@ export const ImportParsingStep: React.FC<ImportParsingStepProps> = ({
     <div className="flex flex-col items-center justify-center gap-6 max-w-lg mx-auto py-12 text-center w-full">
       {error ? (
         <div className="flex flex-col items-center gap-4 w-full">
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-danger-100 text-danger">
-            <ExclamationCircleIcon className="h-8 w-8" />
-          </div>
+          <ExclamationCircleIcon className="h-6 w-6 text-danger" />
           <div>
             <h3 className="text-lg font-bold text-danger">تعذر معالجة الملف</h3>
             <p className="text-sm text-default-600 mt-1 max-w-sm">{error}</p>

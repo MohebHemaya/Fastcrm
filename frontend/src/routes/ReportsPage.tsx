@@ -39,7 +39,6 @@ const REPORT_TABS: Array<{
   shortTitle: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
-  color: string;
 }> = [
   {
     id: 'drivers',
@@ -47,7 +46,6 @@ const REPORT_TABS: Array<{
     shortTitle: 'السائقون',
     description: 'استعراض وتصدير بيانات السائقين الكاملة، حالات التأهيل، المجموعات، ومعدلات الرحلات.',
     icon: UsersIcon,
-    color: 'text-blue-600 bg-blue-50 dark:bg-blue-950/40 dark:text-blue-400',
   },
   {
     id: 'work_orders',
@@ -55,7 +53,6 @@ const REPORT_TABS: Array<{
     shortTitle: 'أوامر الشغل',
     description: 'تفاصيل الرحلات التشغيلية، السائقين المؤكدين والاحتياطيين، الأجر، ونسب التغطية.',
     icon: ClipboardDocumentListIcon,
-    color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400',
   },
   {
     id: 'whatsapp_messages',
@@ -63,7 +60,6 @@ const REPORT_TABS: Array<{
     shortTitle: 'رسائل الواتساب',
     description: 'سجل تفصيلي لجميع الرسائل الصادرة والواردة ونصوصها وحالات تسليمها وقراءتها.',
     icon: ChatBubbleLeftRightIcon,
-    color: 'text-green-600 bg-green-50 dark:bg-green-950/40 dark:text-green-400',
   },
   {
     id: 'questionnaire_answers',
@@ -71,7 +67,6 @@ const REPORT_TABS: Array<{
     shortTitle: 'إجابات الاستبيان',
     description: 'سجل إجابات السائقين على كافة أسئلة الاستبيان، نوع الإجابة، وما إذا تم تخطي السؤال.',
     icon: DocumentTextIcon,
-    color: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-950/40 dark:text-indigo-400',
   },
   {
     id: 'group_performance',
@@ -79,7 +74,6 @@ const REPORT_TABS: Array<{
     shortTitle: 'أداء المجموعات',
     description: 'تحليل عائد الاستقطاب من مجموعات الواتساب ونسب التحويل من منضمين إلى سائقين نشطين.',
     icon: ChartBarIcon,
-    color: 'text-purple-600 bg-purple-50 dark:bg-purple-950/40 dark:text-purple-400',
   },
   {
     id: 'needs_review',
@@ -87,7 +81,6 @@ const REPORT_TABS: Array<{
     shortTitle: 'بحاجة لمراجعة',
     description: 'قائمة السائقين المتعثرين في الاستبيان أو الذين وُضعت عليهم علامة تتطلب مراجعة بشرية.',
     icon: ExclamationTriangleIcon,
-    color: 'text-amber-600 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-400',
   },
   {
     id: 'dispatched_offers',
@@ -95,7 +88,6 @@ const REPORT_TABS: Array<{
     shortTitle: 'توزيع الرحلات',
     description: 'متابعة عروض أوامر الشغل المرسلة للسائقين ومعدلات القبول والاعتذار وتوقيت الاستجابة.',
     icon: PaperAirplaneIcon,
-    color: 'text-cyan-600 bg-cyan-50 dark:bg-cyan-950/40 dark:text-cyan-400',
   },
 ];
 
@@ -300,7 +292,7 @@ export const ReportsPage: React.FC = () => {
       />
 
       {/* Report Switcher Navigation Tabs */}
-      <Card className="border border-default-200 shadow-sm bg-content1 print:hidden">
+      <Card className="border border-default-200 shadow-none bg-content1 print:hidden">
         <CardBody className="p-2 sm:p-3">
           <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
             {REPORT_TABS.map((tab) => {
@@ -310,19 +302,13 @@ export const ReportsPage: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => handleSwitchReport(tab.id)}
-                  className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl font-bold text-xs whitespace-nowrap transition-all border ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-xs whitespace-nowrap transition-colors border ${
                     isActive
-                      ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20'
+                      ? 'bg-primary text-primary-foreground border-primary'
                       : 'bg-content1 hover:bg-default-100 text-default-700 border-default-200'
                   }`}
                 >
-                  <div
-                    className={`p-1.5 rounded-lg ${
-                      isActive ? 'bg-white/20 text-white' : tab.color
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                  </div>
+                  <Icon className="w-4 h-4 shrink-0" />
                   <span>{tab.shortTitle}</span>
                 </button>
               );
@@ -334,19 +320,17 @@ export const ReportsPage: React.FC = () => {
       {/* Active Report Screen Container */}
       <div className="space-y-6">
         {/* Report Banner & Quick Download Card */}
-        <Card className="border border-default-200 shadow-sm bg-content1">
+        <Card className="border border-default-200 shadow-none bg-content1">
           <CardBody className="p-4 sm:p-5">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-start gap-3.5">
-                <div className={`p-3.5 rounded-2xl ${currentReportMeta.color}`}>
-                  {React.createElement(currentReportMeta.icon, { className: 'w-7 h-7' })}
-                </div>
+              <div className="flex items-start gap-3">
+                {React.createElement(currentReportMeta.icon, { className: 'w-6 h-6 text-primary shrink-0 mt-0.5' })}
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-xl font-black text-default-900">
+                    <h2 className="text-xl font-bold text-default-900">
                       {currentReportMeta.title}
                     </h2>
-                    <Chip size="sm" variant="flat" color="primary" className="font-bold text-xs">
+                    <Chip size="sm" variant="flat" color="default" className="text-xs">
                       {tableData?.meta?.total ?? 0} سجل
                     </Chip>
                     <Chip size="sm" variant="bordered" color="default" className="text-xs">
@@ -365,7 +349,7 @@ export const ReportsPage: React.FC = () => {
                   color="primary"
                   variant="solid"
                   size="md"
-                  className="font-bold shadow-md shadow-primary/25"
+                  className="font-semibold shadow-none"
                   startContent={<ArrowDownTrayIcon className="w-5 h-5" />}
                   onPress={handleDownloadExcel}
                   isLoading={isDownloading}
@@ -385,16 +369,16 @@ export const ReportsPage: React.FC = () => {
                 total: 'إجمالي السجلات',
                 active: 'نشط ومعتمد',
                 in_progress: 'في مرحلة الاستبيان',
-                needs_review: 'بحاجة لمراجعة ⚠️',
+                needs_review: 'بحاجة لمراجعة',
                 activation_rate: 'معدل التفعيل',
                 total_orders: 'إجمالي أوامر الشغل',
                 trips_needed: 'الرحلات المطلوبة',
                 confirmed_count: 'السائقين المؤكدين',
                 fulfillment_rate: 'نسبة التغطية الكلية',
-                inbound: 'رسائل واردة 📥',
-                outbound: 'رسائل صادرة 📤',
+                inbound: 'رسائل واردة',
+                outbound: 'رسائل صادرة',
                 delivered: 'تم التسليم للهاتف',
-                read: 'تمت القراءة ✓✓',
+                read: 'تمت القراءة',
                 delivery_rate: 'معدل التسليم',
                 answered: 'إجابات مكتملة',
                 skipped: 'أسئلة متخطاة',
@@ -414,13 +398,13 @@ export const ReportsPage: React.FC = () => {
               return (
                 <Card
                   key={key}
-                  className="border border-default-200 shadow-sm bg-content1 hover:border-primary/40 transition-colors"
+                  className="border border-default-200 shadow-none bg-content1"
                 >
                   <CardBody className="p-3.5 sm:p-4">
                     <p className="text-[11px] font-semibold text-default-500">
                       {labelMap[key] || key}
                     </p>
-                    <h3 className="text-xl sm:text-2xl font-black text-default-900 mt-1">
+                    <h3 className="text-xl sm:text-2xl font-bold text-default-900 mt-1">
                       {typeof value === 'number' ? value.toLocaleString() : value}
                     </h3>
                   </CardBody>
@@ -431,7 +415,7 @@ export const ReportsPage: React.FC = () => {
         )}
 
         {/* Filters and Search Toolbar */}
-        <Card className="border border-default-200 shadow-sm bg-content1 print:hidden">
+        <Card className="border border-default-200 shadow-none bg-content1 print:hidden">
           <CardBody className="p-3 sm:p-4 space-y-3">
             {/* Date Presets Row */}
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
@@ -447,7 +431,7 @@ export const ReportsPage: React.FC = () => {
                   { id: 'this_month', label: 'هذا الشهر' },
                   { id: '30d', label: 'آخر 30 يوم' },
                   { id: 'all', label: 'كل الفترات' },
-                  { id: 'custom', label: 'مخصص 📅' },
+                  { id: 'custom', label: 'مخصص' },
                 ].map((btn) => (
                   <Button
                     key={btn.id}
@@ -532,11 +516,11 @@ export const ReportsPage: React.FC = () => {
                     <SelectItem key="" textValue="كل الاتجاهات">
                       كل الاتجاهات
                     </SelectItem>
-                    <SelectItem key="in" textValue="وارد من السائق 📥">
-                      وارد من السائق 📥
+                    <SelectItem key="in" textValue="وارد من السائق">
+                      وارد من السائق
                     </SelectItem>
-                    <SelectItem key="out" textValue="صادر للنظام 📤">
-                      صادر للنظام 📤
+                    <SelectItem key="out" textValue="صادر للنظام">
+                      صادر للنظام
                     </SelectItem>
                   </Select>
                 </div>
@@ -560,11 +544,11 @@ export const ReportsPage: React.FC = () => {
                     <SelectItem key="" textValue="كل الحالات">
                       كل الحالات
                     </SelectItem>
-                    <SelectItem key="answered" textValue="مكتملة ✓">
-                      مكتملة ✓
+                    <SelectItem key="answered" textValue="مكتملة">
+                      مكتملة
                     </SelectItem>
-                    <SelectItem key="skipped" textValue="تم التخطي ✕">
-                      تم التخطي ✕
+                    <SelectItem key="skipped" textValue="تم التخطي">
+                      تم التخطي
                     </SelectItem>
                   </Select>
                 </div>
@@ -574,7 +558,7 @@ export const ReportsPage: React.FC = () => {
         </Card>
 
         {/* Live Data Preview Table */}
-        <Card className="border border-default-200 shadow-sm bg-content1 overflow-hidden">
+        <Card className="border border-default-200 shadow-none bg-content1 overflow-hidden">
           <CardHeader className="p-4 pb-2 flex items-center justify-between border-b border-default-100 bg-default-50/50">
             <div>
               <h3 className="font-bold text-sm text-default-900 flex items-center gap-2">
@@ -715,7 +699,7 @@ export const ReportsPage: React.FC = () => {
                                   : ''
                               }`}
                             >
-                              {val !== undefined && val !== null && val !== '' ? String(val) : '—'}
+                              {val !== undefined && val !== null && val !== '' ? String(val) : '-'}
                             </td>
                           );
                         })}
@@ -726,9 +710,7 @@ export const ReportsPage: React.FC = () => {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center px-4">
-                <div className="p-4 rounded-2xl bg-default-100 text-default-400 mb-3">
-                  <MagnifyingGlassIcon className="w-8 h-8" />
-                </div>
+                <MagnifyingGlassIcon className="w-6 h-6 text-default-400 mb-2" />
                 <h4 className="font-bold text-sm text-default-800">لا توجد بيانات مطابقة للبحث أو الفترة</h4>
                 <p className="text-xs text-default-500 mt-1 max-w-sm">
                   جرب تغيير نطاق التاريخ أو تفريغ نص البحث لاستعراض كافة السجلات.

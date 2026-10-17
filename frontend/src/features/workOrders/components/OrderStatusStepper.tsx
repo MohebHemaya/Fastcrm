@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckIcon } from '@/components/icons';
+import { CheckIcon, XMarkIcon } from '@/components/icons';
 import type { WorkOrderStatus } from '@/types/workOrder';
 
 interface OrderStatusStepperProps {
@@ -45,13 +45,11 @@ export const OrderStatusStepper: React.FC<OrderStatusStepperProps> = ({ status, 
 
   if (isCancelled) {
     return (
-      <div className={`p-3 rounded-2xl bg-danger-50/70 dark:bg-danger-950/30 border border-danger-200 dark:border-danger-800 flex items-center justify-between gap-3 ${className}`}>
+      <div className={`p-3 rounded-xl bg-danger-50 border border-danger-200 flex items-center justify-between gap-3 ${className}`}>
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-danger text-white flex items-center justify-center font-bold text-sm shadow-xs">
-            ✕
-          </div>
+          <XMarkIcon className="w-5 h-5 text-danger shrink-0" />
           <div className="flex flex-col text-start">
-            <span className="text-xs font-bold text-danger-700 dark:text-danger-400">أمر الشغل ملغي</span>
+            <span className="text-xs font-bold text-danger-700">أمر الشغل ملغي</span>
             <span className="text-[11px] text-danger-600/80">تم إلغاء هذا الأمر وتوقف استلام التأكيدات</span>
           </div>
         </div>
@@ -60,7 +58,7 @@ export const OrderStatusStepper: React.FC<OrderStatusStepperProps> = ({ status, 
   }
 
   return (
-    <div className={`w-full p-3.5 sm:p-4 rounded-2xl bg-background/80 dark:bg-default-50/10 border border-default-200/80 dark:border-default-800 shadow-xs backdrop-blur-xs ${className}`}>
+    <div className={`w-full p-3.5 sm:p-4 rounded-xl bg-background border border-default-200 ${className}`}>
       <div className="flex items-center justify-between relative">
         {STEPS.map((step, idx) => {
           const isCompleted = activeStep > step.id;
@@ -72,11 +70,11 @@ export const OrderStatusStepper: React.FC<OrderStatusStepperProps> = ({ status, 
               {/* Step Node */}
               <div className="flex flex-col items-center gap-1.5 z-10 select-none">
                 <div
-                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs font-bold transition-colors duration-150 ${
                     isCompleted
-                      ? 'bg-success text-white shadow-xs'
+                      ? 'bg-success text-white'
                       : isCurrent
-                      ? 'bg-primary text-white ring-4 ring-primary/20 shadow-sm scale-105'
+                      ? 'bg-primary text-white'
                       : 'bg-default-100 dark:bg-default-800 text-default-400 border border-default-200 dark:border-default-700'
                   }`}
                 >
@@ -88,7 +86,7 @@ export const OrderStatusStepper: React.FC<OrderStatusStepperProps> = ({ status, 
                 </div>
 
                 <span
-                  className={`text-[11px] sm:text-xs font-semibold text-center whitespace-nowrap transition-colors ${
+                  className={`text-[11px] sm:text-xs font-medium text-center whitespace-nowrap transition-colors ${
                     isCurrent
                       ? 'text-primary font-bold'
                       : isCompleted
@@ -102,13 +100,13 @@ export const OrderStatusStepper: React.FC<OrderStatusStepperProps> = ({ status, 
 
               {/* Connecting Bar */}
               {!isLast && (
-                <div className="flex-1 h-0.5 sm:h-1 mx-1.5 -mt-5 transition-all duration-300 rounded-full overflow-hidden bg-default-200 dark:bg-default-800">
+                <div className="flex-1 h-0.5 sm:h-1 mx-1.5 -mt-5 transition-colors duration-150 rounded-full overflow-hidden bg-default-200 dark:bg-default-800">
                   <div
-                    className={`h-full transition-all duration-500 rounded-full ${
+                    className={`h-full transition-all duration-200 rounded-full ${
                       activeStep > step.id
                         ? 'w-full bg-success'
                         : activeStep === step.id
-                        ? 'w-1/2 bg-primary animate-pulse'
+                        ? 'w-1/2 bg-primary'
                         : 'w-0'
                     }`}
                   />

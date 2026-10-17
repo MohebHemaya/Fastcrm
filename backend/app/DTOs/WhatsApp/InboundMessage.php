@@ -14,5 +14,7 @@ final readonly class InboundMessage
         public ?string $payloadId,     // button/list reply payload id
         public string $providerMessageId,
         public int $timestamp,         // unix timestamp
+        public ?string $mediaUrl = null,
+        public ?string $mediaType = null,
     ) {}
 }

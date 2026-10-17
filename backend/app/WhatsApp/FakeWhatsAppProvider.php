@@ -54,6 +54,14 @@ class FakeWhatsAppProvider implements WhatsAppProvider
         return $messageId;
     }
 
+    public function sendImage(string $to, string $imageUrl, string $caption = ''): string
+    {
+        $messageId = 'fake_'.uniqid('img_', true);
+        Log::debug("[FakeWhatsApp] sendImage to={$to} url={$imageUrl}", compact('caption'));
+
+        return $messageId;
+    }
+
     public function verifyWebhook(Request $request): string
     {
         $mode = $request->query('hub_mode');

@@ -75,7 +75,7 @@ export const ImportWizardPage: React.FC = () => {
       />
 
       {/* Stepper Progress Header */}
-      <div className="rounded-2xl border border-default-200 bg-content1 p-4 shadow-sm">
+      <div className="rounded-xl border border-default-200 bg-content1 p-4 shadow-none">
         {/* Mobile Stepper (< sm) */}
         <div className="flex sm:hidden flex-col gap-2">
           <div className="flex items-center justify-between text-xs">
@@ -108,7 +108,7 @@ export const ImportWizardPage: React.FC = () => {
                       isDone
                         ? 'bg-success text-white'
                         : isCurrent
-                        ? 'bg-primary text-white shadow-md shadow-primary/30'
+                        ? 'bg-primary text-white'
                         : 'bg-default-100 text-default-400'
                     }`}
                   >

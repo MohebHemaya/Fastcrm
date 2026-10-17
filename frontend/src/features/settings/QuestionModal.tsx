@@ -311,7 +311,7 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({
                         return (
                           <div
                             key={idx}
-                            className="flex items-center gap-2 p-2 rounded-lg bg-content1 border border-divider shadow-sm"
+                            className="flex items-center gap-2 p-2 rounded-xl bg-content1 border border-divider shadow-none"
                           >
                             <span className="text-xs font-bold text-default-400 w-5 text-center">
                               {idx + 1}
@@ -418,7 +418,7 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({
 
                 {question && (
                   <div className="p-3 bg-primary-50 dark:bg-primary-950/30 rounded-xl border border-primary-200 dark:border-primary-800 text-xs text-primary-800 dark:text-primary-300">
-                    💡 <b>ملاحظة الإصدارات:</b> تعديل نص السؤال أو نوعه أو خياراته سينشئ تلقائياً <b>إصداراً جديداً (v{question.version + 1})</b>. إجابات السائقين السابقة ستظل مرتبطة بالإصدار الذي أجابوا عليه ولن تتأثر.
+                    <b>ملاحظة الإصدارات:</b> تعديل نص السؤال أو نوعه أو خياراته سينشئ تلقائياً <b>إصداراً جديداً (v{question.version + 1})</b>. إجابات السائقين السابقة ستظل مرتبطة بالإصدار الذي أجابوا عليه ولن تتأثر.
                   </div>
                 )}
               </div>

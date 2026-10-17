@@ -171,7 +171,7 @@ class DriverMatcher
 
                     $method = ($idx === 0) ? 'where' : 'orWhere';
                     $questionGroup->{$method}(function ($sub) use ($question, $val, $normalizedOp) {
-                        /** @var Driver|Builder<Driver> $sub */
+                        /** @var Builder<Driver> $sub */
                         if ($question->key === 'whatsapp_group') {
                             $this->applyWhatsAppGroupFilter($sub, $normalizedOp, $val);
                         } elseif ($question->key === 'driver_experience') {

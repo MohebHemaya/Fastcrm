@@ -23,6 +23,7 @@ interface UseDriverChatOptions {
   driverId: number | null;
   onNewMessage?: (msg: WhatsAppMessage) => void;
   onQuestionnaireProgress?: (progress: QuestionnaireProgressPayload) => void;
+  onStatusUpdated?: (update: import('@/types/whatsapp').MessageStatusUpdatedPayload) => void;
 }
 
 /**
@@ -35,10 +36,12 @@ export function useDriverChat({
   driverId,
   onNewMessage,
   onQuestionnaireProgress,
+  onStatusUpdated,
 }: UseDriverChatOptions) {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const onNewMessageRef = useRef(onNewMessage);
   const onQuestionnaireProgressRef = useRef(onQuestionnaireProgress);
+  const onStatusUpdatedRef = useRef(onStatusUpdated);
 
   useEffect(() => {
     onNewMessageRef.current = onNewMessage;
@@ -47,6 +50,10 @@ export function useDriverChat({
   useEffect(() => {
     onQuestionnaireProgressRef.current = onQuestionnaireProgress;
   }, [onQuestionnaireProgress]);
+
+  useEffect(() => {
+    onStatusUpdatedRef.current = onStatusUpdated;
+  }, [onStatusUpdated]);
 
   const convertToWhatsAppMessage = useCallback((payload: DriverChatMessagePayload): WhatsAppMessage => {
     return {
@@ -96,7 +103,12 @@ export function useDriverChat({
       onNewMessageRef.current?.(msg);
     });
 
-    // 3. Questionnaire progress event
+    // 3. Status updated event (ticks: sent -> delivered -> read)
+    channel.listen('.MessageStatusUpdated', (payload: import('@/types/whatsapp').MessageStatusUpdatedPayload) => {
+      onStatusUpdatedRef.current?.(payload);
+    });
+
+    // 4. Questionnaire progress event
     channel.listen('.QuestionnaireProgressUpdated', (payload: QuestionnaireProgressPayload) => {
       onQuestionnaireProgressRef.current?.(payload);
     });

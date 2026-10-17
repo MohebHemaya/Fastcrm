@@ -6,6 +6,7 @@ import {
   Tabs,
   Tab,
   Chip,
+  Tooltip,
 } from '@heroui/react';
 import {
   ArrowPathIcon,
@@ -14,6 +15,7 @@ import {
   ArrowTopRightOnSquareIcon,
   DocumentTextIcon,
   QueueListIcon,
+  ShieldCheckIcon,
 } from '@/components/icons';
 import { SearchInput } from '@/components/form';
 import PageContainer from '@/components/layout/PageContainer';
@@ -139,7 +141,7 @@ export const WhatsAppMessagesPage: React.FC = () => {
   };
 
   const formatDateTime = (dateStr?: string | null) => {
-    if (!dateStr) return '—';
+    if (!dateStr) return '-';
     return new Date(dateStr).toLocaleString('ar-EG', {
       month: 'short',
       day: 'numeric',
@@ -180,7 +182,7 @@ export const WhatsAppMessagesPage: React.FC = () => {
         <Chip
           size="sm"
           variant="flat"
-          color={msg.direction === 'out' ? 'primary' : 'secondary'}
+          color={msg.direction === 'out' ? 'primary' : 'default'}
           className="text-xs"
         >
           {msg.direction_label}
@@ -198,7 +200,7 @@ export const WhatsAppMessagesPage: React.FC = () => {
             </span>
           )}
           <span className="truncate block text-default-700 text-xs">
-            {msg.body || '—'}
+            {msg.body || '-'}
           </span>
           {msg.error_message && (
             <span className="block text-[11px] text-danger-500 truncate" title={msg.error_message}>
@@ -303,6 +305,22 @@ export const WhatsAppMessagesPage: React.FC = () => {
             </Chip>
           )}
 
+          {/* Anti-Ban Shield Pill */}
+          {providerStatus?.anti_ban?.enabled && (
+            <Tooltip
+              content={`حماية الخط نشطة: فواصل ذكية (${providerStatus.anti_ban.min_delay_seconds}-${providerStatus.anti_ban.max_delay_seconds}ث) مع راحة ${providerStatus.anti_ban.batch_pause_seconds}ث كل ${providerStatus.anti_ban.batch_size} رسالة`}
+            >
+              <Chip
+                variant="flat"
+                color="secondary"
+                startContent={<ShieldCheckIcon className="w-3.5 h-3.5 text-secondary-600" />}
+                className="text-xs font-semibold px-3 py-1.5 cursor-help"
+              >
+                حماية Anti-Ban
+              </Chip>
+            </Tooltip>
+          )}
+
           <Button
             isIconOnly
             size="sm"
@@ -325,8 +343,8 @@ export const WhatsAppMessagesPage: React.FC = () => {
           color="primary"
           variant="solid"
           classNames={{
-            tabList: 'bg-default-100 p-1 rounded-xl gap-1 border border-default-200/50 shadow-xs',
-            tab: 'data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground font-bold text-xs px-4 py-2 rounded-lg transition-all',
+            tabList: 'bg-default-100 p-1 rounded-xl gap-1 border border-default-200/50 shadow-none',
+            tab: 'data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground font-semibold text-xs px-4 py-2 rounded-lg transition-colors',
           }}
         >
           <Tab
@@ -357,7 +375,7 @@ export const WhatsAppMessagesPage: React.FC = () => {
 
       {/* View 2: Logs Table */}
       {pageMode === 'logs' && (
-        <Card className="border border-default-200 shadow-sm">
+        <Card className="border border-default-200 shadow-none">
         <CardBody className="p-4 sm:p-6 space-y-4">
           {/* Status Tabs with Counters */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

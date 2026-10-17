@@ -20,11 +20,9 @@ export const RouteErrorBoundary: React.FC = () => {
 
   return (
     <div className="min-h-[60vh] flex items-center justify-center p-4" dir="rtl">
-      <Card className="max-w-md w-full border border-danger-200 bg-content1 shadow-md">
+      <Card className="max-w-md w-full border border-danger-200 bg-content1 shadow-none">
         <CardBody className="p-6 flex flex-col items-center text-center space-y-4">
-          <div className="p-3 rounded-full bg-danger-50 text-danger">
-            <ExclamationTriangleIcon className="h-8 w-8" />
-          </div>
+          <ExclamationTriangleIcon className="h-8 w-8 text-danger shrink-0" />
 
           <div className="space-y-1">
             <h2 className="text-lg font-bold text-default-900">

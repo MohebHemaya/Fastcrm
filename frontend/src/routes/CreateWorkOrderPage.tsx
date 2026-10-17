@@ -39,6 +39,7 @@ import {
 } from '@/data/egyptLocations';
 import PageHeader from '@/components/ui/PageHeader';
 import PageContainer from '@/components/layout/PageContainer';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import { ar } from '@/i18n/ar';
 import { workOrderService } from '@/services/workOrderService';
 import { questionService } from '@/services/questionService';
@@ -52,7 +53,7 @@ import type {
 } from '@/types/workOrder';
 import { useUiStore } from '@/lib/stores/useUiStore';
 
-export const DEFAULT_OFFER_MESSAGE = `فرصة رحلة جديدة 🚗
+export const DEFAULT_OFFER_MESSAGE = `فرصة رحلة جديدة
 مرحبًا يا {{driver_name}}، تتوفر رحلة جديدة مطابقة لبياناتك:
 - رقم الطلب: {{order_code}}
 - خط السير: من {{from_location}} إلى {{to_location}}
@@ -180,6 +181,12 @@ export const CreateWorkOrderPage: React.FC = () => {
   // Live match state
   const [matchPreview, setMatchPreview] = useState<MatchPreviewResponse | null>(null);
   const [isMatchingLoading, setIsMatchingLoading] = useState(false);
+
+  // Confirmation Modals State
+  const [isConfirmBroadcastOpen, setIsConfirmBroadcastOpen] = useState(false);
+  const [isConfirmDraftOpen, setIsConfirmDraftOpen] = useState(false);
+  const [isConfirmDiscardOpen, setIsConfirmDiscardOpen] = useState(false);
+  const [isConfirmCancelOpen, setIsConfirmCancelOpen] = useState(false);
 
   const {
     control,
@@ -400,16 +407,14 @@ export const CreateWorkOrderPage: React.FC = () => {
     const renderedBody = renderPreviewMessage(messageText);
 
     return (
-      <div className="w-full max-w-md rounded-2xl border border-default-200 bg-[#e5ddd5] dark:bg-[#0b141a] overflow-hidden shadow-sm">
+      <div className="w-full max-w-md rounded-xl border border-default-200 bg-[#e5ddd5] dark:bg-[#0b141a] overflow-hidden shadow-none">
         {/* WhatsApp App Bar */}
-        <div className="bg-[#075e54] text-white px-3.5 py-2.5 flex items-center justify-between shadow-sm">
+        <div className="bg-[#075e54] text-white px-3.5 py-2.5 flex items-center justify-between shadow-none">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-emerald-700/80 border border-white/30 flex items-center justify-center font-bold text-xs text-white">
-              📱
-            </div>
+            <ChatBubbleLeftRightIcon className="w-5 h-5 text-emerald-200 shrink-0" />
             <div className="flex flex-col text-start">
               <span className="text-xs font-bold leading-tight">إدارة الرحلات (نظام التشغيل)</span>
-              <span className="text-[10px] text-emerald-200">حساب أعمال رسمي ✓</span>
+              <span className="text-[10px] text-emerald-200">حساب أعمال رسمي</span>
             </div>
           </div>
           <Chip size="sm" variant="flat" className="bg-white/20 text-white text-[10px] h-5 font-bold">
@@ -420,23 +425,22 @@ export const CreateWorkOrderPage: React.FC = () => {
         {/* WhatsApp Chat Content */}
         <div className="p-3 sm:p-4 space-y-2.5 bg-[#efeae2]/80 dark:bg-[#0b141a]">
           {/* WhatsApp Message Bubble */}
-          <div className="bg-white dark:bg-[#1f2c34] text-default-900 dark:text-default-100 rounded-2xl rounded-tr-none p-3.5 shadow-sm border border-black/5 dark:border-white/5 text-start space-y-1.5">
+          <div className="bg-white dark:bg-[#1f2c34] text-default-900 dark:text-default-100 rounded-xl rounded-tr-none p-3.5 border border-default-200 dark:border-default-700 text-start space-y-1.5 shadow-none">
             <p className="text-xs sm:text-[13px] leading-relaxed whitespace-pre-wrap font-sans text-foreground">
               {renderedBody}
             </p>
             <div className="flex items-center justify-end gap-1 pt-1 text-[10px] text-default-400">
               <span>١٠:٣٠ ص</span>
-              <span className="text-primary font-bold">✓✓</span>
             </div>
           </div>
 
           {/* Interactive WhatsApp Buttons */}
           <div className="space-y-1.5 pt-1">
-            <div className="w-full py-2 px-3 bg-white dark:bg-[#1f2c34] text-primary dark:text-primary-400 text-xs font-bold text-center rounded-xl shadow-xs border border-default-200 dark:border-default-700/50 flex items-center justify-center gap-1.5 cursor-default select-none">
+            <div className="w-full py-2 px-3 bg-white dark:bg-[#1f2c34] text-primary dark:text-primary-400 text-xs font-bold text-center rounded-lg border border-default-200 dark:border-default-700/50 flex items-center justify-center gap-1.5 cursor-default select-none shadow-none">
               <CheckIcon className="w-3.5 h-3.5 text-success" />
               <span>{ar.workOrders.messageTemplate.btnAccept}</span>
             </div>
-            <div className="w-full py-2 px-3 bg-white dark:bg-[#1f2c34] text-danger dark:text-danger-400 text-xs font-semibold text-center rounded-xl shadow-xs border border-default-200 dark:border-default-700/50 flex items-center justify-center gap-1.5 cursor-default select-none">
+            <div className="w-full py-2 px-3 bg-white dark:bg-[#1f2c34] text-danger dark:text-danger-400 text-xs font-semibold text-center rounded-lg border border-default-200 dark:border-default-700/50 flex items-center justify-center gap-1.5 cursor-default select-none shadow-none">
               <span>{ar.workOrders.messageTemplate.btnDecline}</span>
             </div>
           </div>
@@ -571,7 +575,7 @@ export const CreateWorkOrderPage: React.FC = () => {
           }
           setIsDraftRestored(true);
           addToast({
-            message: 'تم استرجاع المسودة التي كنت تعمل عليها تلقائياً 💾',
+            message: 'تم استرجاع المسودة التي كنت تعمل عليها تلقائياً.',
             type: 'info',
           });
         }
@@ -633,6 +637,25 @@ export const CreateWorkOrderPage: React.FC = () => {
     });
   };
 
+  const handleCancelWizard = () => {
+    const vals = getValues();
+    const hasContent = Boolean(
+      vals.from_governorate ||
+      vals.to_governorate ||
+      vals.from_location ||
+      vals.to_location ||
+      vals.scheduled_at ||
+      vals.cargo_type ||
+      vals.pay_amount ||
+      vals.notes
+    );
+    if (hasContent) {
+      setIsConfirmCancelOpen(true);
+    } else {
+      navigate('/work-orders');
+    }
+  };
+
   // Validation per step
   const validateStep = async (step: number): Promise<boolean> => {
     switch (step) {
@@ -667,9 +690,10 @@ export const CreateWorkOrderPage: React.FC = () => {
   };
 
   // Submit Handler
-  const onSubmit = async (data: FormValues) => {
+  const executeSubmit = async (data: FormValues, mode: 'draft' | 'send') => {
     if (isSubmitting) return;
     setIsSubmitting(true);
+    setSubmitMode(mode);
     try {
       const validFilters = (data.filters || [])
         .filter((f) => {
@@ -729,7 +753,7 @@ export const CreateWorkOrderPage: React.FC = () => {
         // Ignore
       }
 
-      if (submitMode === 'send') {
+      if (mode === 'send') {
         await workOrderService.sendOrder(createdOrder.id);
         addToast({ message: ar.workOrders.sendSuccess, type: 'success' });
       } else {
@@ -747,6 +771,10 @@ export const CreateWorkOrderPage: React.FC = () => {
     }
   };
 
+  const onSubmit = async (data: FormValues) => {
+    await executeSubmit(data, submitMode);
+  };
+
   return (
     <PageContainer maxWidth="max-w-4xl" className="space-y-6">
       {/* Header */}
@@ -762,10 +790,10 @@ export const CreateWorkOrderPage: React.FC = () => {
 
       {/* Draft Restored Banner */}
       {isDraftRestored && (
-        <Card className="border border-primary-200 dark:border-primary-800 bg-primary-50/80 dark:bg-primary-950/40 shadow-xs">
+        <Card className="border border-primary-200 dark:border-primary-800 bg-primary-50/80 dark:bg-primary-950/40 shadow-none">
           <CardBody className="p-3 sm:p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 text-xs text-primary-950 dark:text-primary-100">
-              <span className="text-base leading-none">💾</span>
+              <CheckIcon className="w-4 h-4 text-primary shrink-0" />
               <div>
                 <span className="font-bold">تم استرجاع المسودة التي كنت تعمل عليها تلقائياً.</span>
                 {draftSavedTime && (
@@ -784,7 +812,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                 variant="flat"
                 color="danger"
                 className="font-medium text-xs h-7 px-3"
-                onPress={handleDiscardDraft}
+                onPress={() => setIsConfirmDiscardOpen(true)}
               >
                 مسح المسودة والبدء من جديد
               </Button>
@@ -794,7 +822,7 @@ export const CreateWorkOrderPage: React.FC = () => {
       )}
 
       {/* Stepper Navigation */}
-      <Card className="shadow-sm">
+      <Card className="border border-default-200 shadow-none">
         <CardBody className="p-3 sm:p-4">
           {/* Mobile Stepper (< md) */}
           <div className="flex md:hidden flex-col gap-2">
@@ -853,7 +881,7 @@ export const CreateWorkOrderPage: React.FC = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* STEP 1: Details */}
         {currentStep === 1 && (
-          <Card className="shadow-sm">
+          <Card className="border border-default-200 shadow-none">
             <CardHeader className="font-semibold text-lg pb-0">
               {ar.workOrders.steps.details}
             </CardHeader>
@@ -864,15 +892,13 @@ export const CreateWorkOrderPage: React.FC = () => {
                 <div className="p-4 border border-default-200 dark:border-default-100 rounded-xl bg-default-50/50 dark:bg-default-50/10 space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 font-semibold text-foreground text-sm">
-                      <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-                        <MapPinIcon className="w-4 h-4" />
-                      </div>
+                      <MapPinIcon className="w-4 h-4 text-default-500 shrink-0" />
                       <span>{ar.workOrders.fields.fromLocation}</span>
                       <span className="text-default-400 text-xs font-normal ms-1">(اختياري)</span>
                     </div>
                     {watchedFromLocation && (
                       <span
-                        className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary font-medium truncate max-w-[220px]"
+                        className="text-xs px-2.5 py-1 rounded-full bg-default-100 text-default-700 font-medium truncate max-w-[220px]"
                         title={watchedFromLocation}
                       >
                         {watchedFromLocation}
@@ -916,9 +942,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                 <div className="p-4 border border-default-200 dark:border-default-100 rounded-xl bg-default-50/50 dark:bg-default-50/10 space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 font-semibold text-foreground text-sm">
-                      <div className="w-7 h-7 rounded-lg bg-success/10 text-success flex items-center justify-center">
-                        <MapPinIcon className="w-4 h-4" />
-                      </div>
+                      <MapPinIcon className="w-4 h-4 text-default-500 shrink-0" />
                       <span>{ar.workOrders.fields.toLocation}</span>
                       <span className="text-default-400 text-xs font-normal ms-1">(اختياري)</span>
                     </div>
@@ -984,7 +1008,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                         aria-label={ar.workOrders.fields.scheduledAt}
                         classNames={{
                           inputWrapper:
-                            'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 focus-within:border-primary',
+                            'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-none hover:border-default-400 focus-within:border-primary',
                         }}
                       />
                     )}
@@ -1024,7 +1048,7 @@ export const CreateWorkOrderPage: React.FC = () => {
 
         {/* STEP 2: Capacity */}
         {currentStep === 2 && (
-          <Card className="shadow-sm">
+          <Card className="border border-default-200 shadow-none">
             <CardHeader className="font-semibold text-lg pb-0">
               {ar.workOrders.steps.capacity}
             </CardHeader>
@@ -1073,7 +1097,7 @@ export const CreateWorkOrderPage: React.FC = () => {
         {/* STEP 3: Filters with Live Matching */}
         {currentStep === 3 && (
           <div className="space-y-4">
-            <Card className="shadow-sm">
+            <Card className="border border-default-200 shadow-none">
               <CardHeader className="flex justify-between items-center pb-0">
                 <div className="flex flex-col gap-0.5">
                   <span className="font-semibold text-lg text-foreground-900">
@@ -1142,7 +1166,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                       return (
                         <div
                           key={fieldItem.id}
-                          className="p-4 rounded-xl border border-default-200 dark:border-default-800 bg-default-50/50 dark:bg-default-100/5 shadow-xs transition-all hover:border-default-300 space-y-3"
+                          className="p-4 rounded-xl border border-default-200 dark:border-default-800 bg-default-50/50 dark:bg-default-100/5 shadow-none transition-all hover:border-default-300 space-y-3"
                         >
                           {/* Filter Item Top Bar */}
                           <div className="flex items-center justify-between pb-2 border-b border-default-200/60 dark:border-default-800/60">
@@ -1218,7 +1242,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                                     classNames={{
                                       base: 'w-full !mt-0',
                                       trigger:
-                                        'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 data-[focus=true]:border-primary',
+                                        'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-none hover:border-default-400 data-[focus=true]:border-primary',
                                     }}
                                   >
                                     {filterQuestions.map((q) => (
@@ -1264,7 +1288,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                                     classNames={{
                                       base: 'w-full !mt-0',
                                       trigger:
-                                        'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 data-[focus=true]:border-primary',
+                                        'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-none hover:border-default-400 data-[focus=true]:border-primary',
                                     }}
                                   >
                                     {isChoice && !isYesNo ? (
@@ -1334,7 +1358,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                                         classNames={{
                                           base: 'w-full !mt-0',
                                           trigger:
-                                            'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 data-[focus=true]:border-primary',
+                                            'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-none hover:border-default-400 data-[focus=true]:border-primary',
                                         }}
                                       >
                                         {yesNoOptions.map((opt) => (
@@ -1386,7 +1410,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                                           classNames={{
                                             base: 'w-full !mt-0',
                                             trigger:
-                                              'min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 data-[focus=true]:border-primary py-1',
+                                              'min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-none hover:border-default-400 data-[focus=true]:border-primary py-1',
                                           }}
                                         >
                                           {choiceOptions.map((opt) => (
@@ -1418,7 +1442,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                                         classNames={{
                                           base: 'w-full !mt-0',
                                           trigger:
-                                            'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 data-[focus=true]:border-primary',
+                                            'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-none hover:border-default-400 data-[focus=true]:border-primary',
                                         }}
                                       >
                                         {choiceOptions.map((opt) => (
@@ -1441,7 +1465,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                                       variant="bordered"
                                       classNames={{
                                         inputWrapper:
-                                          'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 focus-within:border-primary',
+                                          'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-none hover:border-default-400 focus-within:border-primary',
                                       }}
                                     />
                                   );
@@ -1458,7 +1482,7 @@ export const CreateWorkOrderPage: React.FC = () => {
             </Card>
 
             {/* System Filters (Rating, No-shows, Recency) */}
-            <Card className="shadow-sm">
+            <Card className="border border-default-200 shadow-none">
               <CardHeader className="font-semibold text-base pb-0">
                 {ar.workOrders.systemFilters.title}
               </CardHeader>
@@ -1509,7 +1533,7 @@ export const CreateWorkOrderPage: React.FC = () => {
             </Card>
 
             {/* Live Matching Results Box */}
-            <Card className="border border-primary-200 bg-primary-50/40 shadow-sm">
+            <Card className="border border-primary-200 bg-primary-50/40 shadow-none">
               <CardBody className="p-4 space-y-3">
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-2 border-b border-primary-200/50">
                   <div className="flex items-center gap-2">
@@ -1548,7 +1572,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                           onClear={() => field.onChange('')}
                           classNames={{
                             inputWrapper:
-                              'h-9 min-h-9 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 focus-within:border-primary',
+                              'h-9 min-h-9 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-none hover:border-default-400 focus-within:border-primary',
                           }}
                         />
                       )}
@@ -1585,7 +1609,7 @@ export const CreateWorkOrderPage: React.FC = () => {
         {/* STEP 4: Send Strategy & WhatsApp Message */}
         {currentStep === 4 && (
           <div className="space-y-6">
-            <Card className="shadow-sm">
+            <Card className="border border-default-200 shadow-none">
               <CardHeader className="font-semibold text-lg pb-0">
                 {ar.workOrders.steps.strategy}
               </CardHeader>
@@ -1642,7 +1666,7 @@ export const CreateWorkOrderPage: React.FC = () => {
             </Card>
 
             {/* Scheduled Dispatch & Offer Expiration */}
-            <Card className="shadow-sm">
+            <Card className="border border-default-200 shadow-none">
               <CardHeader className="font-semibold text-lg pb-0 flex items-center justify-between">
                 <span>الجدولة التلقائية وتحديد مهلة الرد (اختياري)</span>
               </CardHeader>
@@ -1666,7 +1690,7 @@ export const CreateWorkOrderPage: React.FC = () => {
                           aria-label={ar.workOrders.fields.scheduledDispatchAt}
                           classNames={{
                             inputWrapper:
-                              'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-xs hover:border-default-400 focus-within:border-primary',
+                              'h-10 min-h-10 border-1.5 border-default-300 dark:border-default-700 bg-background shadow-none hover:border-default-400 focus-within:border-primary',
                           }}
                         />
                       )}
@@ -1694,12 +1718,10 @@ export const CreateWorkOrderPage: React.FC = () => {
             </Card>
 
             {/* Custom WhatsApp Message Card */}
-            <Card className="shadow-sm">
+            <Card className="border border-default-200 shadow-none">
               <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 pb-0">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 rounded-xl">
-                    <ChatBubbleLeftRightIcon className="h-5 w-5" />
-                  </div>
+                  <ChatBubbleLeftRightIcon className="h-5 w-5 text-primary shrink-0" />
                   <div className="flex flex-col text-start">
                     <span className="font-semibold text-lg text-foreground-900">
                       {ar.workOrders.messageTemplate.title}
@@ -1800,7 +1822,7 @@ export const CreateWorkOrderPage: React.FC = () => {
         {currentStep === 5 && (() => {
           const reviewValues = getValues();
           return (
-            <Card className="shadow-sm">
+            <Card className="border border-default-200 shadow-none">
               <CardHeader className="font-semibold text-lg pb-0">
                 {ar.workOrders.steps.review}
               </CardHeader>
@@ -1809,20 +1831,20 @@ export const CreateWorkOrderPage: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm bg-default-50 p-4 rounded-lg">
                   <div>
                     <span className="text-default-500 block">{ar.workOrders.fields.fromLocation}:</span>
-                    <span className="font-semibold">{reviewValues.from_location || '—'}</span>
+                    <span className="font-semibold">{reviewValues.from_location || '-'}</span>
                   </div>
                   <div>
                     <span className="text-default-500 block">{ar.workOrders.fields.toLocation}:</span>
-                    <span className="font-semibold">{reviewValues.to_location || '—'}</span>
+                    <span className="font-semibold">{reviewValues.to_location || '-'}</span>
                   </div>
                   <div>
                     <span className="text-default-500 block">{ar.workOrders.fields.scheduledAt}:</span>
-                    <span className="font-semibold">{reviewValues.scheduled_at || '—'}</span>
+                    <span className="font-semibold">{reviewValues.scheduled_at || '-'}</span>
                   </div>
                   <div>
                     <span className="text-default-500 block">{ar.workOrders.fields.payAmount}:</span>
                     <span className="font-semibold">
-                      {reviewValues.pay_amount ? `${reviewValues.pay_amount} ج.م` : '—'}
+                      {reviewValues.pay_amount ? `${reviewValues.pay_amount} ج.م` : '-'}
                     </span>
                   </div>
                   <div>
@@ -1963,9 +1985,9 @@ export const CreateWorkOrderPage: React.FC = () => {
         })()}
 
         {/* Action Buttons Footer */}
-        <div className="sticky bottom-0 z-30 -mx-3.5 sm:-mx-6 lg:-mx-8 -mb-4 sm:-mb-6 lg:-mb-8 mt-6 border-t border-default-200 bg-background/95 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-3.5 safe-pb-sticky shadow-lg shadow-black/5 flex items-center justify-between gap-3">
+        <div className="sticky bottom-0 z-30 -mx-3.5 sm:-mx-6 lg:-mx-8 -mb-4 sm:-mb-6 lg:-mb-8 mt-6 border-t border-default-200 bg-background/95 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-3.5 safe-pb-sticky shadow-none flex items-center justify-between gap-3">
           <div>
-            {currentStep > 1 && (
+            {currentStep > 1 ? (
               <Button
                 type="button"
                 variant="flat"
@@ -1975,6 +1997,17 @@ export const CreateWorkOrderPage: React.FC = () => {
                 isDisabled={isSubmitting}
               >
                 {ar.common.previous}
+              </Button>
+            ) : (
+              <Button
+                type="button"
+                variant="light"
+                color="danger"
+                className="min-h-[44px]"
+                onPress={handleCancelWizard}
+                isDisabled={isSubmitting}
+              >
+                {ar.common.cancel}
               </Button>
             )}
           </div>
@@ -1993,22 +2026,32 @@ export const CreateWorkOrderPage: React.FC = () => {
             ) : (
               <>
                 <Button
-                  type="submit"
+                  type="button"
                   variant="flat"
                   className="min-h-[44px]"
                   startContent={<DocumentArrowDownIcon className="w-4 h-4" />}
-                  onPress={() => setSubmitMode('draft')}
+                  onPress={() => setIsConfirmDraftOpen(true)}
                   isLoading={isSubmitting && submitMode === 'draft'}
                   isDisabled={isSubmitting}
                 >
                   {ar.workOrders.saveDraft}
                 </Button>
                 <Button
-                  type="submit"
+                  type="button"
                   color="primary"
                   className="min-h-[44px]"
                   startContent={<PaperAirplaneIcon className="w-4 h-4" />}
-                  onPress={() => setSubmitMode('send')}
+                  onPress={async () => {
+                    const isValid = await trigger();
+                    if (!isValid) {
+                      addToast({
+                        message: 'يرجى مراجعة واستكمال كافة الحقول المطلوبة قبل البث',
+                        type: 'warning',
+                      });
+                      return;
+                    }
+                    setIsConfirmBroadcastOpen(true);
+                  }}
                   isLoading={isSubmitting && submitMode === 'send'}
                   isDisabled={isSubmitting}
                 >
@@ -2019,6 +2062,124 @@ export const CreateWorkOrderPage: React.FC = () => {
           </div>
         </div>
       </form>
+
+      {/* Broadcast Work Order Confirmation Modal */}
+      <ConfirmDialog
+        isOpen={isConfirmBroadcastOpen}
+        onClose={() => setIsConfirmBroadcastOpen(false)}
+        onConfirm={async () => {
+          setIsConfirmBroadcastOpen(false);
+          await handleSubmit((data) => executeSubmit(data, 'send'))();
+        }}
+        title={ar.workOrders.confirmBroadcastTitle}
+        variant="primary"
+        confirmText={ar.workOrders.sendOrder}
+        confirmIcon={<PaperAirplaneIcon className="w-4 h-4" />}
+        size="lg"
+        isLoading={isSubmitting && submitMode === 'send'}
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-default-600 leading-relaxed">
+            {ar.workOrders.confirmBroadcastPrompt}
+          </p>
+
+          <div className="rounded-xl border border-default-200 bg-default-50/70 p-4 space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <span className="text-default-500 block mb-0.5">{ar.workOrders.fields.fromLocation}</span>
+                <span className="font-semibold text-foreground">{watchedFromLocation || 'غير محدد'}</span>
+              </div>
+              <div>
+                <span className="text-default-500 block mb-0.5">{ar.workOrders.fields.toLocation}</span>
+                <span className="font-semibold text-foreground">{watchedToLocation || 'غير محدد'}</span>
+              </div>
+              <div>
+                <span className="text-default-500 block mb-0.5">{ar.workOrders.fields.scheduledAt}</span>
+                <span className="font-semibold text-foreground">
+                  {watchedScheduledAt
+                    ? new Date(watchedScheduledAt).toLocaleString('ar-EG', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                      })
+                    : 'غير محدد'}
+                </span>
+              </div>
+              <div>
+                <span className="text-default-500 block mb-0.5">{ar.workOrders.fields.tripsNeeded}</span>
+                <span className="font-semibold text-foreground">
+                  {watch('trips_needed')} رحلة
+                  {Number(watch('backup_needed')) > 0 && ` (+ ${watch('backup_needed')} احتياطي)`}
+                </span>
+              </div>
+              <div>
+                <span className="text-default-500 block mb-0.5">السائقون المطابقون المؤهلون</span>
+                <span className="font-bold text-primary">
+                  {matchPreview ? `${matchPreview.count} سائق` : 'جاري الاحتساب...'}
+                </span>
+              </div>
+              <div>
+                <span className="text-default-500 block mb-0.5">{ar.workOrders.fields.sendStrategy}</span>
+                <span className="font-semibold text-foreground">
+                  {watchedStrategy === 'staged'
+                    ? `على دفعات (${watch('batch_size')} سائق / ${watch('batch_interval_minutes')} دقيقة)`
+                    : 'فوري لجميع السائقين المطابقين'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-2.5 rounded-lg border border-warning-200 bg-warning-50/70 dark:bg-warning-950/30 p-3 text-xs text-warning-900 dark:text-warning-200">
+            <ExclamationCircleIcon className="w-4 h-4 text-warning-600 dark:text-warning-400 shrink-0 mt-0.5" />
+            <span>{ar.workOrders.confirmBroadcastWarning}</span>
+          </div>
+        </div>
+      </ConfirmDialog>
+
+      {/* Save Draft Confirmation Modal */}
+      <ConfirmDialog
+        isOpen={isConfirmDraftOpen}
+        onClose={() => setIsConfirmDraftOpen(false)}
+        onConfirm={async () => {
+          setIsConfirmDraftOpen(false);
+          await handleSubmit((data) => executeSubmit(data, 'draft'))();
+        }}
+        title={ar.workOrders.confirmDraftTitle}
+        message={ar.workOrders.confirmDraftPrompt}
+        variant="primary"
+        confirmText={ar.workOrders.saveDraft}
+        confirmIcon={<DocumentArrowDownIcon className="w-4 h-4" />}
+        isLoading={isSubmitting && submitMode === 'draft'}
+      />
+
+      {/* Discard Draft Confirmation Modal */}
+      <ConfirmDialog
+        isOpen={isConfirmDiscardOpen}
+        onClose={() => setIsConfirmDiscardOpen(false)}
+        onConfirm={() => {
+          setIsConfirmDiscardOpen(false);
+          handleDiscardDraft();
+        }}
+        title={ar.workOrders.confirmDiscardTitle}
+        message={ar.workOrders.confirmDiscardPrompt}
+        variant="danger"
+        confirmText="نعم، مسح المسودة"
+        cancelText={ar.common.cancel}
+      />
+
+      {/* Cancel Wizard Confirmation Modal */}
+      <ConfirmDialog
+        isOpen={isConfirmCancelOpen}
+        onClose={() => setIsConfirmCancelOpen(false)}
+        onConfirm={() => {
+          setIsConfirmCancelOpen(false);
+          navigate('/work-orders');
+        }}
+        title={ar.workOrders.confirmCancelWizardTitle}
+        message={ar.workOrders.confirmCancelWizardPrompt}
+        variant="warning"
+        confirmText={ar.workOrders.leaveWizard}
+        cancelText={ar.workOrders.stayInWizard}
+      />
     </PageContainer>
   );
 };

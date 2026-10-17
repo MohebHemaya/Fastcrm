@@ -63,6 +63,36 @@ interface HealthData {
   db: string;
 }
 
+const statusLabels: Record<string, string> = {
+  new: ar.statuses.new,
+  contacted: ar.statuses.contacted,
+  qualified: ar.statuses.qualified,
+  training_scheduled: ar.statuses.training_scheduled,
+  trained: ar.statuses.trained,
+  active: ar.statuses.active,
+  declined: ar.statuses.declined,
+  no_response: ar.statuses.no_response,
+  suspended: ar.statuses.suspended,
+  blocked: ar.statuses.blocked,
+  opted_out: ar.statuses.opted_out,
+};
+
+const statusColorMap: Record<string, string> = {
+  active: '#10b981',
+  new: '#3b82f6',
+  contacted: '#06b6d4',
+  qualified: '#8b5cf6',
+  training_scheduled: '#f59e0b',
+  trained: '#14b8a6',
+  declined: '#64748b',
+  no_response: '#94a3b8',
+  suspended: '#f97316',
+  blocked: '#ef4444',
+  opted_out: '#e11d48',
+};
+
+const statusColors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#64748b'];
+
 export const HomePage: React.FC = () => {
   const user = useAuthStore((state) => state.user);
   const addToast = useUiStore((state) => state.addToast);
@@ -284,36 +314,6 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  const statusLabels: Record<string, string> = {
-    new: ar.statuses.new,
-    contacted: ar.statuses.contacted,
-    qualified: ar.statuses.qualified,
-    training_scheduled: ar.statuses.training_scheduled,
-    trained: ar.statuses.trained,
-    active: ar.statuses.active,
-    declined: ar.statuses.declined,
-    no_response: ar.statuses.no_response,
-    suspended: ar.statuses.suspended,
-    blocked: ar.statuses.blocked,
-    opted_out: ar.statuses.opted_out,
-  };
-
-  const statusColorMap: Record<string, string> = {
-    active: '#10b981',             // Success / Emerald (نشط)
-    new: '#3b82f6',                // Blue (جديد)
-    contacted: '#06b6d4',          // Cyan (تم التواصل)
-    qualified: '#8b5cf6',          // Purple (مؤهل)
-    training_scheduled: '#f59e0b', // Amber (تدريب مجدول)
-    trained: '#14b8a6',            // Teal (تم التدريب)
-    declined: '#64748b',           // Slate (معتذر)
-    no_response: '#94a3b8',        // Gray (لم يرد)
-    suspended: '#f97316',          // Orange (موقوف مؤقتاً)
-    blocked: '#ef4444',            // Red (محظور)
-    opted_out: '#e11d48',          // Rose (طلب عدم التواصل)
-  };
-
-  const statusColors = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#64748b'];
-
   const totalDrivers = summary?.total_drivers ?? (summary as any)?.drivers_summary?.total_drivers ?? 0;
   const activeDrivers = summary?.active_drivers_count ?? (summary as any)?.drivers_summary?.active_drivers ?? 0;
   const optedOutDrivers = summary?.opted_out_drivers_count ?? (summary as any)?.drivers_summary?.opted_out_drivers ?? 0;
@@ -372,7 +372,7 @@ export const HomePage: React.FC = () => {
     <PageContainer className="space-y-6">
       <PageHeader
         title={ar.dashboard.title}
-        description={`مرحباً بك، ${user?.name || 'المدير'} — ${ar.dashboard.subtitle}`}
+        description={`مرحباً بك، ${user?.name || 'المدير'}، ${ar.dashboard.subtitle}`}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <Button
@@ -415,7 +415,7 @@ export const HomePage: React.FC = () => {
       />
 
       {/* Date Range Filter Bar */}
-      <Card className="border border-default-200 shadow-sm bg-content1">
+      <Card className="border border-default-200 shadow-none bg-content1">
         <CardBody className="p-4">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-2">
@@ -430,7 +430,7 @@ export const HomePage: React.FC = () => {
                 { id: 'this_month', label: 'هذا الشهر' },
                 { id: 'this_quarter', label: 'الربع الحالي' },
                 { id: 'all', label: 'كل الفترات' },
-                { id: 'custom', label: 'مخصص 📅' },
+                { id: 'custom', label: 'مخصص' },
               ].map((btn) => (
                 <Button
                   key={btn.id}
@@ -494,18 +494,16 @@ export const HomePage: React.FC = () => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             {/* Total Drivers */}
-            <Card className="border border-default-200 shadow-sm bg-content1">
+            <Card className="border border-default-200 shadow-none bg-content1">
               <CardBody className="p-4 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-default-500 font-medium">
                     {ar.dashboard.cards.totalDrivers}
                   </span>
-                  <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
-                    <UsersIcon className="h-4 w-4" />
-                  </div>
+                  <UsersIcon className="h-4 w-4 text-default-400" />
                 </div>
                 <div className="mt-2">
-                  <span className="text-2xl font-black text-default-900" dir="ltr">
+                  <span className="text-2xl font-bold text-default-900" dir="ltr">
                     {totalDrivers.toLocaleString('en-US')}
                   </span>
                 </div>
@@ -513,18 +511,16 @@ export const HomePage: React.FC = () => {
             </Card>
 
             {/* Active Drivers */}
-            <Card className="border border-default-200 shadow-sm bg-content1">
+            <Card className="border border-default-200 shadow-none bg-content1">
               <CardBody className="p-4 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-default-500 font-medium">
                     {ar.dashboard.cards.activeDrivers}
                   </span>
-                  <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    <UserPlusIcon className="h-4 w-4" />
-                  </div>
+                  <UserPlusIcon className="h-4 w-4 text-default-400" />
                 </div>
                 <div className="mt-2 flex items-baseline gap-2">
-                  <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400" dir="ltr">
+                  <span className="text-2xl font-bold text-default-900" dir="ltr">
                     {activeDrivers.toLocaleString('en-US')}
                   </span>
                   {totalDrivers > 0 && (
@@ -537,18 +533,16 @@ export const HomePage: React.FC = () => {
             </Card>
 
             {/* Opted-Out Drivers */}
-            <Card className="border border-default-200 shadow-sm bg-content1">
+            <Card className="border border-default-200 shadow-none bg-content1">
               <CardBody className="p-4 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-default-500 font-medium">
                     {ar.dashboard.cards.optedOutDrivers}
                   </span>
-                  <div className="p-2 rounded-xl bg-rose-50 text-rose-600">
-                    <UserMinusIcon className="h-4 w-4" />
-                  </div>
+                  <UserMinusIcon className="h-4 w-4 text-default-400" />
                 </div>
                 <div className="mt-2">
-                  <span className="text-2xl font-black text-rose-600" dir="ltr">
+                  <span className="text-2xl font-bold text-danger-600" dir="ltr">
                     {optedOutDrivers.toLocaleString('en-US')}
                   </span>
                 </div>
@@ -556,22 +550,20 @@ export const HomePage: React.FC = () => {
             </Card>
 
             {/* Orders This Month */}
-            <Card className="border border-default-200 shadow-sm bg-content1">
+            <Card className="border border-default-200 shadow-none bg-content1">
               <CardBody className="p-4 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-default-500 font-medium">
                     {ar.dashboard.cards.ordersThisMonth}
                   </span>
-                  <div className="p-2 rounded-xl bg-amber-50 text-amber-600">
-                    <ClipboardDocumentListIcon className="h-4 w-4" />
-                  </div>
+                  <ClipboardDocumentListIcon className="h-4 w-4 text-default-400" />
                 </div>
                 <div className="mt-2 flex items-baseline justify-between">
-                  <span className="text-2xl font-black text-default-900" dir="ltr">
+                  <span className="text-2xl font-bold text-default-900" dir="ltr">
                     {totalOrders.toLocaleString('en-US')}
                   </span>
                   <div className="flex gap-1 text-[10px]">
-                    <span className="text-success font-bold">
+                    <span className="text-success font-semibold">
                       {completedOrdersCount} مكتمل
                     </span>
                   </div>
@@ -580,18 +572,16 @@ export const HomePage: React.FC = () => {
             </Card>
 
             {/* Offer Acceptance Rate */}
-            <Card className="border border-default-200 shadow-sm bg-content1">
+            <Card className="border border-default-200 shadow-none bg-content1">
               <CardBody className="p-4 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-default-500 font-medium">
                     {ar.dashboard.cards.acceptanceRate}
                   </span>
-                  <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600">
-                    <ChartBarIcon className="h-4 w-4" />
-                  </div>
+                  <ChartBarIcon className="h-4 w-4 text-default-400" />
                 </div>
                 <div className="mt-2">
-                  <span className="text-2xl font-black text-indigo-600" dir="ltr">
+                  <span className="text-2xl font-bold text-default-900" dir="ltr">
                     {acceptanceRate}%
                   </span>
                 </div>
@@ -599,18 +589,16 @@ export const HomePage: React.FC = () => {
             </Card>
 
             {/* Average Time-To-Fill */}
-            <Card className="border border-default-200 shadow-sm bg-content1">
+            <Card className="border border-default-200 shadow-none bg-content1">
               <CardBody className="p-4 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-default-500 font-medium">
                     {ar.dashboard.cards.avgTimeToFill}
                   </span>
-                  <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
-                    <ClockIcon className="h-4 w-4" />
-                  </div>
+                  <ClockIcon className="h-4 w-4 text-default-400" />
                 </div>
                 <div className="mt-2">
-                  <span className="text-lg font-black text-purple-700">
+                  <span className="text-lg font-bold text-default-900">
                     {formatTimeToFill(avgTimeToFill)}
                   </span>
                 </div>
@@ -621,7 +609,7 @@ export const HomePage: React.FC = () => {
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Monthly Work Orders Trend Chart */}
-            <Card className="lg:col-span-2 border border-default-200 shadow-sm bg-content1">
+            <Card className="lg:col-span-2 border border-default-200 shadow-none bg-content1">
               <CardHeader className="flex items-center justify-between pb-2 border-b border-default-100">
                 <div className="flex items-center gap-2">
                   <ChartBarIcon className="h-4 w-4 text-primary" />
@@ -664,7 +652,7 @@ export const HomePage: React.FC = () => {
             </Card>
 
             {/* Driver Status Breakdown Pie Chart */}
-            <Card className="border border-default-200 shadow-sm bg-content1">
+            <Card className="border border-default-200 shadow-none bg-content1">
               <CardHeader className="flex items-center justify-between pb-2 border-b border-default-100">
                 <div className="flex items-center gap-2">
                   <ChartPieIcon className="h-4 w-4 text-primary" />
@@ -707,7 +695,7 @@ export const HomePage: React.FC = () => {
           </div>
 
           {/* Group Performance Table Section */}
-          <Card className="border border-default-200 shadow-sm bg-content1">
+          <Card className="border border-default-200 shadow-none bg-content1">
             <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-default-100 p-4">
               <div>
                 <h3 className="font-bold text-base text-default-900">
@@ -922,7 +910,7 @@ export const HomePage: React.FC = () => {
                         size="sm"
                         color="primary"
                         classNames={{
-                          cursor: 'bg-primary text-primary-foreground font-bold shadow-sm',
+                          cursor: 'bg-primary text-primary-foreground font-bold shadow-none',
                         }}
                       />
                     </div>
@@ -939,7 +927,7 @@ export const HomePage: React.FC = () => {
       )}
 
       {/* System Health Section */}
-      <div className="rounded-2xl border border-default-200 bg-content1 p-6 shadow-sm">
+      <div className="rounded-xl border border-default-200 bg-content1 p-6 shadow-none">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-5">
           <div>
             <h2 className="text-lg font-bold text-default-900">{ar.health.status}</h2>
@@ -961,9 +949,7 @@ export const HomePage: React.FC = () => {
           {/* Backend API */}
           <Card className="border border-default-200 shadow-none bg-default-50/50">
             <CardHeader className="flex gap-3 items-center pb-2">
-              <div className="p-2 rounded-xl bg-blue-100 text-blue-700">
-                <ServerIcon className="h-4 w-4" />
-              </div>
+              <ServerIcon className="h-5 w-5 text-default-500 shrink-0" />
               <div className="flex flex-col text-start">
                 <span className="text-xs font-bold text-default-900">واجهة الخادم (API)</span>
                 <span className="text-[11px] text-default-400">Laravel /api/v1</span>
@@ -992,9 +978,7 @@ export const HomePage: React.FC = () => {
           {/* Database */}
           <Card className="border border-default-200 shadow-none bg-default-50/50">
             <CardHeader className="flex gap-3 items-center pb-2">
-              <div className="p-2 rounded-xl bg-emerald-100 text-emerald-700">
-                <CircleStackIcon className="h-4 w-4" />
-              </div>
+              <CircleStackIcon className="h-5 w-5 text-default-500 shrink-0" />
               <div className="flex flex-col text-start">
                 <span className="text-xs font-bold text-default-900">{ar.health.database}</span>
                 <span className="text-[11px] text-default-400">MySQL InnoDB utf8mb4</span>
@@ -1023,9 +1007,7 @@ export const HomePage: React.FC = () => {
           {/* Server Time */}
           <Card className="border border-default-200 shadow-none bg-default-50/50">
             <CardHeader className="flex gap-3 items-center pb-2">
-              <div className="p-2 rounded-xl bg-purple-100 text-purple-700">
-                <ClockIcon className="h-4 w-4" />
-              </div>
+              <ClockIcon className="h-5 w-5 text-default-500 shrink-0" />
               <div className="flex flex-col text-start">
                 <span className="text-xs font-bold text-default-900">توقيت الخادم</span>
                 <span className="text-[11px] text-default-400">Africa/Cairo</span>

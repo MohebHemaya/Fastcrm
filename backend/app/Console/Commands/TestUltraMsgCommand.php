@@ -32,31 +32,34 @@ class TestUltraMsgCommand extends Command
         $configuredToken = config('whatsapp.ultramsg.token');
         $configuredInstance = config('whatsapp.ultramsg.instance_id');
 
-        $this->info("---------------------------------------------");
-        $this->info(" Testing UltraMsg WhatsApp Integration");
-        $this->info("---------------------------------------------");
+        $this->info('---------------------------------------------');
+        $this->info(' Testing UltraMsg WhatsApp Integration');
+        $this->info('---------------------------------------------');
         $this->line("Target Phone: <comment>{$phone}</comment>");
-        $this->line("Instance ID : <comment>" . ($configuredInstance ?: '[NOT SET]') . "</comment>");
-        $this->line("API Token   : <comment>" . ($configuredToken ? substr($configuredToken, 0, 8) . '...' : '[NOT SET]') . "</comment>");
+        $this->line('Instance ID : <comment>'.($configuredInstance ?: '[NOT SET]').'</comment>');
+        $this->line('API Token   : <comment>'.($configuredToken ? substr($configuredToken, 0, 8).'...' : '[NOT SET]').'</comment>');
         $this->line("Message Text: <info>{$text}</info>");
-        $this->info("---------------------------------------------");
+        $this->info('---------------------------------------------');
 
         if (empty($configuredToken) || empty($configuredInstance)) {
-            $this->error("❌ UltraMsg credentials are missing!");
-            $this->warn("Please provide --token and --instance or set ULTRAMSG_TOKEN and ULTRAMSG_INSTANCE_ID in .env");
+            $this->error('❌ UltraMsg credentials are missing!');
+            $this->warn('Please provide --token and --instance or set ULTRAMSG_TOKEN and ULTRAMSG_INSTANCE_ID in .env');
+
             return self::FAILURE;
         }
 
         try {
-            $this->comment("Sending message to UltraMsg...");
-            $provider = new UltraMsgProvider();
+            $this->comment('Sending message to UltraMsg...');
+            $provider = new UltraMsgProvider;
             $messageId = $provider->sendText($phone, $text);
 
-            $this->info("✅ Message sent / queued successfully via UltraMsg!");
+            $this->info('✅ Message sent / queued successfully via UltraMsg!');
             $this->line("Provider Message ID: <info>{$messageId}</info>");
+
             return self::SUCCESS;
         } catch (Throwable $e) {
-            $this->error("❌ Failed to send message: " . $e->getMessage());
+            $this->error('❌ Failed to send message: '.$e->getMessage());
+
             return self::FAILURE;
         }
     }

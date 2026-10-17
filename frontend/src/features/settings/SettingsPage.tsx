@@ -197,11 +197,9 @@ export const SettingsPage: React.FC = () => {
           <div className="space-y-6 mt-4">
             {/* Summary KPI Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <Card shadow="sm" className="border border-divider">
+              <Card shadow="none" className="border border-divider">
                 <CardBody className="p-4 flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
-                    <QuestionMarkCircleIcon className="w-5 h-5" />
-                  </div>
+                  <QuestionMarkCircleIcon className="w-5 h-5 text-default-500 shrink-0" />
                   <div>
                     <p className="text-xs text-default-500 font-medium">إجمالي الأسئلة</p>
                     <p className="text-xl font-bold">{questions.length}</p>
@@ -209,23 +207,19 @@ export const SettingsPage: React.FC = () => {
                 </CardBody>
               </Card>
 
-              <Card shadow="sm" className="border border-divider">
+              <Card shadow="none" className="border border-divider">
                 <CardBody className="p-4 flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    <CheckCircleIcon className="w-5 h-5" />
-                  </div>
+                  <CheckCircleIcon className="w-5 h-5 text-default-500 shrink-0" />
                   <div>
                     <p className="text-xs text-default-500 font-medium">أسئلة نشطة</p>
-                    <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{activeQuestionsCount}</p>
+                    <p className="text-xl font-bold">{activeQuestionsCount}</p>
                   </div>
                 </CardBody>
               </Card>
 
-              <Card shadow="sm" className="border border-divider">
+              <Card shadow="none" className="border border-divider">
                 <CardBody className="p-4 flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-secondary/10 text-secondary">
-                    <FunnelIcon className="w-5 h-5" />
-                  </div>
+                  <FunnelIcon className="w-5 h-5 text-default-500 shrink-0" />
                   <div>
                     <p className="text-xs text-default-500 font-medium">تستخدم كفلتر</p>
                     <p className="text-xl font-bold">{filterQuestionsCount}</p>
@@ -233,11 +227,9 @@ export const SettingsPage: React.FC = () => {
                 </CardBody>
               </Card>
 
-              <Card shadow="sm" className="border border-divider">
+              <Card shadow="none" className="border border-divider">
                 <CardBody className="p-4 flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-warning/10 text-warning">
-                    <CircleStackIcon className="w-5 h-5" />
-                  </div>
+                  <CircleStackIcon className="w-5 h-5 text-default-500 shrink-0" />
                   <div>
                     <p className="text-xs text-default-500 font-medium">إجمالي الإجابات</p>
                     <p className="text-xl font-bold">
@@ -274,9 +266,9 @@ export const SettingsPage: React.FC = () => {
                 <Spinner label="جاري تحميل الأسئلة..." />
               </div>
             ) : questions.length === 0 ? (
-              <Card className="border border-dashed border-divider p-8 text-center">
+              <Card className="border border-dashed border-divider p-8 text-center shadow-none">
                 <CardBody className="flex flex-col items-center justify-center gap-3">
-                  <QuestionMarkCircleIcon className="w-12 h-12 text-default-300" />
+                  <QuestionMarkCircleIcon className="w-6 h-6 text-default-400" />
                   <p className="text-base font-semibold">لا توجد أسئلة مضافة بعد</p>
                   <p className="text-xs text-default-500 max-w-sm">
                     أضف أسئلتك الأولى لبدء استبيان السائقين وجمع معلومات سياراتهم وخبراتهم تلقائياً

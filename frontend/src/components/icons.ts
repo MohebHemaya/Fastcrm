@@ -60,7 +60,7 @@ export {
   TruckIcon,
   BriefcaseIcon,
   SignalIcon,
-  SparklesIcon,
+  StarIcon,
   HomeIcon,
   WrenchScrewdriverIcon,
   InboxIcon,
@@ -81,6 +81,9 @@ export {
   SpeakerWaveIcon,
   EllipsisVerticalIcon,
   InboxStackIcon,
+  PauseIcon,
+  PhotoIcon,
+  MagnifyingGlassPlusIcon,
 } from '@heroicons/react/24/outline';
 
 // Solid icons (used for active navigation states and filled badges)

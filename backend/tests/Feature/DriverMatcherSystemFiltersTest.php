@@ -3,6 +3,7 @@
 use App\Enums\DriverStatus;
 use App\Models\Driver;
 use App\Models\DriverMetric;
+use App\Models\WhatsappGroup;
 use App\Services\DriverMatcher;
 use Carbon\Carbon;
 
@@ -92,8 +93,8 @@ test('DriverMatcher last_trip_within_days matches only drivers active within spe
 test('DriverMatcher target_group_id and driver_experience filter properly', function () {
     $matcher = app(DriverMatcher::class);
 
-    $groupA = \App\Models\WhatsappGroup::factory()->create(['name' => 'Group Tenth']);
-    $groupB = \App\Models\WhatsappGroup::factory()->create(['name' => 'Group October']);
+    $groupA = WhatsappGroup::factory()->create(['name' => 'Group Tenth']);
+    $groupB = WhatsappGroup::factory()->create(['name' => 'Group October']);
 
     // Driver 1: in Group A, experienced (5 trips)
     $d1 = Driver::factory()->create(['status' => DriverStatus::ACTIVE]);

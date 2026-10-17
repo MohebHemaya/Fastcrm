@@ -15,6 +15,7 @@ import {
   UsersIcon,
   ClockIcon,
   ExclamationCircleIcon,
+  ShieldCheckIcon,
 } from '@/components/icons';
 import { ar } from '@/i18n/ar';
 import { useUiStore } from '@/lib/stores/useUiStore';
@@ -109,9 +110,7 @@ export const BulkInviteModal: React.FC<BulkInviteModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} size="md">
       <ModalContent>
         <ModalHeader className="flex items-center gap-2 border-b border-default-200">
-          <div className="w-8 h-8 rounded-lg bg-success-50 text-success-600 flex items-center justify-center">
-            <PaperAirplaneIcon className="w-4 h-4 rtl:-scale-x-100" />
-          </div>
+          <PaperAirplaneIcon className="w-5 h-5 text-default-600 rtl:-scale-x-100 shrink-0" />
           <span className="text-base font-bold text-default-900">
             {ar.whatsapp.inviteConfirmTitle}
           </span>
@@ -168,6 +167,18 @@ export const BulkInviteModal: React.FC<BulkInviteModalProps> = ({
                 <div className="pt-2 border-t border-default-200/60 text-xs text-default-500">
                   {ar.whatsapp.sendRateNotice.replace('{rate}', estimate.send_rate_per_min.toString())}
                 </div>
+
+                {estimate.anti_ban_enabled && (
+                  <div className="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs leading-relaxed">
+                    <ShieldCheckIcon className="w-5 h-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                    <div>
+                      <span className="font-semibold block">حماية الخط من الحظر نشطة</span>
+                      <span className="text-[11px] opacity-90">
+                        فواصل إرسال عشوائية ({estimate.anti_ban_min_delay} - {estimate.anti_ban_max_delay} ث) مع فترات راحة ذكية لضمان سلامة الرقم.
+                      </span>
+                    </div>
+                  </div>
+                )}
               </>
             ) : null}
           </div>

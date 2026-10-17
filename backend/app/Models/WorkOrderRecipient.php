@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
  * @property int|null $sequence_number
  * @property int $stage_batch
  * @property Carbon|null $sent_at
+ * @property Carbon|null $expires_at
  * @property Carbon|null $responded_at
  * @property WorkOrderOutcome|null $outcome
  * @property int|null $rating

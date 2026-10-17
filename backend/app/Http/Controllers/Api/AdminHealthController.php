@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\WebhookEvent;
 use App\Models\WhatsAppMessage;
+use App\Services\Audit;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use App\Services\Audit;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -27,7 +27,7 @@ class AdminHealthController extends ApiController
         $ageMinutes = 0;
 
         if ($lastHeartbeatIso) {
-            $ageSeconds = max(0, now()->timestamp - Carbon::parse($lastHeartbeatIso)->timestamp);
+            $ageSeconds = max(0, (int) now()->timestamp - (int) Carbon::parse((string) $lastHeartbeatIso)->timestamp);
             $ageMinutes = round($ageSeconds / 60, 1);
             if ($ageMinutes > 5) {
                 $schedulerStatus = 'warning';

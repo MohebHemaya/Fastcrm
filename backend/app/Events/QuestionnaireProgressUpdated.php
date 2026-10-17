@@ -17,11 +17,11 @@ class QuestionnaireProgressUpdated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public function __construct(
-        public readonly int    $driverId,
+        public readonly int $driverId,
         public readonly string $questionText,
         public readonly string $answer,
-        public readonly int    $answeredCount,
-        public readonly int    $totalQuestions,
+        public readonly int $answeredCount,
+        public readonly int $totalQuestions,
         public readonly string $updatedAt,
     ) {}
 
@@ -41,12 +41,12 @@ class QuestionnaireProgressUpdated implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'driver_id'       => $this->driverId,
-            'question_text'   => $this->questionText,
-            'answer'          => $this->answer,
-            'answered_count'  => $this->answeredCount,
+            'driver_id' => $this->driverId,
+            'question_text' => $this->questionText,
+            'answer' => $this->answer,
+            'answered_count' => $this->answeredCount,
             'total_questions' => $this->totalQuestions,
-            'updated_at'      => $this->updatedAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 }

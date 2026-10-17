@@ -245,9 +245,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="flex items-start gap-3">
-                        <div className="p-2 rounded-lg bg-default-100 text-default-700 mt-0.5">
-                          <DocumentArrowDownIcon className="h-5 w-5" />
-                        </div>
+                        <DocumentArrowDownIcon className="h-5 w-5 text-default-600 mt-1 shrink-0" />
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-sm text-default-900">

@@ -1,5 +1,8 @@
 <?php
 
+use App\Contracts\WhatsAppProvider;
+use App\Enums\DriverStatus;
+use App\Models\Driver;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schedule;
@@ -9,13 +12,13 @@ Artisan::command('app:heartbeat', function () {
     $this->info('Scheduler heartbeat recorded at: '.now()->toIso8601String());
 })->purpose('Record scheduler heartbeat timestamp in cache');
 
-Artisan::command('whatsapp:sync-statuses', function (\App\Contracts\WhatsAppProvider $provider) {
+Artisan::command('whatsapp:sync-statuses', function (WhatsAppProvider $provider) {
     $count = $provider->syncRecentStatuses(50);
 
     // Also sync inbound messages for any drivers actively in questionnaires or recent activity
-    $activeDrivers = \App\Models\Driver::whereIn('status', [
-        \App\Enums\DriverStatus::INVITED,
-        \App\Enums\DriverStatus::QUESTIONNAIRE_IN_PROGRESS,
+    $activeDrivers = Driver::whereIn('status', [
+        DriverStatus::INVITED,
+        DriverStatus::QUESTIONNAIRE_IN_PROGRESS,
     ])->limit(15)->get();
 
     $inboundCount = 0;
