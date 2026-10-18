@@ -328,18 +328,55 @@ class WassengerProvider implements WhatsAppProvider
         // 2. Poll vote update (when driver clicks an option on a WhatsApp Poll)
         elseif ($event === 'message:update' && (($data['type'] ?? '') === 'poll' || isset($data['poll']))) {
             $poll = $data['poll'] ?? [];
-            $votes = $poll['votes'] ?? [];
+            $votedOptions = [];
+            $customSender = null;
 
-            if (! empty($votes) && is_array($votes)) {
-                $latestVote = end($votes);
-                $votedOption = trim((string) ($latestVote['option'] ?? ''));
-                $senderRaw = (string) ($latestVote['sender'] ?? ($data['chat']['contact']['phone'] ?? ($data['to'] ?? '')));
-                $cleanPhone = preg_replace('/[^0-9]/', '', str_replace(['@c.us', '@s.whatsapp.net'], '', $senderRaw));
+            // Format A: votes array of objects [{ option, sender, timestamp }]
+            if (! empty($poll['votes']) && is_array($poll['votes'])) {
+                $latestVote = end($poll['votes']);
+                if (is_array($latestVote)) {
+                    $opt = trim((string) ($latestVote['option'] ?? ''));
+                    if ($opt !== '') {
+                        $votedOptions[] = $opt;
+                        $customSender = $latestVote['sender'] ?? null;
+                    }
+                }
+            }
 
-                if ($cleanPhone !== '' && $votedOption !== '') {
-                    $from = '+'.$cleanPhone;
-                    $voteTs = (int) ($latestVote['timestamp'] ?? $payload['time'] ?? now()->timestamp);
-                    $voteId = 'poll_vote_'.($data['id'] ?? 'poll').'_'.md5($from.$votedOption.$voteTs);
+            // Format B: selected or options tally array
+            if (empty($votedOptions)) {
+                if (! empty($poll['selected']) && is_array($poll['selected'])) {
+                    $votedOptions = $poll['selected'];
+                } elseif (! empty($data['selected']) && is_array($data['selected'])) {
+                    $votedOptions = $data['selected'];
+                } elseif (! empty($poll['options']) && is_array($poll['options'])) {
+                    foreach ($poll['options'] as $opt) {
+                        if ((isset($opt['count']) && $opt['count'] > 0) || ! empty($opt['votes'])) {
+                            $votedOptions[] = trim((string) ($opt['name'] ?? ($opt['title'] ?? '')));
+                        }
+                    }
+                }
+            }
+
+            $isOutbound = ! empty($data['fromMe']) || ($data['flow'] ?? '') === 'outbound';
+            $senderRaw = $customSender
+                ?: ($isOutbound
+                    ? (string) ($data['to'] ?? ($data['toNumber'] ?? ($data['chat']['phone'] ?? '')))
+                    : (string) ($data['from'] ?? ($data['fromNumber'] ?? ($data['chat']['phone'] ?? ''))));
+
+            $cleanPhone = preg_replace('/[^0-9]/', '', str_replace(['@c.us', '@s.whatsapp.net', '@g.us'], '', (string) $senderRaw));
+
+            if ($cleanPhone !== '' && ! empty($votedOptions)) {
+                $from = '+'.$cleanPhone;
+                $voteTs = (int) ($data['timestamp'] ?? $payload['time'] ?? now()->timestamp);
+
+                foreach ($votedOptions as $votedOption) {
+                    $votedOption = trim((string) $votedOption);
+                    if ($votedOption === '') {
+                        continue;
+                    }
+
+                    $voteId = 'poll_vote_'.($data['id'] ?? 'poll').'_'.md5($from.$votedOption);
 
                     $events[] = new InboundMessage(
                         from: $from,
@@ -435,13 +472,13 @@ class WassengerProvider implements WhatsAppProvider
     public function syncChatInbound(string $phone): int
     {
         $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
-        if ($cleanPhone === '') {
+        if ($cleanPhone === '' || empty($this->deviceId)) {
             return 0;
         }
 
         try {
-            $response = $this->http->get('messages', [
-                'phone' => '+'.$cleanPhone,
+            $response = $this->http->get("chat/{$this->deviceId}/messages", [
+                'chat' => $cleanPhone.'@c.us',
                 'limit' => 20,
             ]);
 
@@ -454,36 +491,7 @@ class WassengerProvider implements WhatsAppProvider
                 return 0;
             }
 
-            $syncedCount = 0;
-            foreach ($messages as $msg) {
-                if (! empty($msg['fromMe'])) {
-                    continue;
-                }
-
-                $id = (string) ($msg['id'] ?? '');
-                if ($id === '' || WhatsAppMessage::where('provider_message_id', $id)->exists()) {
-                    continue;
-                }
-
-                $text = (string) ($msg['message'] ?? ($msg['text'] ?? ''));
-                $timestamp = (int) ($msg['timestamp'] ?? now()->timestamp);
-
-                $driver = Driver::where('phone', '+'.$cleanPhone)->first();
-
-                WhatsAppMessage::create([
-                    'driver_id' => $driver?->id,
-                    'direction' => WhatsAppMessageDirection::INBOUND,
-                    'type' => WhatsAppMessageType::TEXT,
-                    'body' => $text,
-                    'status' => WhatsAppMessageStatus::DELIVERED,
-                    'provider_message_id' => $id,
-                    'sent_at' => Carbon::createFromTimestamp($timestamp),
-                ]);
-
-                $syncedCount++;
-            }
-
-            return $syncedCount;
+            return $this->processMessagesStream($messages);
         } catch (\Throwable $e) {
             Log::warning('[WassengerProvider] syncChatInbound error: '.$e->getMessage());
             return 0;
@@ -491,12 +499,16 @@ class WassengerProvider implements WhatsAppProvider
     }
 
     /**
-     * Efficiently sync all recent inbound messages in ONE single API call across all chats.
+     * Efficiently sync all recent inbound messages and poll votes across all chats.
      */
     public function syncAllRecentInbound(int $limit = 30): int
     {
+        if (empty($this->deviceId)) {
+            return 0;
+        }
+
         try {
-            $response = $this->http->get('messages', [
+            $response = $this->http->get("chat/{$this->deviceId}/messages", [
                 'limit' => $limit,
             ]);
 
@@ -509,46 +521,143 @@ class WassengerProvider implements WhatsAppProvider
                 return 0;
             }
 
-            $syncedCount = 0;
-            foreach ($messages as $msg) {
-                if (! empty($msg['fromMe']) || ($msg['deliveryStatus'] ?? '') === 'sent') {
-                    continue;
-                }
-
-                $id = (string) ($msg['id'] ?? '');
-                if ($id === '' || WhatsAppMessage::where('provider_message_id', $id)->exists()) {
-                    continue;
-                }
-
-                $phone = (string) ($msg['phone'] ?? '');
-                $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
-                if ($cleanPhone === '') {
-                    continue;
-                }
-
-                $text = (string) ($msg['message'] ?? ($msg['body'] ?? ($msg['text'] ?? '')));
-                $timestamp = isset($msg['timestamp']) ? (int) $msg['timestamp'] : (isset($msg['createdAt']) ? strtotime($msg['createdAt']) : now()->timestamp);
-
-                $driver = Driver::where('phone', '+'.$cleanPhone)->first();
-
-                WhatsAppMessage::create([
-                    'driver_id' => $driver?->id,
-                    'direction' => WhatsAppMessageDirection::INBOUND,
-                    'type' => WhatsAppMessageType::TEXT,
-                    'body' => $text,
-                    'status' => WhatsAppMessageStatus::DELIVERED,
-                    'provider_message_id' => $id,
-                    'sent_at' => Carbon::createFromTimestamp($timestamp),
-                ]);
-
-                $syncedCount++;
-            }
-
-            return $syncedCount;
+            return $this->processMessagesStream($messages);
         } catch (\Throwable $e) {
             Log::warning('[WassengerProvider] syncAllRecentInbound error: '.$e->getMessage());
             return 0;
         }
+    }
+
+    /**
+     * Process raw messages retrieved from Wassenger device chat API.
+     * Extracts inbound texts, media, and poll interactions, passing them to InboundMessageRouter.
+     */
+    protected function processMessagesStream(array $messages): int
+    {
+        $router = app(\App\Services\InboundMessageRouter::class);
+        $processed = 0;
+
+        foreach ($messages as $msg) {
+            $chat = (string) ($msg['chat'] ?? ($msg['chatId'] ?? ''));
+            // Skip group chats
+            if (str_ends_with($chat, '@g.us')) {
+                continue;
+            }
+
+            $flow = (string) ($msg['flow'] ?? '');
+            $type = (string) ($msg['type'] ?? '');
+            $msgId = (string) ($msg['id'] ?? '');
+
+            // 1. Poll vote detection on poll messages
+            if ($type === 'poll' || isset($msg['poll'])) {
+                $poll = $msg['poll'] ?? [];
+                $votedOptions = [];
+
+                if (! empty($poll['selected']) && is_array($poll['selected'])) {
+                    $votedOptions = $poll['selected'];
+                } elseif (! empty($poll['options']) && is_array($poll['options'])) {
+                    foreach ($poll['options'] as $opt) {
+                        if ((isset($opt['count']) && $opt['count'] > 0) || ! empty($opt['votes'])) {
+                            $votedOptions[] = trim((string) ($opt['name'] ?? ($opt['title'] ?? '')));
+                        }
+                    }
+                }
+
+                if (! empty($votedOptions)) {
+                    $voterRaw = ($flow === 'outbound' || ! empty($msg['fromMe']))
+                        ? (string) ($msg['toNumber'] ?? ($msg['to'] ?? $chat))
+                        : (string) ($msg['fromNumber'] ?? ($msg['from'] ?? $chat));
+
+                    $cleanPhone = preg_replace('/[^0-9]/', '', str_replace(['@c.us', '@s.whatsapp.net'], '', $voterRaw));
+
+                    if ($cleanPhone !== '') {
+                        foreach ($votedOptions as $votedOption) {
+                            $votedOption = trim((string) $votedOption);
+                            if ($votedOption === '') {
+                                continue;
+                            }
+
+                            $voteId = 'poll_vote_'.$msgId.'_'.md5('+'.$cleanPhone.$votedOption);
+
+                            if (WhatsAppMessage::where('provider_message_id', $voteId)->exists()) {
+                                continue;
+                            }
+
+                            $inbound = new InboundMessage(
+                                from: '+'.$cleanPhone,
+                                type: 'button',
+                                text: $votedOption,
+                                payloadId: $votedOption,
+                                providerMessageId: $voteId,
+                                timestamp: (int) ($msg['timestamp'] ?? now()->timestamp),
+                            );
+
+                            try {
+                                $router->handle($inbound);
+                                $processed++;
+                            } catch (\Throwable $e) {
+                                Log::error('[WassengerProvider] Error routing poll vote: '.$e->getMessage());
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 2. Regular Inbound message from driver
+            if ($flow === 'inbound' || empty($msg['fromMe'])) {
+                if ($msgId === '' || WhatsAppMessage::where('provider_message_id', $msgId)->exists()) {
+                    continue;
+                }
+
+                $senderRaw = (string) ($msg['fromNumber'] ?? ($msg['from'] ?? $chat));
+                $cleanPhone = preg_replace('/[^0-9]/', '', str_replace(['@c.us', '@s.whatsapp.net'], '', $senderRaw));
+
+                if ($cleanPhone === '') {
+                    continue;
+                }
+
+                $text = (string) ($msg['body'] ?? ($msg['text'] ?? ($msg['message'] ?? '')));
+                if ($text === '' && $type !== 'image' && $type !== 'audio' && $type !== 'document') {
+                    continue;
+                }
+
+                $inbound = new InboundMessage(
+                    from: '+'.$cleanPhone,
+                    type: in_array($type, ['image', 'photo'], true) ? 'image' : 'text',
+                    text: $text,
+                    payloadId: $text,
+                    providerMessageId: $msgId,
+                    timestamp: (int) ($msg['timestamp'] ?? now()->timestamp),
+                    mediaUrl: $msg['media']['url'] ?? null,
+                );
+
+                try {
+                    $router->handle($inbound);
+                    $processed++;
+                } catch (\Throwable $e) {
+                    Log::error('[WassengerProvider] Error routing inbound message: '.$e->getMessage());
+                }
+            }
+
+            // 3. Outbound status updates (delivered, read, failed)
+            if ($flow === 'outbound' || ! empty($msg['fromMe'])) {
+                $ack = isset($msg['ack']) ? (int) $msg['ack'] : null;
+                $status = match ($ack) {
+                    3 => WhatsAppMessageStatus::READ,
+                    2 => WhatsAppMessageStatus::DELIVERED,
+                    1 => WhatsAppMessageStatus::SENT,
+                    default => null,
+                };
+
+                if ($status && $msgId !== '') {
+                    WhatsAppMessage::where('provider_message_id', $msgId)
+                        ->where('status', '!=', WhatsAppMessageStatus::READ)
+                        ->update(['status' => $status]);
+                }
+            }
+        }
+
+        return $processed;
     }
 
     /**

@@ -204,3 +204,43 @@ test('WassengerProvider resolves correctly from Laravel container when configure
 
     expect($resolved)->toBeInstanceOf(WassengerProvider::class);
 });
+
+test('WassengerProvider syncAllRecentInbound processes poll votes from chat stream and advances driver status', function () {
+    config([
+        'whatsapp.wassenger.token' => 'dummy_token',
+        'whatsapp.wassenger.device_id' => 'dev_test_123',
+    ]);
+
+    $driver = \App\Models\Driver::factory()->create([
+        'phone' => '+201278842350',
+        'status' => \App\Enums\DriverStatus::INVITED,
+    ]);
+
+    Http::fake([
+        'https://api.wassenger.com/v1/chat/dev_test_123/messages*' => Http::response([
+            [
+                'id' => 'poll_test_msg_999',
+                'type' => 'poll',
+                'flow' => 'outbound',
+                'to' => '201278842350@c.us',
+                'toNumber' => '+201278842350',
+                'poll' => [
+                    'options' => [
+                        ['id' => 0, 'name' => 'نعم، مهتم', 'count' => 1, 'votes' => ['201278842350@c.us']],
+                        ['id' => 1, 'name' => 'لا، شكرًا', 'count' => 0, 'votes' => []],
+                    ],
+                ],
+                'timestamp' => time(),
+            ],
+            'https://api.wassenger.com/v1/messages' => Http::response(['id' => 'ws_out_auto'], 201),
+        ], 200),
+        'https://api.wassenger.com/v1/messages' => Http::response(['id' => 'ws_out_auto'], 201),
+    ]);
+
+    $provider = new WassengerProvider;
+    $processed = $provider->syncAllRecentInbound(10);
+
+    expect($processed)->toBe(1);
+    $driver->refresh();
+    expect($driver->status)->toBe(\App\Enums\DriverStatus::QUESTIONNAIRE_IN_PROGRESS);
+});
