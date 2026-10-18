@@ -71,20 +71,22 @@ class WhatsAppController extends Controller
     /**
      * Get chat/message log for a specific driver.
      */
-    public function driverMessages(Driver $driver, WhatsAppProvider $provider): JsonResponse
+    public function driverMessages(Request $request, Driver $driver, WhatsAppProvider $provider): JsonResponse
     {
-        // Actively check for any incoming messages from driver that might have missed the webhook
-        $provider->syncChatInbound($driver->phone);
+        // Only run synchronous remote sync if explicitly requested via ?sync=1 to keep page load instant (< 20ms)
+        if ($request->boolean('sync')) {
+            $provider->syncChatInbound($driver->phone);
 
-        // If there are recent outgoing messages awaiting final delivery status, sync them
-        $hasPending = WhatsAppMessage::where('driver_id', $driver->id)
-            ->where('direction', WhatsAppMessageDirection::OUT)
-            ->whereIn('status', [WhatsAppMessageStatus::QUEUED, WhatsAppMessageStatus::SENT, WhatsAppMessageStatus::DELIVERED])
-            ->where('created_at', '>=', now()->subHours(2))
-            ->exists();
+            // If there are recent outgoing messages awaiting final delivery status, sync them
+            $hasPending = WhatsAppMessage::where('driver_id', $driver->id)
+                ->where('direction', WhatsAppMessageDirection::OUT)
+                ->whereIn('status', [WhatsAppMessageStatus::QUEUED, WhatsAppMessageStatus::SENT, WhatsAppMessageStatus::DELIVERED])
+                ->where('created_at', '>=', now()->subHours(2))
+                ->exists();
 
-        if ($hasPending) {
-            $provider->syncRecentStatuses(25);
+            if ($hasPending) {
+                $provider->syncRecentStatuses(25);
+            }
         }
 
         $messages = WhatsAppMessage::with('driver')
@@ -334,25 +336,27 @@ class WhatsAppController extends Controller
     {
         $afterId = (int) $request->query('after_id', 0);
 
-        // Actively check for incoming messages from this driver (throttled every 2 seconds)
-        $inboundCacheKey = "whatsapp_sync_inbound_{$driver->id}";
-        if (! cache()->has($inboundCacheKey)) {
-            cache()->put($inboundCacheKey, true, now()->addSeconds(2));
-            $provider->syncChatInbound($driver->phone);
-        }
+        // Only sync remote Wassenger messages if explicitly requested via ?sync=1
+        if ($request->boolean('sync')) {
+            $inboundCacheKey = "whatsapp_sync_inbound_{$driver->id}";
+            if (! cache()->has($inboundCacheKey)) {
+                cache()->put($inboundCacheKey, true, now()->addSeconds(10));
+                $provider->syncChatInbound($driver->phone);
+            }
 
-        // Check if there are active outbound messages awaiting final delivery status
-        $hasPending = WhatsAppMessage::where('driver_id', $driver->id)
-            ->where('direction', WhatsAppMessageDirection::OUT)
-            ->whereIn('status', [WhatsAppMessageStatus::QUEUED, WhatsAppMessageStatus::SENT, WhatsAppMessageStatus::DELIVERED])
-            ->where('created_at', '>=', now()->subHours(2))
-            ->exists();
+            // Check if there are active outbound messages awaiting final delivery status
+            $hasPending = WhatsAppMessage::where('driver_id', $driver->id)
+                ->where('direction', WhatsAppMessageDirection::OUT)
+                ->whereIn('status', [WhatsAppMessageStatus::QUEUED, WhatsAppMessageStatus::SENT, WhatsAppMessageStatus::DELIVERED])
+                ->where('created_at', '>=', now()->subHours(2))
+                ->exists();
 
-        if ($hasPending) {
-            $cacheKey = "whatsapp_sync_pending_{$driver->id}";
-            if (! cache()->has($cacheKey)) {
-                cache()->put($cacheKey, true, now()->addSeconds(5));
-                $provider->syncRecentStatuses(25);
+            if ($hasPending) {
+                $cacheKey = "whatsapp_sync_pending_{$driver->id}";
+                if (! cache()->has($cacheKey)) {
+                    cache()->put($cacheKey, true, now()->addSeconds(15));
+                    $provider->syncRecentStatuses(25);
+                }
             }
         }
 

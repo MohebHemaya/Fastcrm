@@ -1,4 +1,5 @@
 import api from '@/lib/api';
+import appCache from '@/lib/cache';
 import type {
   Question,
   CreateQuestionPayload,
@@ -7,11 +8,21 @@ import type {
 
 export const questionService = {
   /**
-   * Get list of all questions.
+   * Get list of all questions (with SWR caching for instant page loads).
    */
-  async getQuestions(): Promise<Question[]> {
-    const res = await api.get<{ data: Question[] }>('/questions');
-    return res.data.data;
+  async getQuestions(forceRefresh = false): Promise<Question[]> {
+    if (forceRefresh) {
+      appCache.invalidate('questions:list');
+    }
+    const { data } = await appCache.swr(
+      'questions:list',
+      async () => {
+        const res = await api.get<{ data: Question[] }>('/questions');
+        return res.data.data;
+      },
+      { ttlMs: 30_000 }
+    );
+    return data;
   },
 
   /**
@@ -27,6 +38,7 @@ export const questionService = {
    */
   async createQuestion(payload: CreateQuestionPayload): Promise<Question> {
     const res = await api.post<{ data: Question }>('/questions', payload);
+    appCache.invalidate('questions:');
     return res.data.data;
   },
 
@@ -35,6 +47,7 @@ export const questionService = {
    */
   async updateQuestion(id: number, payload: UpdateQuestionPayload): Promise<Question> {
     const res = await api.put<{ data: Question }>(`/questions/${id}`, payload);
+    appCache.invalidate('questions:');
     return res.data.data;
   },
 
@@ -45,6 +58,7 @@ export const questionService = {
     const res = await api.patch<{ data: { id: number; is_active: boolean } }>(
       `/questions/${id}/toggle-active`
     );
+    appCache.invalidate('questions:');
     return res.data.data;
   },
 
@@ -53,6 +67,7 @@ export const questionService = {
    */
   async reorderQuestions(orders: Array<{ id: number; sort_order: number }>): Promise<void> {
     await api.post('/questions/reorder', { orders });
+    appCache.invalidate('questions:');
   },
 
   /**
@@ -60,6 +75,7 @@ export const questionService = {
    */
   async deleteQuestion(id: number): Promise<void> {
     await api.delete(`/questions/${id}`);
+    appCache.invalidate('questions:');
   },
 
   /**
@@ -73,3 +89,5 @@ export const questionService = {
     return res.data.data;
   },
 };
+
+export default questionService;

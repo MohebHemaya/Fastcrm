@@ -38,14 +38,18 @@ import { questionService } from '@/services/questionService';
 import { settingsService } from '@/services/settingsService';
 import type { Question } from '@/types/question';
 import type { SystemSettings } from '@/types/settings';
+import appCache from '@/lib/cache';
 import QuestionModal from './QuestionModal';
 
 export const SettingsPage: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<string>('questions');
 
-  // Questions State
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
+  // Questions State: hydrate from memory cache for instant 0ms render
+  const cachedQuestions = appCache.getStale<Question[]>('questions:list');
+  const [questions, setQuestions] = useState<Question[]>(() =>
+    cachedQuestions ? cachedQuestions.filter((q) => !q.is_system) : []
+  );
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState(!cachedQuestions);
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
   const [deletingQuestion, setDeletingQuestion] = useState<Question | null>(null);
@@ -54,15 +58,18 @@ export const SettingsPage: React.FC = () => {
   const [isSendingTest, setIsSendingTest] = useState<boolean>(false);
   const [liveAnswers, setLiveAnswers] = useState<QuestionnaireProgressPayload[]>([]);
 
-  // Settings State
-  const [settings, setSettings] = useState<SystemSettings>({
-    questionnaire_reminder_hours: 24,
-    questionnaire_timeout_days: 3,
-    send_rate_per_minute: 30,
-    invite_batch_size: 50,
-    invite_no_response_days: 3,
-  });
-  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
+  // Settings State: hydrate from memory cache
+  const cachedSettings = appCache.getStale<{ settings: SystemSettings }>('system:settings');
+  const [settings, setSettings] = useState<SystemSettings>(() =>
+    cachedSettings ? cachedSettings.settings : {
+      questionnaire_reminder_hours: 24,
+      questionnaire_timeout_days: 3,
+      send_rate_per_minute: 30,
+      invite_batch_size: 50,
+      invite_no_response_days: 3,
+    }
+  );
+  const [isLoadingSettings, setIsLoadingSettings] = useState(!cachedSettings);
   const [isSavingSettings, setIsSavingSettings] = useState(false);
 
   const addToast = useUiStore((state) => state.addToast);
@@ -87,7 +94,9 @@ export const SettingsPage: React.FC = () => {
   });
 
   const fetchQuestions = async () => {
-    setIsLoadingQuestions(true);
+    if (!appCache.getStale('questions:list')) {
+      setIsLoadingQuestions(true);
+    }
     try {
       const data = await questionService.getQuestions();
       setQuestions(data.filter((q) => !q.is_system));
@@ -99,7 +108,9 @@ export const SettingsPage: React.FC = () => {
   };
 
   const fetchSettings = async () => {
-    setIsLoadingSettings(true);
+    if (!appCache.getStale('system:settings')) {
+      setIsLoadingSettings(true);
+    }
     try {
       const data = await settingsService.getSettings();
       setSettings(data.settings);

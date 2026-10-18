@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
+import PageSkeleton from '@/components/ui/PageSkeleton';
 import {
   Dropdown,
   DropdownTrigger,
@@ -645,7 +646,9 @@ export const AppShell: React.FC = () => {
 
         {/* Page body */}
         <main className="flex-1 overflow-y-auto p-3.5 sm:p-6 lg:p-8 safe-bottom">
-          <Outlet />
+          <Suspense fallback={<PageSkeleton />}>
+            <Outlet />
+          </Suspense>
         </main>
       </div>
 

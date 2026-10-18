@@ -1,4 +1,5 @@
 import { api } from '@/lib/api';
+import appCache from '@/lib/cache';
 
 export interface SidebarBadges {
   orders_open: number;
@@ -18,11 +19,21 @@ export interface SidebarBadgesResponse {
 export const sidebarService = {
   /**
    * Fetch live operational badge counts for sidebar navigation.
-   * Cached <= 30 seconds on the backend.
+   * Utilizes client-side SWR caching (15s) to eliminate duplicate requests.
    */
-  async getBadges(): Promise<SidebarBadges> {
-    const res = await api.get<SidebarBadgesResponse>('/sidebar-badges');
-    return res.data.data;
+  async getBadges(forceRefresh = false): Promise<SidebarBadges> {
+    if (forceRefresh) {
+      appCache.invalidate('sidebar:badges');
+    }
+    const { data } = await appCache.swr(
+      'sidebar:badges',
+      async () => {
+        const res = await api.get<SidebarBadgesResponse>('/sidebar-badges');
+        return res.data.data;
+      },
+      { ttlMs: 15_000 }
+    );
+    return data;
   },
 };
 
