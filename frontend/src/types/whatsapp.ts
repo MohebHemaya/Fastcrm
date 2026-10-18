@@ -45,8 +45,9 @@ export interface WhatsAppMessagesMeta {
 }
 
 export interface WhatsAppProviderStatus {
-  provider: 'ultramsg' | 'cloud' | string;
+  provider: 'wassenger' | 'cloud' | string;
   is_fake?: boolean;
+
   send_rate_per_minute: number;
   invite_batch_size: number;
   free_form_window: number;

@@ -83,15 +83,16 @@ describe('whatsappService', () => {
   it('getProviderStatus calls GET /whatsapp/provider-status', async () => {
     vi.mocked(api.get).mockResolvedValueOnce({
       data: {
-        data: { provider: 'ultramsg', is_fake: false, send_rate_per_minute: 30, invite_batch_size: 50, free_form_window: 24, no_response_days: 3 },
+        data: { provider: 'wassenger', is_fake: false, send_rate_per_minute: 30, invite_batch_size: 50, free_form_window: 24, no_response_days: 3 },
       },
     } as any);
 
     const res = await whatsappService.getProviderStatus();
 
     expect(api.get).toHaveBeenCalledWith('/whatsapp/provider-status');
-    expect(res.data.provider).toBe('ultramsg');
+    expect(res.data.provider).toBe('wassenger');
   });
+
 
   it('sendDirectMessage calls POST /drivers/:id/send-message', async () => {
     vi.mocked(api.post).mockResolvedValueOnce({

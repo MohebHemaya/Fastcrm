@@ -297,12 +297,13 @@ export const WhatsAppMessagesPage: React.FC = () => {
               startContent={<SignalIcon className="w-3.5 h-3.5 text-success-500" />}
               className="text-xs font-semibold px-3 py-1.5"
             >
-              {providerStatus.provider === 'ultramsg'
-                ? ar.whatsapp.ultramsgProvider
+              {providerStatus.provider === 'wassenger'
+                ? ar.whatsapp.wassengerProvider
                 : providerStatus.provider === 'cloud'
                 ? ar.whatsapp.cloudProvider
                 : 'مزود واتساب'}
             </Chip>
+
           )}
 
           {/* Anti-Ban Shield Pill */}

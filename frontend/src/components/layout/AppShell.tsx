@@ -496,14 +496,14 @@ export const AppShell: React.FC = () => {
                 color="success"
                 className="text-[10px] font-bold h-5 px-1.5"
               >
-                {providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'ألترا مسج (UltraMsg)'}
+                {providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'فاسينجر (Wassenger)'}
               </Chip>
             </div>
           ) : (
             <div className="flex justify-center pt-1">
               <Tooltip
                 content={`مزود الواتساب: ${
-                  providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'ألترا مسج (UltraMsg)'
+                  providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'فاسينجر (Wassenger)'
                 }`}
                 placement="left"
                 closeDelay={0}
@@ -568,7 +568,7 @@ export const AppShell: React.FC = () => {
                     color="success"
                     className="text-[10px] font-bold h-5"
                   >
-                    {providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'ألترا مسج (UltraMsg)'}
+                    {providerStatus?.provider === 'cloud' ? 'سحابي (Cloud)' : 'فاسينجر (Wassenger)'}
                   </Chip>
                 </div>
               </DrawerFooter>

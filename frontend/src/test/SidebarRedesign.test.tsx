@@ -67,8 +67,9 @@ describe('Sidebar Redesign & Badges', () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/ألترا مسج \(UltraMsg\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/فاسينجر \(Wassenger\)/i)).toBeInTheDocument();
     });
+
   });
 
   it('toggles collapsible sidebar mode and adjusts width', () => {

@@ -6,9 +6,9 @@ return [
     |--------------------------------------------------------------------------
     | WhatsApp Provider
     |--------------------------------------------------------------------------
-    | Supported: "fake", "cloud", "ultramsg"
+    | Supported: "fake", "cloud", "wassenger"
     */
-    'provider' => env('WHATSAPP_PROVIDER', 'ultramsg'),
+    'provider' => env('WHATSAPP_PROVIDER', 'wassenger'),
 
     /*
     |--------------------------------------------------------------------------
@@ -29,16 +29,18 @@ return [
         'version' => env('WHATSAPP_GRAPH_VERSION', 'v25.0'),
     ],
 
+
     /*
     |--------------------------------------------------------------------------
-    | UltraMsg API credentials (https://ultramsg.com)
+    | Wassenger API credentials (https://wassenger.com)
     |--------------------------------------------------------------------------
     */
-    'ultramsg' => [
-        'base_url' => env('ULTRAMSG_BASE_URL', 'https://api.ultramsg.com'),
-        'token' => env('ULTRAMSG_TOKEN', ''),
-        'instance_id' => env('ULTRAMSG_INSTANCE_ID', ''),
+    'wassenger' => [
+        'base_url' => env('WASSENGER_BASE_URL', 'https://api.wassenger.com/v1'),
+        'token' => env('WASSENGER_TOKEN', ''),
+        'device_id' => env('WASSENGER_DEVICE_ID', ''),
     ],
+
 
     /*
     |--------------------------------------------------------------------------

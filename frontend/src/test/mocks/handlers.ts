@@ -36,7 +36,7 @@ export const handlers = [
   http.get('/api/v1/whatsapp/provider-status', () => {
     return HttpResponse.json({
       data: {
-        provider: 'ultramsg',
+        provider: 'wassenger',
         send_rate_per_minute: 30,
         invite_batch_size: 50,
         free_form_window: 24,
@@ -966,7 +966,7 @@ export const handlers = [
           age_minutes: 3.5,
         },
         whatsapp: {
-          provider: 'ultramsg',
+          provider: 'wassenger',
           graph_version: 'v25.0',
           failed_messages_24h: 0,
         },

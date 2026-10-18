@@ -12,7 +12,7 @@ use App\Services\DashboardService;
 use App\Services\WhatsAppTemplateService;
 use App\WhatsApp\CloudApiProvider;
 use App\WhatsApp\FakeWhatsAppProvider;
-use App\WhatsApp\UltraMsgProvider;
+use App\WhatsApp\WassengerProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -31,10 +31,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(WhatsAppProvider::class, function () {
             return match (config('whatsapp.provider', 'fake')) {
                 'cloud' => new CloudApiProvider,
-                'ultramsg' => new UltraMsgProvider,
+                'wassenger' => new WassengerProvider,
                 default => new FakeWhatsAppProvider,
             };
         });
+
+
 
         $this->app->singleton(WhatsAppTemplateService::class);
     }

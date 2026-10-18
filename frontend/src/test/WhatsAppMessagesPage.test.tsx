@@ -53,7 +53,7 @@ describe('WhatsAppMessagesPage', () => {
 
     vi.mocked(whatsappService.getProviderStatus).mockResolvedValue({
       data: {
-        provider: 'ultramsg',
+        provider: 'wassenger',
         is_fake: false,
         send_rate_per_minute: 30,
         invite_batch_size: 50,
@@ -87,8 +87,9 @@ describe('WhatsAppMessagesPage', () => {
     expect(screen.getByText(ar.whatsapp.title)).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByText(ar.whatsapp.ultramsgProvider)).toBeInTheDocument();
+      expect(screen.getByText(ar.whatsapp.wassengerProvider)).toBeInTheDocument();
     });
+
 
     // Switch to logs tab to view message records table
     const logsTab = screen.getByText(/سجل وتفاصيل الرسائل/);

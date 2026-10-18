@@ -352,8 +352,9 @@ export const ar = {
     retry: 'إعادة المحاولة',
     retrySuccess: 'تمت إعادة جدولة الرسالة للإرسال بنجاح.',
     providerStatus: 'مزود الخدمة',
-    ultramsgProvider: 'مزود UltraMsg (متصل)',
+    wassengerProvider: 'مزود Wassenger (متصل)',
     cloudProvider: 'مزود Meta الرسمي (Cloud API)',
+
     providerMode: 'نمط المزود',
     optedOutNotice: 'هذا السائق ألغى الاشتراك؛ محظور إرسال رسائل جديدة له.',
   },
