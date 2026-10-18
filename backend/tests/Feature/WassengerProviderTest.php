@@ -35,12 +35,11 @@ test('WassengerProvider sends direct text message via /messages API', function (
     expect($msgId)->toBe('msg_w101');
 });
 
-test('WassengerProvider sends native WhatsApp Poll with options for buttons when use_polls is true', function () {
+test('WassengerProvider sends native WhatsApp Poll with options for buttons', function () {
     config([
         'whatsapp.wassenger.token' => 'test_wassenger_token',
         'whatsapp.wassenger.device_id' => 'device_xyz',
         'whatsapp.wassenger.base_url' => 'https://api.wassenger.com/v1',
-        'whatsapp.wassenger.use_polls' => true,
     ]);
 
     Http::fake([
@@ -64,38 +63,6 @@ test('WassengerProvider sends native WhatsApp Poll with options for buttons when
     ]);
 
     expect($msgId)->toBe('poll_msg_202');
-});
-
-test('WassengerProvider sends rich formatted text with numbered options for buttons by default', function () {
-    config([
-        'whatsapp.wassenger.token' => 'test_wassenger_token',
-        'whatsapp.wassenger.device_id' => 'device_xyz',
-        'whatsapp.wassenger.base_url' => 'https://api.wassenger.com/v1',
-        'whatsapp.wassenger.use_polls' => false,
-    ]);
-
-    Http::fake([
-        'https://api.wassenger.com/v1/messages' => function (Illuminate\Http\Client\Request $request) {
-            expect($request['phone'])->toBe('+201278842350');
-            expect($request['message'])->toContain('ما هو نوع سيارتك؟');
-            expect($request['message'])->toContain('1️⃣ بيك أب');
-            expect($request['message'])->toContain('2️⃣ جامبو');
-            expect($request['message'])->toContain('يمكنك الرد برقم أو اسم الخيار');
-
-            return Http::response([
-                'id' => 'text_buttons_msg_203',
-                'status' => 'queued',
-            ], 201);
-        },
-    ]);
-
-    $provider = new WassengerProvider;
-    $msgId = $provider->sendButtons('01278842350', 'ما هو نوع سيارتك؟', [
-        ['id' => 'pickup', 'title' => 'بيك أب'],
-        ['id' => 'jumbo', 'title' => 'جامبو'],
-    ]);
-
-    expect($msgId)->toBe('text_buttons_msg_203');
 });
 
 test('WassengerProvider sends image with caption', function () {

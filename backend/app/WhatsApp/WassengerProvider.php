@@ -141,51 +141,39 @@ class WassengerProvider implements WhatsAppProvider
             }
         }
 
-        $usePolls = (bool) config('whatsapp.wassenger.use_polls', false);
-
         // WhatsApp polls require at least 2 options and maximum 12 options
-        if ($usePolls && count($options) >= 2 && count($options) <= 12) {
-            $payload = [
-                'phone' => $formattedPhone,
-                'poll' => [
-                    'name' => $body,
-                    'options' => $options,
-                    'multiple' => false,
-                ],
-            ];
-
-            if (! empty($this->deviceId)) {
-                $payload['device'] = $this->deviceId;
+        if (count($options) < 2) {
+            $formatted = $body;
+            if (! empty($options)) {
+                $formatted .= "\n\n🔘 *الخيارات:*\n" . implode("\n", array_map(fn ($opt, $idx) => ($idx + 1).'️⃣ '.$opt, $options, array_keys($options)));
             }
-
-            $response = $this->http->post('messages', $payload);
-
-            $this->assertSuccess($response, 'sendButtons (Poll)');
-
-            $responseData = $response->json();
-
-            return (string) ($responseData['id'] ?? $responseData['wid'] ?? ('ws_poll_'.uniqid('', true)));
+            return $this->sendText($to, $formatted);
         }
 
-        // Reliable rich text options format (guaranteed to work across 1-on-1 chats, polling, and all phones)
-        $formatted = $body;
-        if (! empty($options)) {
-            $numEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
-            $optionsList = [];
-            foreach ($options as $idx => $opt) {
-                $prefix = $numEmojis[$idx] ?? (($idx + 1).'-');
-                $optionsList[] = "{$prefix} {$opt}";
-            }
+        $payload = [
+            'phone' => $formattedPhone,
+            'poll' => [
+                'name' => $body,
+                'options' => $options,
+                'multiple' => false,
+            ],
+        ];
 
-            $formatted .= "\n\n🔘 *الخيارات:*\n".implode("\n", $optionsList);
-            $formatted .= "\n\n_(يمكنك الرد برقم أو اسم الخيار)_";
+        if (! empty($this->deviceId)) {
+            $payload['device'] = $this->deviceId;
         }
 
-        return $this->sendText($to, $formatted);
+        $response = $this->http->post('messages', $payload);
+
+        $this->assertSuccess($response, 'sendButtons (Poll)');
+
+        $responseData = $response->json();
+
+        return (string) ($responseData['id'] ?? $responseData['wid'] ?? ('ws_poll_'.uniqid('', true)));
     }
 
     /**
-     * Send a list message with up to 10 rows (formatted with numbered options).
+     * Send a list message with up to 10 rows (sent as native WhatsApp Poll).
      */
     public function sendList(string $to, string $body, string $buttonLabel, array $rows): string
     {
@@ -197,9 +185,21 @@ class WassengerProvider implements WhatsAppProvider
             }
         }
 
-        $buttons = array_map(fn ($title) => ['title' => $title], $options);
+        if (count($options) >= 2 && count($options) <= 12) {
+            $buttons = array_map(fn ($title) => ['title' => $title], $options);
+            return $this->sendButtons($to, $body, $buttons);
+        }
 
-        return $this->sendButtons($to, $body, $buttons);
+        $formatted = $body."\n\n*{$buttonLabel}*:";
+        foreach ($rows as $idx => $row) {
+            $num = $idx + 1;
+            $formatted .= "\n{$num}. ".($row['title'] ?? '');
+            if (! empty($row['description'])) {
+                $formatted .= ' — '.$row['description'];
+            }
+        }
+
+        return $this->sendText($to, $formatted);
     }
 
     /**
@@ -341,17 +341,27 @@ class WassengerProvider implements WhatsAppProvider
                 }
             }
 
-            // Format B: selected or options tally array
+            // Format B: selected, pollResult, options tally, or vote options
             if (empty($votedOptions)) {
                 if (! empty($poll['selected']) && is_array($poll['selected'])) {
                     $votedOptions = $poll['selected'];
                 } elseif (! empty($data['selected']) && is_array($data['selected'])) {
                     $votedOptions = $data['selected'];
+                } elseif (! empty($data['pollResult']) && is_array($data['pollResult'])) {
+                    foreach ($data['pollResult'] as $pr) {
+                        if (! empty($pr['voters']) || (isset($pr['count']) && $pr['count'] > 0)) {
+                            $votedOptions[] = trim((string) ($pr['name'] ?? ''));
+                        }
+                    }
                 } elseif (! empty($poll['options']) && is_array($poll['options'])) {
                     foreach ($poll['options'] as $opt) {
-                        if ((isset($opt['count']) && $opt['count'] > 0) || ! empty($opt['votes'])) {
+                        if ((isset($opt['count']) && $opt['count'] > 0) || ! empty($opt['votes']) || ! empty($opt['voters'])) {
                             $votedOptions[] = trim((string) ($opt['name'] ?? ($opt['title'] ?? '')));
                         }
+                    }
+                } elseif (! empty($data['vote']['options']) && is_array($data['vote']['options'])) {
+                    foreach ($data['vote']['options'] as $opt) {
+                        $votedOptions[] = trim((string) ($opt['value'] ?? ($opt['name'] ?? '')));
                     }
                 }
             }
@@ -553,11 +563,23 @@ class WassengerProvider implements WhatsAppProvider
 
                 if (! empty($poll['selected']) && is_array($poll['selected'])) {
                     $votedOptions = $poll['selected'];
+                } elseif (! empty($msg['selected']) && is_array($msg['selected'])) {
+                    $votedOptions = $msg['selected'];
+                } elseif (! empty($msg['pollResult']) && is_array($msg['pollResult'])) {
+                    foreach ($msg['pollResult'] as $pr) {
+                        if (! empty($pr['voters']) || (isset($pr['count']) && $pr['count'] > 0)) {
+                            $votedOptions[] = trim((string) ($pr['name'] ?? ''));
+                        }
+                    }
                 } elseif (! empty($poll['options']) && is_array($poll['options'])) {
                     foreach ($poll['options'] as $opt) {
-                        if ((isset($opt['count']) && $opt['count'] > 0) || ! empty($opt['votes'])) {
+                        if ((isset($opt['count']) && $opt['count'] > 0) || ! empty($opt['votes']) || ! empty($opt['voters'])) {
                             $votedOptions[] = trim((string) ($opt['name'] ?? ($opt['title'] ?? '')));
                         }
+                    }
+                } elseif (! empty($msg['vote']['options']) && is_array($msg['vote']['options'])) {
+                    foreach ($msg['vote']['options'] as $opt) {
+                        $votedOptions[] = trim((string) ($opt['value'] ?? ($opt['name'] ?? '')));
                     }
                 }
 
