@@ -85,8 +85,9 @@ class WebhookController extends Controller
 
         try {
             $webhookEvent = WebhookEvent::create([
-                'provider' => config('whatsapp.provider', 'fake'),
+                'provider' => config('whatsapp.provider', 'wassenger'),
                 'external_id' => $externalId,
+
                 'payload' => [
                     'messages' => $messages,
                     'statuses' => $statuses,

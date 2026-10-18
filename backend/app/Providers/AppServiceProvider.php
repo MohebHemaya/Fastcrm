@@ -29,12 +29,13 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(WhatsAppProvider::class, function () {
-            return match (config('whatsapp.provider', 'fake')) {
+            return match (config('whatsapp.provider', 'wassenger')) {
                 'cloud' => new CloudApiProvider,
-                'wassenger' => new WassengerProvider,
-                default => new FakeWhatsAppProvider,
+                'fake' => new FakeWhatsAppProvider,
+                default => new WassengerProvider,
             };
         });
+
 
 
 

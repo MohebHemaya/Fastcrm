@@ -72,7 +72,8 @@ class AdminHealthController extends ApiController
             : null;
 
         // 5. WhatsApp Provider & Failed Messages
-        $providerMode = config('whatsapp.provider', 'fake');
+        $providerMode = config('whatsapp.provider', 'wassenger');
+
         $graphVersion = config('whatsapp.cloud_api.version', 'v25.0');
         $failedMessages24h = WhatsAppMessage::where('status', 'failed')
             ->where('updated_at', '>=', now()->subHours(24))

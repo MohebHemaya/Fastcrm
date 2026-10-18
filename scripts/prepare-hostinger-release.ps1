@@ -171,11 +171,12 @@ SANCTUM_STATEFUL_DOMAINS=erp.zimpact-eg.com
 CORS_ALLOWED_ORIGINS=https://erp.zimpact-eg.com
 FRONTEND_URL=https://erp.zimpact-eg.com
 
-WHATSAPP_PROVIDER=ultramsg
+WHATSAPP_PROVIDER=wassenger
 WHATSAPP_VERIFY_TOKEN=fastcrm_zimpact_2026
-ULTRAMSG_BASE_URL=https://api.ultramsg.com
-ULTRAMSG_INSTANCE_ID=instance194026
-ULTRAMSG_TOKEN=962ei4qk35vt83ir
+WASSENGER_BASE_URL=https://api.wassenger.com/v1
+WASSENGER_TOKEN=56ade3f0a08089167eb6dadcc60583cb65e0d8fc3c5c1055bbc4327433cb566120f74c62f41e694e
+WASSENGER_DEVICE_ID=6ad468b2c9f97de89339ca2e
+
 
 # Initial Admin Seeding (Credentials)
 ADMIN_EMAIL=admin@erp.zimpact-eg.com

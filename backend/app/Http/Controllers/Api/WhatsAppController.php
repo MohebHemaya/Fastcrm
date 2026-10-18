@@ -223,7 +223,7 @@ class WhatsAppController extends Controller
     {
         return response()->json([
             'data' => [
-                'provider' => config('whatsapp.provider', 'fake'),
+                'provider' => config('whatsapp.provider', 'wassenger'),
                 'is_fake' => config('whatsapp.provider') === 'fake',
                 'send_rate_per_minute' => (int) config('whatsapp.send_rate_per_minute', 30),
                 'invite_batch_size' => (int) config('whatsapp.invite_batch_size', 50),
@@ -393,7 +393,7 @@ class WhatsAppController extends Controller
      */
     public function connectionStatus(): JsonResponse
     {
-        $provider = config('whatsapp.provider', 'fake');
+        $provider = config('whatsapp.provider', 'wassenger');
         $isFake = ($provider === 'fake');
 
         // For real providers: a simple proxy check — look for recent sent messages
@@ -632,7 +632,7 @@ class WhatsAppController extends Controller
     }
 
     /**
-     * Background sync: poll UltraMsg for any incoming messages across all active drivers.
+     * Background sync: poll WhatsApp provider for any incoming messages across all active drivers.
      * Keeps questionnaire bots and incoming chats alive without needing any specific modal open.
      */
     public function syncActiveInbound(WhatsAppProvider $provider): JsonResponse
