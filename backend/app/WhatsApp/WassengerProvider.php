@@ -491,6 +491,67 @@ class WassengerProvider implements WhatsAppProvider
     }
 
     /**
+     * Efficiently sync all recent inbound messages in ONE single API call across all chats.
+     */
+    public function syncAllRecentInbound(int $limit = 30): int
+    {
+        try {
+            $response = $this->http->get('messages', [
+                'limit' => $limit,
+            ]);
+
+            if (! $response->successful()) {
+                return 0;
+            }
+
+            $messages = $response->json();
+            if (! is_array($messages)) {
+                return 0;
+            }
+
+            $syncedCount = 0;
+            foreach ($messages as $msg) {
+                if (! empty($msg['fromMe']) || ($msg['deliveryStatus'] ?? '') === 'sent') {
+                    continue;
+                }
+
+                $id = (string) ($msg['id'] ?? '');
+                if ($id === '' || WhatsAppMessage::where('provider_message_id', $id)->exists()) {
+                    continue;
+                }
+
+                $phone = (string) ($msg['phone'] ?? '');
+                $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
+                if ($cleanPhone === '') {
+                    continue;
+                }
+
+                $text = (string) ($msg['message'] ?? ($msg['body'] ?? ($msg['text'] ?? '')));
+                $timestamp = isset($msg['timestamp']) ? (int) $msg['timestamp'] : (isset($msg['createdAt']) ? strtotime($msg['createdAt']) : now()->timestamp);
+
+                $driver = Driver::where('phone', '+'.$cleanPhone)->first();
+
+                WhatsAppMessage::create([
+                    'driver_id' => $driver?->id,
+                    'direction' => WhatsAppMessageDirection::INBOUND,
+                    'type' => WhatsAppMessageType::TEXT,
+                    'body' => $text,
+                    'status' => WhatsAppMessageStatus::DELIVERED,
+                    'provider_message_id' => $id,
+                    'sent_at' => Carbon::createFromTimestamp($timestamp),
+                ]);
+
+                $syncedCount++;
+            }
+
+            return $syncedCount;
+        } catch (\Throwable $e) {
+            Log::warning('[WassengerProvider] syncAllRecentInbound error: '.$e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
      * Normalize an input phone number to E.164.
      */
     private function normalizePhone(string $phone): string

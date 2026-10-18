@@ -637,6 +637,21 @@ class WhatsAppController extends Controller
      */
     public function syncActiveInbound(WhatsAppProvider $provider): JsonResponse
     {
+        // 1. If provider supports batch sync in 1 single HTTP call (e.g. Wassenger), use it for blazing speed
+        if (method_exists($provider, 'syncAllRecentInbound')) {
+            $processed = $provider->syncAllRecentInbound(30);
+
+            return response()->json([
+                'data' => [
+                    'synced_drivers' => 1,
+                    'processed_messages' => $processed,
+                ],
+                'meta' => null,
+                'message' => 'تمت مزامنة الرسائل الواردة بنجاح',
+            ]);
+        }
+
+        // 2. Fallback for other providers: limit to at most 3 drivers per poll to avoid blocking the thread
         $activeDrivers = Driver::query()
             ->whereIn('status', [
                 DriverStatus::INVITED,
@@ -645,13 +660,8 @@ class WhatsAppController extends Controller
             ->orWhereHas('workOrderRecipients', function ($q) {
                 $q->where('status', 'sent');
             })
-            ->orWhereHas('whatsappMessages', function ($q) {
-                $q->where('direction', 'out')
-                    ->where('created_at', '>=', now()->subHours(2));
-            })
-            ->orWhere('updated_at', '>=', now()->subMinutes(30))
             ->distinct()
-            ->limit(25)
+            ->limit(3)
             ->get();
 
         $processed = 0;

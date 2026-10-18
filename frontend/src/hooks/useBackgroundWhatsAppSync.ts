@@ -31,8 +31,8 @@ export function useBackgroundWhatsAppSync(onNewMessage?: () => void) {
       }
     };
 
-    // Initial sync
-    runSync();
+    // Defer initial sync by 3 seconds so page loads and renders instantly without network contention
+    const initialTimer = setTimeout(runSync, 3000);
 
     const interval = setInterval(runSync, SYNC_INTERVAL_MS);
 
@@ -45,6 +45,7 @@ export function useBackgroundWhatsAppSync(onNewMessage?: () => void) {
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
+      clearTimeout(initialTimer);
       clearInterval(interval);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
