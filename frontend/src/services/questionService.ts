@@ -61,4 +61,15 @@ export const questionService = {
   async deleteQuestion(id: number): Promise<void> {
     await api.delete(`/questions/${id}`);
   },
+
+  /**
+   * Send test WhatsApp poll/message for this question to a phone number.
+   */
+  async testSend(id: number, phone: string): Promise<{ provider_message_id: string; phone: string }> {
+    const res = await api.post<{ data: { provider_message_id: string; phone: string } }>(
+      `/questions/${id}/test-send`,
+      { phone }
+    );
+    return res.data.data;
+  },
 };

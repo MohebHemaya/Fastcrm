@@ -43,6 +43,12 @@ describe('questionService & settingsService', () => {
     ).resolves.not.toThrow();
   });
 
+  it('sends test WhatsApp question poll successfully', async () => {
+    const res = await questionService.testSend(1, '01278842350');
+    expect(res.provider_message_id).toBe('ws_poll_1');
+    expect(res.phone).toBe('01278842350');
+  });
+
   it('fetches and updates settings successfully', async () => {
     const data = await settingsService.getSettings();
     expect(data.settings.questionnaire_reminder_hours).toBe(24);

@@ -94,6 +94,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Questions Management
     Route::post('/questions/reorder', [QuestionController::class, 'reorder']);
+    Route::post('/questions/{question}/test-send', [QuestionController::class, 'testSend']);
     Route::patch('/questions/{question}/toggle-active', [QuestionController::class, 'toggleActive']);
     Route::apiResource('/questions', QuestionController::class);
 

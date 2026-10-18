@@ -9,7 +9,13 @@ import {
   Switch,
   Input,
   Spinner,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@heroui/react';
+import { useDriverUpdates, type QuestionnaireProgressPayload } from '@/hooks/useDriverUpdates';
 import {
   QuestionMarkCircleIcon,
   Cog6ToothIcon,
@@ -43,6 +49,10 @@ export const SettingsPage: React.FC = () => {
   const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
   const [deletingQuestion, setDeletingQuestion] = useState<Question | null>(null);
+  const [testingQuestion, setTestingQuestion] = useState<Question | null>(null);
+  const [testPhone, setTestPhone] = useState<string>('01278842350');
+  const [isSendingTest, setIsSendingTest] = useState<boolean>(false);
+  const [liveAnswers, setLiveAnswers] = useState<QuestionnaireProgressPayload[]>([]);
 
   // Settings State
   const [settings, setSettings] = useState<SystemSettings>({
@@ -56,6 +66,25 @@ export const SettingsPage: React.FC = () => {
   const [isSavingSettings, setIsSavingSettings] = useState(false);
 
   const addToast = useUiStore((state) => state.addToast);
+
+  // WebSockets live updates for driver questionnaire answers
+  const { isConnected } = useDriverUpdates({
+    onQuestionnaireProgress: (payload) => {
+      // Live increment matching question answers_count
+      setQuestions((prev) =>
+        prev.map((q) =>
+          q.text_ar === payload.question_text
+            ? { ...q, answers_count: (q.answers_count || 0) + 1 }
+            : q
+        )
+      );
+      setLiveAnswers((prev) => [payload, ...prev.slice(0, 4)]);
+      addToast({
+        type: 'info',
+        message: `⚡ استجابة جديدة عبر واتساب: سائق #${payload.driver_id} اختار "${payload.answer}"`,
+      });
+    },
+  });
 
   const fetchQuestions = async () => {
     setIsLoadingQuestions(true);
@@ -148,6 +177,26 @@ export const SettingsPage: React.FC = () => {
     }
   };
 
+  const handleSendTest = async () => {
+    if (!testingQuestion || !testPhone.trim()) return;
+    setIsSendingTest(true);
+    try {
+      const res = await questionService.testSend(testingQuestion.id, testPhone.trim());
+      addToast({
+        type: 'success',
+        message: `تم إرسال السؤال بنجاح إلى ${res.phone} عبر Wassenger كاستطلاع رأي تفاعلي!`,
+      });
+      setTestingQuestion(null);
+    } catch (err: any) {
+      addToast({
+        type: 'error',
+        message: err?.response?.data?.message || 'تعذر إرسال السؤال للتجربة عبر واتساب.',
+      });
+    } finally {
+      setIsSendingTest(false);
+    }
+  };
+
   // General Settings Actions
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -172,6 +221,34 @@ export const SettingsPage: React.FC = () => {
         description="إدارة أسئلة استبيان واتساب، إصدارات الأسئلة، وإعدادات النظام ومعدلات الإرسال"
       />
 
+      {/* Real-time Status Badges */}
+      <div className="flex items-center gap-2.5 flex-wrap -mt-3">
+        <Chip
+          size="sm"
+          variant="flat"
+          color={isConnected ? 'success' : 'warning'}
+          className="font-semibold text-xs"
+          startContent={
+            <span
+              className={`w-2 h-2 rounded-full ms-1 ${
+                isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+              }`}
+            />
+          }
+        >
+          {isConnected ? 'البث المباشر متصل (WebSockets Live 🟢)' : 'جاري الاتصال بالبث المباشر... 🟡'}
+        </Chip>
+
+        <Chip
+          size="sm"
+          variant="flat"
+          color="secondary"
+          className="font-semibold text-xs"
+        >
+          ⚡ مزود الخدمة: Wassenger • استطلاعات تفاعلية (WhatsApp Polls - إجابة واحدة)
+        </Chip>
+      </div>
+
       {/* Tabs */}
       <Tabs
         aria-label="خيارات الإعدادات"
@@ -195,6 +272,53 @@ export const SettingsPage: React.FC = () => {
           }
         >
           <div className="space-y-6 mt-4">
+            {/* Real-time WhatsApp Answers Live Feed */}
+            {liveAnswers.length > 0 && (
+              <Card className="border border-emerald-500/30 bg-emerald-950/15 shadow-sm">
+                <CardBody className="p-3.5 space-y-2 text-start">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                      <h4 className="text-xs font-bold text-emerald-400">
+                        البث المباشر للردود (Wassenger Live Feed)
+                      </h4>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="light"
+                      color="default"
+                      className="text-[10px] h-6 px-2 text-default-400"
+                      onPress={() => setLiveAnswers([])}
+                    >
+                      مسح السجل
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {liveAnswers.map((ans, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between gap-2 p-2 rounded-lg bg-content1/90 border border-divider text-xs shadow-none"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Chip size="sm" variant="flat" color="success" className="text-[10px]">
+                            سائق #{ans.driver_id}
+                          </Chip>
+                          <span className="text-default-500 truncate max-w-[140px]">
+                            {ans.question_text}:
+                          </span>
+                          <span className="font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded truncate">
+                            {ans.answer}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-default-400 font-mono shrink-0">
+                          {ans.answered_count}/{ans.total_questions}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </CardBody>
+              </Card>
+            )}
             {/* Summary KPI Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <Card shadow="none" className="border border-divider">
@@ -365,8 +489,22 @@ export const SettingsPage: React.FC = () => {
                       </div>
 
                       {/* Right: Actions */}
-                      <div className="flex items-center gap-3 self-end md:self-center">
-                        <div className="flex items-center gap-1.5">
+                      <div className="flex items-center gap-2.5 self-end md:self-center flex-wrap">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          color="secondary"
+                          className="text-xs font-semibold"
+                          startContent={<PaperAirplaneIcon className="w-3.5 h-3.5" />}
+                          onPress={() => {
+                            setTestingQuestion(q);
+                            setTestPhone('01278842350');
+                          }}
+                        >
+                          تجربة على واتساب
+                        </Button>
+
+                        <div className="flex items-center gap-1.5 ms-1">
                           <span
                             className={`text-xs font-semibold ${
                               q.is_active
@@ -574,6 +712,88 @@ export const SettingsPage: React.FC = () => {
         confirmText="نعم، قم بالتعطيل"
         variant="danger"
       />
+
+      {/* Test Question on WhatsApp Modal */}
+      <Modal
+        isOpen={!!testingQuestion}
+        onClose={() => !isSendingTest && setTestingQuestion(null)}
+        size="md"
+        placement="center"
+      >
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1 text-start">
+            <h3 className="text-base font-bold flex items-center gap-2">
+              <PaperAirplaneIcon className="w-5 h-5 text-secondary" />
+              <span>تجربة إرسال السؤال على واتساب (Wassenger)</span>
+            </h3>
+            <p className="text-xs text-default-500 font-normal">
+              إرسال السؤال فوراً كاستطلاع رأي تفاعلي (WhatsApp Single-Choice Poll) إلى هاتفك للتجربة الحية
+            </p>
+          </ModalHeader>
+          <ModalBody className="space-y-4 text-start">
+            {testingQuestion && (
+              <>
+                <div className="p-3.5 rounded-xl bg-content2/60 border border-divider space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-default-500">نص السؤال:</span>
+                    <Chip size="sm" variant="flat" color="primary">
+                      {testingQuestion.type_label}
+                    </Chip>
+                  </div>
+                  <p className="text-sm font-bold text-foreground">
+                    {testingQuestion.text_ar}
+                  </p>
+                  {testingQuestion.options && testingQuestion.options.length > 0 && (
+                    <div className="pt-2 border-t border-divider">
+                      <span className="text-[11px] text-default-400 block mb-1.5">
+                        خيارات الاستطلاع ({testingQuestion.options.length}):
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {testingQuestion.options.map((opt, i) => (
+                          <Chip key={i} size="sm" variant="bordered" color="default">
+                            {opt.label_ar}
+                          </Chip>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div>
+                  <Input
+                    label="رقم الهاتف للتجربة"
+                    placeholder="مثال: 01278842350 أو +201278842350"
+                    value={testPhone}
+                    onValueChange={setTestPhone}
+                    variant="bordered"
+                    isRequired
+                    description="سيصلك السؤال كاستطلاع رأي تفاعلي WhatsApp Poll بإجابة واحدة عبر Wassenger."
+                    startContent={<span className="text-default-400 text-xs">📱</span>}
+                  />
+                </div>
+              </>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="flat"
+              color="default"
+              onPress={() => setTestingQuestion(null)}
+              isDisabled={isSendingTest}
+            >
+              إلغاء
+            </Button>
+            <Button
+              color="secondary"
+              onPress={handleSendTest}
+              isLoading={isSendingTest}
+              startContent={!isSendingTest && <PaperAirplaneIcon className="w-4 h-4" />}
+            >
+              إرسال الآن عبر واتساب
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 };

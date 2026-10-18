@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Contracts\WhatsAppProvider;
 use App\Enums\QuestionType;
 use App\Models\ActivityLog;
 use App\Models\Question;
@@ -228,6 +229,62 @@ class QuestionController extends ApiController
         );
 
         return $this->success(null, 'تم تعطيل السؤال بنجاح');
+    }
+
+    /**
+     * Send a test WhatsApp poll or message for this question to a specified phone number.
+     */
+    public function testSend(Request $request, int $id, WhatsAppProvider $provider): JsonResponse
+    {
+        $validated = $request->validate([
+            'phone' => 'required|string|min:10|max:20',
+        ], [
+            'phone.required' => 'رقم الهاتف مطلوب لتجربة الإرسال.',
+            'phone.min' => 'رقم الهاتف غير صالح.',
+        ]);
+
+        $question = Question::with(['currentVersion', 'activeOptions'])->findOrFail($id);
+        $version = $question->currentVersion;
+        $text = $version ? $version->text_ar : $question->key;
+
+        $phone = $validated['phone'];
+
+        try {
+            if ($question->type === QuestionType::YES_NO) {
+                $buttons = [
+                    ['id' => 'opt_yes', 'title' => 'نعم'],
+                    ['id' => 'opt_no', 'title' => 'لا'],
+                ];
+                $providerMsgId = $provider->sendButtons($phone, $text, $buttons);
+            } elseif ($question->type === QuestionType::SINGLE_CHOICE) {
+                $options = $question->key === 'whatsapp_group'
+                    ? WhatsappGroup::orderBy('name')->get()->map(fn ($g) => ['id' => $g->id, 'title' => $g->name])->toArray()
+                    : $question->activeOptions->map(fn ($o) => ['id' => $o->id, 'title' => $o->label_ar])->toArray();
+
+                if (count($options) >= 2) {
+                    $providerMsgId = $provider->sendButtons($phone, $text, $options);
+                } else {
+                    $providerMsgId = $provider->sendText($phone, $text);
+                }
+            } else {
+                $providerMsgId = $provider->sendText($phone, $text);
+            }
+
+            ActivityLog::record(
+                action: 'test_send_question',
+                description: "تم تجربة إرسال السؤال {$question->key} إلى {$phone} عبر Wassenger",
+                subjectType: Question::class,
+                subjectId: $question->id,
+                properties: ['phone' => $phone, 'provider_message_id' => $providerMsgId]
+            );
+
+            return $this->success([
+                'provider_message_id' => $providerMsgId,
+                'phone' => $phone,
+            ], 'تم إرسال السؤال بنجاح كتجربة عبر واتساب (Wassenger)');
+        } catch (\Throwable $e) {
+            return $this->error('فشل إرسال التجربة عبر واتساب: ' . $e->getMessage(), 500);
+        }
     }
 
     /**

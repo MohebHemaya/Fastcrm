@@ -41,8 +41,8 @@ interface QuestionModalProps {
 }
 
 const QUESTION_TYPES: Array<{ key: QuestionType; label: string }> = [
-  { key: 'single_choice', label: 'اختيار من متعدد (أزرار / قائمة)' },
-  { key: 'yes_no', label: 'نعم / لا (زرين)' },
+  { key: 'single_choice', label: 'اختيار من متعدد (استطلاع رأي WhatsApp Poll - إجابة واحدة)' },
+  { key: 'yes_no', label: 'نعم / لا (استطلاع رأي WhatsApp Poll)' },
   { key: 'number', label: 'رقم (مثل سنوات الخبرة أو سعة الحمولة)' },
   { key: 'text', label: 'نص حر (إجابة نصية حرة)' },
 ];
@@ -271,17 +271,11 @@ export const QuestionModal: React.FC<QuestionModalProps> = ({
                   <div className="border border-divider rounded-xl p-3.5 bg-content2/40 space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="text-sm font-semibold">خيارات الإجابة</h4>
+                        <h4 className="text-sm font-semibold">خيارات الاستطلاع (WhatsApp Poll)</h4>
                         <p className="text-xs text-default-500">
-                          {options.length <= 3 ? (
-                            <span className="text-primary font-medium">
-                              ستظهر كـ <b>أزرار واتساب سريعة</b> (الحد الأقصى {maxChars} حرفاً للزر)
-                            </span>
-                          ) : (
-                            <span className="text-warning font-medium">
-                              ستظهر كـ <b>قائمة منسدلة</b> (الحد الأقصى {maxChars} حرفاً للخيار)
-                            </span>
-                          )}
+                          <span className="text-primary font-medium">
+                            ترسل كـ <b>استطلاع رأي تفاعلي (Wassenger Poll)</b> بإجابة واحدة فقط، تتيح للسائق الاختيار بنقرة واحدة (الحد الأقصى {maxChars} حرفاً).
+                          </span>
                         </p>
                       </div>
                       <Button

@@ -19,6 +19,12 @@ export const handlers = [
     });
   }),
 
+  http.post('/api/v1/broadcasting/auth', () => {
+    return HttpResponse.json({
+      auth: 'mock-socket-auth-key:mock-signature',
+    });
+  }),
+
   http.get('/api/v1/sidebar-badges', () => {
     return HttpResponse.json({
       data: {
@@ -663,6 +669,18 @@ export const handlers = [
       data: null,
       meta: null,
       message: 'تم حفظ ترتيب الأسئلة بنجاح',
+    });
+  }),
+
+  http.post('/api/v1/questions/:id/test-send', async ({ request, params }) => {
+    const body = (await request.json()) as any;
+    return HttpResponse.json({
+      data: {
+        provider_message_id: 'ws_poll_' + params.id,
+        phone: body?.phone || '01278842350',
+      },
+      meta: null,
+      message: 'تم إرسال السؤال بنجاح كتجربة عبر واتساب (Wassenger)',
     });
   }),
 

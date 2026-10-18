@@ -57,16 +57,36 @@ describe('SettingsPage & Questionnaire UI', () => {
     expect(screen.getByText('لا')).toBeInTheDocument();
   });
 
-  it('switches to general settings tab and displays timeout and reminder inputs', async () => {
+  it('displays real-time WebSockets and Wassenger badges in header', async () => {
     renderComponent();
 
-    const generalTab = screen.getByText('إعدادات النظام العامة');
-    fireEvent.click(generalTab);
+    await waitFor(() => {
+      expect(screen.getByText(/Wassenger/)).toBeInTheDocument();
+      expect(screen.getByText(/البث المباشر/)).toBeInTheDocument();
+    });
+  });
+
+  it('opens test question modal and triggers live WhatsApp test send', async () => {
+    renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/مواعيد ومهلات الاستبيان/)).toBeInTheDocument();
-      expect(screen.getByText(/مهلة تذكير الاستبيان/)).toBeInTheDocument();
-      expect(screen.getByText(/أقصى معدل إرسال بالدقيقة/)).toBeInTheDocument();
+      expect(screen.getByText('ما نوع مركبتك؟')).toBeInTheDocument();
+    });
+
+    const testButtons = screen.getAllByText('تجربة على واتساب');
+    expect(testButtons.length).toBeGreaterThan(0);
+    fireEvent.click(testButtons[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText(/تجربة إرسال السؤال على واتساب/)).toBeInTheDocument();
+      expect(screen.getByDisplayValue('01278842350')).toBeInTheDocument();
+    });
+
+    const submitBtn = screen.getByText('إرسال الآن عبر واتساب');
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.queryByText(/تجربة إرسال السؤال على واتساب/)).not.toBeInTheDocument();
     });
   });
 });
