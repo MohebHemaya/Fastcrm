@@ -39,6 +39,13 @@ class WebhookController extends Controller
      */
     public function receive(Request $request, WhatsAppProvider $provider)
     {
+        // Dynamically resolve provider if incoming payload format matches a specific provider
+        if ($request->has('event') && $request->has('data')) {
+            $provider = app(\App\WhatsApp\WassengerProvider::class);
+        } elseif ($request->has('entry') || $request->hasHeader('X-Hub-Signature-256')) {
+            $provider = app(\App\WhatsApp\CloudApiProvider::class);
+        }
+
         try {
             $events = $provider->parseWebhook($request);
         } catch (ValidationException $e) {

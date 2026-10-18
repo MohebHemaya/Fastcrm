@@ -141,40 +141,51 @@ class WassengerProvider implements WhatsAppProvider
             }
         }
 
+        $usePolls = (bool) config('whatsapp.wassenger.use_polls', false);
+
         // WhatsApp polls require at least 2 options and maximum 12 options
-        if (count($options) < 2) {
-            // Fallback to text if less than 2 options
-            $formatted = $body;
-            if (! empty($options)) {
-                $formatted .= "\n\n🔘 *الخيارات:*\n" . implode("\n", array_map(fn ($opt, $idx) => ($idx + 1).'️⃣ '.$opt, $options, array_keys($options)));
+        if ($usePolls && count($options) >= 2 && count($options) <= 12) {
+            $payload = [
+                'phone' => $formattedPhone,
+                'poll' => [
+                    'name' => $body,
+                    'options' => $options,
+                    'multiple' => false,
+                ],
+            ];
+
+            if (! empty($this->deviceId)) {
+                $payload['device'] = $this->deviceId;
             }
-            return $this->sendText($to, $formatted);
+
+            $response = $this->http->post('messages', $payload);
+
+            $this->assertSuccess($response, 'sendButtons (Poll)');
+
+            $responseData = $response->json();
+
+            return (string) ($responseData['id'] ?? $responseData['wid'] ?? ('ws_poll_'.uniqid('', true)));
         }
 
-        $payload = [
-            'phone' => $formattedPhone,
-            'poll' => [
-                'name' => $body,
-                'options' => $options,
-                'multiple' => false,
-            ],
-        ];
+        // Reliable rich text options format (guaranteed to work across 1-on-1 chats, polling, and all phones)
+        $formatted = $body;
+        if (! empty($options)) {
+            $numEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+            $optionsList = [];
+            foreach ($options as $idx => $opt) {
+                $prefix = $numEmojis[$idx] ?? (($idx + 1).'-');
+                $optionsList[] = "{$prefix} {$opt}";
+            }
 
-        if (! empty($this->deviceId)) {
-            $payload['device'] = $this->deviceId;
+            $formatted .= "\n\n🔘 *الخيارات:*\n".implode("\n", $optionsList);
+            $formatted .= "\n\n_(يمكنك الرد برقم أو اسم الخيار)_";
         }
 
-        $response = $this->http->post('messages', $payload);
-
-        $this->assertSuccess($response, 'sendButtons (Poll)');
-
-        $responseData = $response->json();
-
-        return (string) ($responseData['id'] ?? $responseData['wid'] ?? ('ws_poll_'.uniqid('', true)));
+        return $this->sendText($to, $formatted);
     }
 
     /**
-     * Send a list message with up to 10 rows (sent as native Poll options).
+     * Send a list message with up to 10 rows (formatted with numbered options).
      */
     public function sendList(string $to, string $body, string $buttonLabel, array $rows): string
     {
@@ -186,22 +197,9 @@ class WassengerProvider implements WhatsAppProvider
             }
         }
 
-        if (count($options) >= 2 && count($options) <= 12) {
-            $buttons = array_map(fn ($title) => ['title' => $title], $options);
-            return $this->sendButtons($to, $body, $buttons);
-        }
+        $buttons = array_map(fn ($title) => ['title' => $title], $options);
 
-        // Fallback to clear text if rows exceed 12 options
-        $formatted = $body."\n\n*{$buttonLabel}*:";
-        foreach ($rows as $idx => $row) {
-            $num = $idx + 1;
-            $formatted .= "\n{$num}. ".($row['title'] ?? '');
-            if (! empty($row['description'])) {
-                $formatted .= ' — '.$row['description'];
-            }
-        }
-
-        return $this->sendText($to, $formatted);
+        return $this->sendButtons($to, $body, $buttons);
     }
 
     /**
